@@ -1,0 +1,68 @@
+# Проверочная сборка
+#
+# Триггер: открытие / обновление Pull Request в main, stage или dev
+# НЕ деплоит — только проверяет, что код компилируется без ошибок.
+# Защищает основные ветки от сломанного кода.
+#
+# Если сборка упала — PR нельзя будет вмержить (при включённой защите веток).
+
+name: Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - stage
+      - dev
+
+concurrency:
+  group: build-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Check — PR → ${{ github.base_ref }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Собираем с base path целевой ветки, чтобы ловить ошибки, специфичные для окружения.
+      # Если ветка не совпадает ни с одним case — завершаем с ошибкой,
+      # чтобы не допустить сборки с пустым base path (тихая ошибка хуже явной).
+      - name: Set base path for target branch
+        id: config
+        run: |
+          case "${{ github.base_ref }}" in
+            main)  echo "base=/fidenta-landing/"       >> $GITHUB_OUTPUT ;;
+            stage) echo "base=/fidenta-landing/stage/" >> $GITHUB_OUTPUT ;;
+            dev)   echo "base=/fidenta-landing/dev/"   >> $GITHUB_OUTPUT ;;
+            *)
+              echo "::error::Неожиданная целевая ветка: ${{ github.base_ref }}. Ожидается main, stage или dev."
+              exit 1
+              ;;
+          esac
+
+      - name: Build
+        env:
+          ASTRO_BASE_PATH: ${{ steps.config.outputs.base }}
+        run: pnpm build

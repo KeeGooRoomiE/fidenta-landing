@@ -1,0 +1,111 @@
+# Деплой на GitHub Pages
+#
+# Триггер: push в main, stage или dev
+# Каждая ветка деплоится в свою подпапку gh-pages ветки:
+#   main  → keegooroomie.github.io/fidenta-landing/
+#   stage → keegooroomie.github.io/fidenta-landing/stage/
+#   dev   → keegooroomie.github.io/fidenta-landing/dev/
+#
+# ВАЖНО: GitHub Pages должен быть настроен в Settings → Pages → Source: Deploy from a branch → gh-pages
+# Этот воркфлоу сам создаёт и обновляет ветку gh-pages.
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+      - dev
+
+# Одновременно может выполняться только один деплой для каждой ветки.
+# Если пришёл новый push, пока идёт деплой — старый деплой отменяется.
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: true
+
+# Права для записи в gh-pages ветку
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Build & Deploy — ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # 1. Скачиваем код ветки, которая триггернула воркфлоу
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Устанавливаем pnpm (должен идти ДО setup-node для корректного кэша)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # 3. Устанавливаем Node.js с кэшированием pnpm-зависимостей
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # 4. Устанавливаем зависимости строго по pnpm-lock.yaml
+      # --frozen-lockfile запрещает изменение lockfile в CI — защита от «у меня работало»
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. Определяем base path, целевую папку и стратегию очистки в зависимости от ветки.
+      # base path нужен Astro, чтобы правильно строить ссылки на ресурсы.
+      # clean_exclude: при деплое main в корень gh-pages сохраняем папки stage/ и dev/,
+      # чтобы они не были удалены. Для stage/dev clean-exclude не нужен — target-folder
+      # изолирует очистку в рамках своей папки.
+      - name: Set deploy config
+        id: config
+        run: |
+          case "${{ github.ref_name }}" in
+            main)
+              echo "base=/fidenta-landing/"   >> $GITHUB_OUTPUT
+              echo "target=."                 >> $GITHUB_OUTPUT
+              {
+                echo "clean_exclude<<EOF"
+                echo "stage"
+                echo "dev"
+                echo "EOF"
+              } >> $GITHUB_OUTPUT
+              ;;
+            stage)
+              echo "base=/fidenta-landing/stage/" >> $GITHUB_OUTPUT
+              echo "target=stage"                 >> $GITHUB_OUTPUT
+              echo "clean_exclude="               >> $GITHUB_OUTPUT
+              ;;
+            dev)
+              echo "base=/fidenta-landing/dev/"   >> $GITHUB_OUTPUT
+              echo "target=dev"                   >> $GITHUB_OUTPUT
+              echo "clean_exclude="               >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "::error::Неожиданная ветка: ${{ github.ref_name }}. Ожидается main, stage или dev."
+              exit 1
+              ;;
+          esac
+
+      # 6. Собираем Astro с нужным base path
+      # Результат попадает в папку dist/
+      - name: Build
+        env:
+          ASTRO_BASE_PATH: ${{ steps.config.outputs.base }}
+        run: pnpm build
+
+      # 7. Пушим dist/ в нужную подпапку ветки gh-pages
+      # clean: true — удаляет устаревшие файлы в целевой папке при каждом деплое.
+      # clean-exclude — защищает папки других веток при деплое main в корень.
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          target-folder: ${{ steps.config.outputs.target }}
+          clean: true
+          clean-exclude: ${{ steps.config.outputs.clean_exclude }}
