@@ -1,0 +1,122 @@
+# Отправка CTA-заявки на почту
+#
+# Триггер: workflow_dispatch — вызывается через GitHub API с сайта при сабмите формы.
+# Запускает Python-скрипт scripts/send_cta.py, который отправляет данные формы по SMTP.
+#
+# НЕ уведомляет в Telegram об успехе. При ошибке — уведомляет отдельным шагом,
+# чтобы потерянная заявка не прошла незамеченной.
+#
+# Как это работает:
+#   1. Пользователь заполняет форму на сайте и нажимает «Отправить»
+#   2. JavaScript на сайте делает POST-запрос к GitHub API:
+#      POST https://api.github.com/repos/keegooroomie/fidenta-landing/actions/workflows/cta-email.yml/dispatches
+#      Authorization: Bearer <GITHUB_CTA_TOKEN>  ← fine-grained PAT, только Actions: write на этом репо
+#   3. GitHub Actions запускает этот воркфлоу с данными из тела запроса
+#   4. Python-скрипт формирует письмо и шлёт по SMTP
+#
+# SECURITY: GITHUB_CTA_TOKEN виден в браузере (JS на клиенте).
+# Смягчения: fine-grained PAT (только Actions:write), лимит 2000 dispatch/день на GitHub,
+# валидация в Python-скрипте. При наличии VPS — перенести на backend.
+#
+# GitHub Secrets, которые нужно настроить в Settings → Secrets → Actions:
+#   SMTP_HOST            — SMTP-сервер (например: smtp.yandex.ru)
+#   SMTP_PORT            — SMTP-порт (например: 587)
+#   SMTP_USER            — SMTP-логин (email отправителя)
+#   SMTP_PASSWORD        — SMTP-пароль или app password
+#   CTA_RECIPIENT_EMAIL  — email менеджера, куда приходят заявки
+#   TELEGRAM_BOT_TOKEN   — для уведомления об ошибке
+#   TELEGRAM_CHAT_ID     — для уведомления об ошибке
+
+name: CTA Email
+
+on:
+  workflow_dispatch:
+    # Поля, которые передаёт JS с сайта при вызове через API.
+    # ВАЖНО: required: true работает только в GitHub UI.
+    # При вызове через API поля могут быть пустыми — Python-скрипт это проверяет.
+    inputs:
+      name:
+        description: Имя клиента
+        required: true
+        type: string
+      phone:
+        description: Телефон клиента
+        required: true
+        type: string
+      message:
+        description: Сообщение / комментарий
+        required: false
+        type: string
+        default: ''
+      client_email:
+        description: Email клиента (если указал в форме)
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  send-email:
+    name: Send CTA Email
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Явная валидация обязательных полей до запуска Python.
+      # required: true в inputs не работает при вызове через API.
+      - name: Validate inputs
+        run: |
+          if [ -z "${{ inputs.name }}" ] || [ -z "${{ inputs.phone }}" ]; then
+            echo "::error::Поля name и phone обязательны. Получены: name='${{ inputs.name }}', phone='${{ inputs.phone }}'"
+            exit 1
+          fi
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Если у скрипта появятся зависимости (например, requests) — добавить requirements.txt
+      # - name: Install Python dependencies
+      #   run: pip install -r scripts/requirements.txt
+
+      - name: Send CTA email
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          CTA_RECIPIENT_EMAIL: ${{ secrets.CTA_RECIPIENT_EMAIL }}
+          # Данные из формы передаются через env-переменные (безопаснее, чем аргументы CLI)
+          FORM_NAME: ${{ inputs.name }}
+          FORM_PHONE: ${{ inputs.phone }}
+          FORM_MESSAGE: ${{ inputs.message }}
+          FORM_CLIENT_EMAIL: ${{ inputs.client_email }}
+        run: python scripts/send_cta.py
+
+      # Если отправка письма провалилась — уведомляем в Telegram.
+      # Заявка от клиента не должна теряться молча.
+      - name: Notify Telegram on failure
+        if: failure()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FORM_NAME: ${{ inputs.name }}
+          FORM_PHONE: ${{ inputs.phone }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=⚠️ <b>CTA Email: ошибка отправки!</b>
+
+Заявка потеряна — нужна ручная обработка.
+Клиент: <code>${FORM_NAME}</code>
+Телефон: <code>${FORM_PHONE}</code>
+
+Проверь логи Actions." \
+            --data-urlencode "parse_mode=HTML" \
+            --data-urlencode "disable_web_page_preview=true"
