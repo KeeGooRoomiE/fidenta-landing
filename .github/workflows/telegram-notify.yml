@@ -1,0 +1,100 @@
+# Уведомления в Telegram о статусе воркфлоу
+#
+# Триггер: завершение воркфлоу Deploy, Build Check или Tests
+# НЕ подписан на CTA Email — у него своя логика уведомлений об ошибке.
+#
+# Отправляет в Telegram-бот сообщение с:
+#   - Статусом (✅ успех / ❌ ошибка / ⏹ отменён)
+#   - Названием воркфлоу
+#   - Веткой и коротким SHA коммита со ссылкой
+#   - Ссылкой на лог воркфлоу
+#
+# ВАЖНО: workflow_run работает только если этот файл находится на ДЕФОЛТНОЙ ветке репо.
+# Дефолтная ветка — main. До первого мержа в main уведомления работать не будут.
+#
+# GitHub Secrets, которые нужно настроить в Settings → Secrets → Actions:
+#   TELEGRAM_BOT_TOKEN  — токен бота (формат: 123456789:ABC-...)
+#   TELEGRAM_CHAT_ID    — ID чата или группы (формат: -100123456789)
+
+name: Telegram Notify
+
+on:
+  workflow_run:
+    # Имена должны совпадать с полем `name:` в соответствующих воркфлоу точно
+    workflows:
+      - Deploy
+      - Build Check
+      - Tests
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    name: Notify Telegram
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      # Определяем статус и эмодзи. CONCLUSION читаем через env, а не inline,
+      # чтобы избежать интерполяции в shell.
+      - name: Prepare message data
+        id: data
+        env:
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          FULL_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          case "$CONCLUSION" in
+            success)   EMOJI="✅"; STATUS="Успешно"   ;;
+            failure)   EMOJI="❌"; STATUS="Ошибка"    ;;
+            cancelled) EMOJI="⏹"; STATUS="Отменён"   ;;
+            skipped)   EMOJI="⏭"; STATUS="Пропущен"  ;;
+            *)         EMOJI="❓"; STATUS="$CONCLUSION" ;;
+          esac
+
+          SHORT_SHA="${FULL_SHA:0:7}"
+
+          echo "emoji=$EMOJI"         >> $GITHUB_OUTPUT
+          echo "status=$STATUS"       >> $GITHUB_OUTPUT
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+
+      # Все значения из контекста передаются через env — не интерполируются в shell.
+      # Это защищает от shell injection через имена веток или воркфлоу.
+      - name: Send Telegram message
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          FULL_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          EMOJI: ${{ steps.data.outputs.emoji }}
+          STATUS: ${{ steps.data.outputs.status }}
+          SHORT_SHA: ${{ steps.data.outputs.short_sha }}
+        run: |
+          REPO="keegooroomie/fidenta-landing"
+          COMMIT_URL="https://github.com/${REPO}/commit/${FULL_SHA}"
+
+          MESSAGE="${EMOJI} <b>Fidenta Landing</b> — ${STATUS}
+
+🔄 Воркфлоу: <code>${WORKFLOW_NAME}</code>
+🌿 Ветка: <code>${BRANCH}</code>
+📝 Коммит: <a href=\"${COMMIT_URL}\">${SHORT_SHA}</a>
+
+<a href=\"${RUN_URL}\">Открыть лог →</a>"
+
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}" \
+            --data-urlencode "parse_mode=HTML" \
+            --data-urlencode "disable_web_page_preview=true")
+
+          echo "Telegram API response: $RESPONSE"
+
+          # Проверяем что API вернул успех. Молчаливый сбой хуже явного.
+          if ! echo "$RESPONSE" | grep -q '"ok":true'; then
+            echo "::error::Telegram API вернул ошибку: $RESPONSE"
+            exit 1
+          fi
