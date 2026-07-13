@@ -1,0 +1,28 @@
+---
+/*
+  UI-АТОМ — Card
+
+  Универсальная карточка-обёртка: поверхность, рамка, скругление, отступ.
+  Содержимое передаётся через <slot />. Используется как основа для более
+  специализированных карточек и просто как контейнер.
+
+  Проп hover добавляет подсветку рамки при наведении (для кликабельных карточек).
+
+  Пример:
+    <Card>...</Card>
+    <Card hover>...</Card>
+*/
+interface Props {
+  hover?: boolean;
+  class?: string;
+}
+const { hover = false, class: extraClass = '' } = Astro.props;
+
+const hoverClass = hover
+  ? 'transition-colors duration-200 hover:border-accent/60 hover:bg-surface-2'
+  : '';
+---
+
+<div class={`rounded-2xl border border-border bg-surface p-6 ${hoverClass} ${extraClass}`}>
+  <slot />
+</div>

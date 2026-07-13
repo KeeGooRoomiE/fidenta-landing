@@ -1,0 +1,70 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК CtaForm («Готовы передать объект под управление?»)
+
+  Слева — призыв и описание. Справа — форма заявки.
+  Атрибуты name полей совпадают с inputs воркфлоу cta-email.yml и переменными
+  в scripts/send_cta.py:
+    name → FORM_NAME, phone → FORM_PHONE, client_email → FORM_CLIENT_EMAIL, message → FORM_MESSAGE
+
+  Отправка формы (fetch к GitHub API) пока НЕ подключена — это следующий шаг.
+  Сейчас скрипт лишь перехватывает submit и показывает заглушку.
+
+  id="cta" — якорь для кнопок «Консультация» и ссылки «Контакты».
+*/
+import Input from '../ui/Input.astro';
+import Button from '../ui/Button.astro';
+---
+
+<section id="cta" class="bg-panel py-20 md:py-28">
+  <div class="container-page grid gap-12 lg:grid-cols-2 lg:gap-16">
+    <!-- Левая колонка: призыв -->
+    <div>
+      <span class="eyebrow mb-4">— Оставить заявку</span>
+      <h2 class="text-3xl leading-tight sm:text-4xl md:text-5xl">
+        Готовы передать объект под управление?
+      </h2>
+      <p class="mt-5 max-w-md text-base leading-relaxed text-muted">
+        Оставьте заявку — свяжемся в течение одного рабочего дня, проконсультируем
+        и при необходимости выедем на осмотр объекта.
+      </p>
+    </div>
+
+    <!-- Правая колонка: форма -->
+    <div class="rounded-2xl border border-border bg-surface p-7 md:p-8">
+      <h3 class="text-xl">Напишите нам</h3>
+      <p class="mt-1 text-sm text-muted">Ответим в течение одного рабочего дня.</p>
+
+      <form id="cta-form" class="mt-6 flex flex-col gap-5" novalidate>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <Input label="Имя" name="name" placeholder="Александр" required />
+          <Input label="Телефон" name="phone" type="tel" placeholder="+7 (812) ..." required />
+        </div>
+
+        <Input label="E-mail" name="client_email" type="email" placeholder="example@mail.ru" />
+
+        <Input label="Тема обращения" name="message" placeholder="Управление коммерческой недвижимостью" />
+
+        <Button variant="primary" type="submit" class="mt-1 w-full">Отправить сообщение</Button>
+
+        <!-- Сюда скрипт выведет статус отправки -->
+        <p id="cta-status" class="hidden text-sm" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Заглушка обработки формы. Реальную отправку (fetch к GitHub API →
+  // workflow_dispatch воркфлоу cta-email.yml) подключим отдельным шагом.
+  const form = document.getElementById('cta-form');
+  const status = document.getElementById('cta-status');
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!status) return;
+    status.textContent = 'Форма собрана. Отправка на сервер будет подключена позже.';
+    status.classList.remove('hidden');
+    status.classList.add('text-accent');
+  });
+</script>

@@ -1,0 +1,40 @@
+---
+/*
+  UI-АТОМ — Button
+
+  Переиспользуемая кнопка. Умеет рендериться как <a> (если передан href)
+  или как <button>. Внешний вид задаётся пропом variant.
+
+  Пример:
+    <Button variant="primary" href="#cta">Консультация</Button>
+    <Button variant="secondary">Наши объекты</Button>
+*/
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  href?: string;
+  type?: 'button' | 'submit';
+  class?: string;
+}
+
+const { variant = 'primary', href, type = 'button', class: extraClass = '' } = Astro.props;
+
+// Базовые классы — общие для всех вариантов
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none';
+
+// Классы под конкретный вариант
+const variants = {
+  primary: 'bg-accent text-canvas hover:bg-accent-soft',
+  secondary: 'border border-border text-fg hover:border-accent hover:text-accent',
+  ghost: 'text-fg hover:text-accent',
+};
+
+const classes = `${base} ${variants[variant]} ${extraClass}`;
+
+// Тег выбирается динамически: ссылка или кнопка
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag class={classes} href={href} type={href ? undefined : type}>
+  <slot />
+</Tag>

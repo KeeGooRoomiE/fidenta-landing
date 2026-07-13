@@ -1,0 +1,38 @@
+---
+/*
+  UI-АТОМ — SectionHeading
+
+  Единый заголовок секции: надзаголовок-eyebrow + крупный заголовок,
+  в котором часть слова выделена золотым акцентом, + опциональное описание.
+
+  Пример:
+    <SectionHeading
+      eyebrow="Как работаем"
+      title="От заявки до"
+      accent="стабильного дохода"
+      description="Прозрачный процесс передачи объекта под управление — пять понятных шагов."
+    />
+*/
+interface Props {
+  eyebrow?: string;
+  title: string;
+  accent?: string;      // выделенная золотом часть заголовка (ставится после title)
+  description?: string;
+  align?: 'left' | 'center';
+}
+
+const { eyebrow, title, accent, description, align = 'left' } = Astro.props;
+
+const alignClass = align === 'center' ? 'items-center text-center mx-auto' : 'items-start text-left';
+---
+
+<div class={`flex flex-col ${alignClass} max-w-2xl`}>
+  {eyebrow && <span class="eyebrow mb-4">— {eyebrow}</span>}
+
+  <h2 class="text-3xl sm:text-4xl md:text-5xl leading-tight">
+    {title}
+    {accent && <span class="text-accent"> {accent}</span>}
+  </h2>
+
+  {description && <p class="mt-4 text-base text-muted leading-relaxed">{description}</p>}
+</div>

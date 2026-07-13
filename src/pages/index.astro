@@ -1,0 +1,33 @@
+---
+/*
+  УРОВЕНЬ 2 — СТРАНИЦА (index.astro)
+
+  Единственная страница лендинга. Её задача — только СОБРАТЬ блоки в нужном
+  порядке. Никакой бизнес-логики и вёрстки здесь нет: всё внутри блоков (секций).
+
+  Порядок блоков соответствует макету сверху вниз.
+*/
+import Layout from '../layouts/Layout.astro';
+
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import HowWeWork from '../components/sections/HowWeWork.astro';
+import Portfolio from '../components/sections/Portfolio.astro';
+import WhyUs from '../components/sections/WhyUs.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import CtaForm from '../components/sections/CtaForm.astro';
+import Footer from '../components/sections/Footer.astro';
+---
+
+<Layout title="Фидента — инвестиции в коммерческую недвижимость">
+  <Header />
+  <main>
+    <Hero />
+    <HowWeWork />
+    <Portfolio />
+    <WhyUs />
+    <Testimonials />
+    <CtaForm />
+  </main>
+  <Footer />
+</Layout>

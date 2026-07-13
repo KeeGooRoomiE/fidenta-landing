@@ -1,0 +1,55 @@
+---
+/*
+  УРОВЕНЬ 1 — LAYOUT (базовая оболочка страницы)
+
+  Отвечает за общий HTML-каркас, единый для всех страниц сайта:
+  <html>, <head> (мета-теги, шрифты, favicon), <body> и подключение глобального CSS.
+  Конкретный контент страницы вставляется в <slot />.
+
+  Props — типизированы через interface. title обязателен, description — опционально.
+*/
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Fidenta — управление коммерческой недвижимостью в Санкт-Петербурге. Создаём и управляем активами, формируем ценность на годы.',
+} = Astro.props;
+
+// BASE_URL учитывает base из astro.config (напр. /fidenta-landing/).
+// Используем его для ссылок на статику из public/, чтобы пути были корректны на GitHub Pages.
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Favicon (SVG-плейсхолдер, заменить на брендовый) -->
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+
+    <!-- Шрифты (плейсхолдеры Playfair Display + Inter с поддержкой кириллицы).
+         TODO: заменить на брендовые и по возможности захостить локально в public/fonts. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Сюда Astro вставит содержимое страницы (index.astro и т.д.) -->
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,78 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК Footer (подвал)
+
+  Логотип + слоган слева, три колонки ссылок (Услуги, Компания, Контакты),
+  снизу — копирайт и правовые ссылки. Ссылки собираются из массивов.
+*/
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Услуги',
+    links: ['Арендные отношения', 'Техническая эксплуатация', 'Юридическое сопровождение', 'Финансовое управление', 'Консалтинг'],
+  },
+  {
+    title: 'Компания',
+    links: ['О компании', 'Наши объекты', 'Как мы работаем', 'Отзывы клиентов'],
+  },
+];
+
+const contacts = ['+7 (812) 000-00-00', 'info@uk-fidenta.ru', 'ул. Кирочная, 9', 'Пн–Пт 9:00–18:00'];
+---
+
+<footer class="border-t border-border bg-canvas">
+  <div class="container-page py-16">
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Логотип + слоган -->
+      <div>
+        <div class="flex items-center gap-3">
+          <svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+            class="text-accent" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 46 L32 15 L52 46" />
+            <line x1="10" y1="47" x2="54" y2="47" />
+            <line x1="32" y1="15" x2="22" y2="47" />
+            <line x1="32" y1="15" x2="42" y2="47" />
+          </svg>
+          <div>
+            <span class="block font-display text-base font-semibold text-fg">ФИДЕНТА</span>
+            <span class="block text-[0.55rem] uppercase tracking-[0.2em] text-muted">Управляющая компания</span>
+          </div>
+        </div>
+        <p class="mt-5 font-display text-lg italic text-fg/80">Ваши активы — наша ответственность</p>
+        <p class="mt-3 text-sm text-muted">ООО «УК Фидента» · Санкт-Петербург</p>
+      </div>
+
+      <!-- Колонки ссылок -->
+      {columns.map((column) => (
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-muted">{column.title}</h4>
+          <ul class="mt-4 flex flex-col gap-2.5">
+            {column.links.map((link) => (
+              <li><a href="#" class="text-sm text-fg/80 transition-colors hover:text-accent">{link}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <!-- Контакты -->
+      <div>
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-muted">Контакты</h4>
+        <ul class="mt-4 flex flex-col gap-2.5">
+          {contacts.map((item) => (
+            <li class="text-sm text-fg/80">{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Нижняя строка: копирайт + правовые ссылки -->
+    <div class="mt-14 flex flex-col gap-4 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
+      <div class="flex gap-6">
+        <a href="#" class="transition-colors hover:text-accent">Политика конфиденциальности</a>
+        <a href="#" class="transition-colors hover:text-accent">Пользовательское соглашение</a>
+      </div>
+    </div>
+  </div>
+</footer>

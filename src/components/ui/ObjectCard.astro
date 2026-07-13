@@ -1,0 +1,63 @@
+---
+/*
+  UI-ЭЛЕМЕНТ — ObjectCard
+
+  Карточка объекта недвижимости в блоке «Объекты под управлением».
+  Сверху — плейсхолдер под фото (сюда вставится изображение из Figma),
+  бейдж типа объекта, ниже — название, адрес и три показателя.
+
+  Пример:
+    <ObjectCard
+      type="Офисы"
+      title="БЦ «Нева Плаза»"
+      address="В.О., 7-я линия, 76"
+      gla="4200"
+      occupancy="97%"
+      since="с 2018"
+    />
+*/
+import Tag from './Tag.astro';
+
+interface Props {
+  type: string;
+  title: string;
+  address: string;
+  gla: string;        // площадь, м² GLA
+  occupancy: string;  // заполняемость, %
+  since: string;      // с какого года в управлении
+}
+const { type, title, address, gla, occupancy, since } = Astro.props;
+---
+
+<article class="overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-200 hover:border-accent/60">
+  <!-- Плейсхолдер под фото объекта (заменить на <img> из Figma).
+       aspect-[16/10] держит пропорции, бейдж позиционируется поверх. -->
+  <div class="relative aspect-[16/10] bg-gradient-to-br from-surface-2 to-canvas">
+    <div class="absolute left-4 top-4">
+      <Tag>{type}</Tag>
+    </div>
+  </div>
+
+  <div class="p-6">
+    <h3 class="text-xl">{title}</h3>
+    <p class="mt-1 flex items-center gap-1 text-sm text-muted">
+      <span class="text-accent">◍</span>{address}
+    </p>
+
+    <!-- Три показателя объекта -->
+    <dl class="mt-5 grid grid-cols-3 gap-2 border-t border-border pt-5">
+      <div>
+        <dt class="text-lg font-semibold text-fg">{gla}</dt>
+        <dd class="text-xs uppercase tracking-wide text-muted">м² GLA</dd>
+      </div>
+      <div>
+        <dt class="text-lg font-semibold text-fg">{occupancy}</dt>
+        <dd class="text-xs uppercase tracking-wide text-muted">заполнено</dd>
+      </div>
+      <div>
+        <dt class="text-lg font-semibold text-fg">{since}</dt>
+        <dd class="text-xs uppercase tracking-wide text-muted">в управлении</dd>
+      </div>
+    </dl>
+  </div>
+</article>
