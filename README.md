@@ -168,7 +168,9 @@ fidenta-landing/
 │       ├── build.yml               # Проверочная сборка (без деплоя)
 │       ├── test.yml                # Запуск тестов
 │       ├── cta-email.yml           # Отправка CTA-заявок на почту
-│       └── telegram-notify.yml     # Уведомления о статусе в Telegram
+│       ├── telegram-notify.yml     # Уведомления о статусе в Telegram
+│       ├── promote-dev-to-stage.yml   # Ручной merge dev → stage + деплой
+│       └── promote-stage-to-main.yml  # Ручной merge stage → main + деплой
 │
 ├── src/                            # Весь исходный код сайта
 │   │
@@ -463,6 +465,20 @@ Tailwind генерирует CSS из классов, которые ты ис�
 - Описанием ошибки (если есть)
 
 > Токен бота и ID чата хранятся в GitHub Secrets — никогда не коммитятся в код.
+
+### `promote-dev-to-stage.yml` / `promote-stage-to-main.yml` — Продвижение веток
+
+**Триггер:** ручной запуск из вкладки Actions (`workflow_dispatch`)
+
+Продвигают код по цепочке `dev → stage → main`:
+1. Сливают исходную ветку в целевую (`merge --no-ff`)
+2. Пушат целевую ветку
+3. Запускают деплой целевой ветки
+4. Шлют уведомление в Telegram о продвижении
+
+> **Важно:** ручные воркфлоу видны в Actions только когда лежат на **дефолтной ветке** репо.
+> Рекомендуется сделать дефолтной веткой `dev` (Settings → Branches → Default branch) —
+> тогда кнопки Run workflow появляются сразу и PAT не требуется.
 
 ---
 
