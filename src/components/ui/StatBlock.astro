@@ -1,0 +1,28 @@
+---
+/*
+  UI-ЭЛЕМЕНТ — StatBlock
+
+  Крупная цифра-показатель + подпись + описание.
+  Используется в блоке «Почему выбирают Фидента» (12 лет, 47+ объектов, 98% и т.д.).
+
+  suffix — маленький верхний индекс у числа (например «+» в «47+»).
+
+  Пример:
+    <StatBlock value="47" suffix="+" label="Объектов под управлением" text="Диверсифицированный портфель..." />
+*/
+interface Props {
+  value: string;
+  suffix?: string;
+  label: string;
+  text: string;
+}
+const { value, suffix, label, text } = Astro.props;
+---
+
+<div>
+  <p class="font-display text-4xl font-semibold text-accent">
+    {value}{suffix && <sup class="text-xl">{suffix}</sup>}
+  </p>
+  <h3 class="mt-2 text-base font-semibold text-fg">{label}</h3>
+  <p class="mt-2 text-sm leading-relaxed text-muted">{text}</p>
+</div>

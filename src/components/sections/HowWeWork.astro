@@ -1,0 +1,36 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК HowWeWork («От заявки до стабильного дохода»)
+
+  Заголовок секции + пять шагов процесса. Шаги живут в массиве steps
+  и рендерятся циклом через переиспользуемый компонент StepItem.
+*/
+import SectionHeading from '../ui/SectionHeading.astro';
+import StepItem from '../ui/StepItem.astro';
+
+const steps = [
+  { number: 1, title: 'Заявка', text: 'Оставляете заявку, обсуждаем объект и ваши цели.' },
+  { number: 2, title: 'Аудит', text: 'Выезжаем на осмотр, оцениваем состояние и доходность.' },
+  { number: 3, title: 'Договор', text: 'Согласуем условия и прозрачную структуру вознаграждения.' },
+  { number: 4, title: 'Передача', text: 'Берём объект под полный операционный контроль.' },
+  { number: 5, title: 'Управление', text: 'Ведём объект и присылаем отчётность каждый месяц.' },
+];
+---
+
+<section class="bg-panel py-20 md:py-28">
+  <div class="container-page">
+    <SectionHeading
+      eyebrow="Как работаем"
+      title="От заявки до"
+      accent="стабильного дохода"
+      description="Прозрачный процесс передачи объекта под управление — пять понятных шагов."
+    />
+
+    <!-- Сетка шагов: 2 колонки на планшете, 5 в ряд на десктопе -->
+    <div class="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-5">
+      {steps.map((step) => (
+        <StepItem number={step.number} title={step.title} text={step.text} />
+      ))}
+    </div>
+  </div>
+</section>

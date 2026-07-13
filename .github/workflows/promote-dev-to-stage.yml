@@ -1,0 +1,103 @@
+# Продвижение: dev → stage
+#
+# Ручной запуск: Actions → «Promote: dev → stage» → Run workflow.
+# Что делает:
+#   1. Сливает ветку dev в stage (merge --no-ff — всегда явный коммит продвижения)
+#   2. Пушит stage
+#   3. Запускает деплой stage (через workflow_dispatch воркфлоу Deploy)
+#   4. Шлёт уведомление в Telegram о продвижении
+#
+# ВАЖНО (две особенности GitHub Actions):
+#   - Кнопка «Run workflow» появляется, только если ЭТОТ файл на ДЕФОЛТНОЙ ветке репо.
+#   - push, сделанный GITHUB_TOKEN, НЕ запускает воркфлоу автоматически, поэтому деплой
+#     запускается явно командой `gh workflow run` (для неё deploy.yml тоже должен быть
+#     на дефолтной ветке).
+#   Рекомендация: сделать дефолтной веткой `dev` — тогда всё работает без PAT.
+
+name: "Promote: dev → stage"
+
+on:
+  workflow_dispatch:
+
+# Не запускаем два продвижения одновременно и не отменяем начатое на полпути.
+concurrency:
+  group: promote-dev-stage
+  cancel-in-progress: false
+
+permissions:
+  contents: write # push в stage
+  actions: write  # запуск воркфлоу Deploy
+
+jobs:
+  promote:
+    name: Merge dev → stage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # Полная история нужна для корректного merge (fetch-depth: 0).
+      # Чекаутим целевую ветку — stage.
+      - name: Checkout stage
+        uses: actions/checkout@v4
+        with:
+          ref: stage
+          fetch-depth: 0
+
+      - name: Настроить git-идентичность
+        run: |
+          git config user.name "fidenta-pipeline[bot]"
+          git config user.email "actions@github.com"
+
+      - name: Слить dev в stage
+        run: |
+          git fetch origin dev
+          # --no-ff: всегда создаём коммит слияния (явный след продвижения в истории).
+          # Если dev уже полностью в stage — git сообщит «Already up to date» и выйдет с 0.
+          if git merge --no-ff origin/dev -m "Promote: dev → stage (run #${{ github.run_number }})"; then
+            echo "Слияние выполнено (или ветка уже актуальна)."
+          else
+            echo "::error::Конфликт слияния dev → stage. Разреши вручную и запусти снова."
+            git merge --abort || true
+            exit 1
+          fi
+
+      - name: Запушить stage
+        run: git push origin stage
+
+      # Явно запускаем деплой stage. GITHUB_TOKEN не триггерит деплой автоматически,
+      # поэтому вызываем его через workflow_dispatch. Не критично, если не удастся —
+      # деплой всегда можно запустить вручную.
+      - name: Запустить деплой stage
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run deploy.yml --ref stage \
+            || echo "::warning::Не удалось запустить Deploy автоматически. Запусти вручную: Actions → Deploy → Run workflow (ветка stage)."
+
+      # Уведомление о продвижении. if: always() — сообщаем и об успехе, и об ошибке.
+      - name: Уведомление в Telegram
+        if: always()
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          JOB_STATUS: ${{ job.status }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "Telegram-секреты не заданы — уведомление пропущено."
+            exit 0
+          fi
+
+          if [ "$JOB_STATUS" = "success" ]; then
+            TEXT=$(printf '🔀 Продвижение: dev → stage\n\n✅ stage обновлён кодом из dev, запущен деплой.\n🌐 https://keegooroomie.github.io/fidenta-landing/stage/\n👤 Запустил: %s' "$ACTOR")
+          else
+            TEXT=$(printf '🔀 Продвижение: dev → stage\n\n❌ Не выполнено — проверь логи.\nВозможные причины: конфликт слияния или нет ветки stage.\n👤 %s\n📋 %s' "$ACTOR" "$RUN_URL")
+          fi
+
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${TEXT}" \
+            --data-urlencode "disable_web_page_preview=true")
+          echo "Telegram response: $RESPONSE"
+          echo "$RESPONSE" | grep -q '"ok":true' || echo "::warning::Telegram API вернул ошибку: $RESPONSE"

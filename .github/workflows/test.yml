@@ -1,0 +1,109 @@
+# Тесты и проверка типов
+#
+# Триггер: push и PR в основные ветки
+# Запускает:
+#   1. Проверку TypeScript-типов через `astro check` (требует @astrojs/check)
+#   2. Линтинг кода (ESLint) — раскомментировать когда будет добавлен eslint
+#   3. Место для будущих тестов (Vitest, Playwright и т.д.)
+#
+# ВАЖНО: перед первым запуском добавить зависимость:
+#   pnpm add -D @astrojs/check typescript
+# До этого шаг typecheck выдаст предупреждение и пропустит проверку (не падает).
+
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+      - dev
+  pull_request:
+    branches:
+      - main
+      - stage
+      - dev
+
+# github.head_ref — название ветки-источника для PR, пустая строка для push.
+# github.ref_name — название ветки для push, merge-ref для PR.
+# Комбинация head_ref || ref_name даёт уникальный идентификатор для обоих случаев.
+concurrency:
+  group: test-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Проверяем, установлен ли @astrojs/check. Если нет — предупреждаем и пропускаем.
+      # Это предотвращает падение воркфлоу до инициализации Astro-проекта.
+      # После `pnpm add -D @astrojs/check typescript` проверка заработает автоматически.
+      - name: Astro type check
+        run: |
+          if pnpm list @astrojs/check --depth=0 2>/dev/null | grep -q "@astrojs/check"; then
+            pnpm astro check
+          else
+            echo "::warning::Пакет @astrojs/check не установлен — проверка типов пропущена."
+            echo "::warning::Добавь зависимость: pnpm add -D @astrojs/check typescript"
+          fi
+
+  # Раскомментировать после добавления ESLint в проект:
+  # lint:
+  #   name: Lint
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 5
+  #   permissions:
+  #     contents: read
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 9
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: pnpm
+  #     - run: pnpm install --frozen-lockfile
+  #     - run: pnpm lint
+
+  # Раскомментировать после добавления тестов (Vitest и/или Playwright):
+  # unit-tests:
+  #   name: Unit Tests
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+  #   permissions:
+  #     contents: read
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 9
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: pnpm
+  #     - run: pnpm install --frozen-lockfile
+  #     - run: pnpm test
