@@ -1,0 +1,30 @@
+---
+/*
+  UI-ЭЛЕМЕНТ — FeatureBadge
+
+  Небольшой «плашка»-бейдж в нижней части Hero: иконка/значение слева,
+  заголовок и подпись справа. Например: «12 лет на рынке — более 100 объектов».
+
+  Проп value — крупное значение слева (напр. «11,8%»); если не задан,
+  показывается слот icon для иконки.
+
+  Пример:
+    <FeatureBadge value="11,8%" title="Целевая годовая" subtitle="доходность" />
+*/
+interface Props {
+  value?: string;
+  title: string;
+  subtitle: string;
+}
+const { value, title, subtitle } = Astro.props;
+---
+
+<div class="flex items-center gap-3 rounded-xl border border-border bg-canvas/30 px-4 py-3 backdrop-blur-sm">
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-sm font-semibold text-accent">
+    {value ? value : <slot name="icon">◆</slot>}
+  </div>
+  <div class="leading-tight">
+    <p class="text-sm font-semibold text-fg">{title}</p>
+    <p class="text-xs text-muted">{subtitle}</p>
+  </div>
+</div>

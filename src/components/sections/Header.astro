@@ -1,0 +1,86 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК Header (шапка сайта)
+
+  Sticky-шапка: логотип, навигация, телефон/адрес, кнопка «Личный кабинет».
+  На мобильных навигация прячется за кнопку-бургер (переключается скриптом внизу).
+
+  Ссылки навигации ведут на якоря секций (id) на этой же странице.
+*/
+import Button from '../ui/Button.astro';
+
+// Данные навигации — массив. Меняем меню в одном месте, разметка строится циклом.
+const navLinks = [
+  { label: 'О компании', href: '#why' },
+  { label: 'Фонды', href: '#portfolio' },
+  { label: 'Объекты', href: '#portfolio' },
+  { label: 'Новости', href: '#' },
+  { label: 'Контакты', href: '#cta' },
+];
+---
+
+<header class="sticky top-0 z-50 border-b border-border/60 bg-canvas/80 backdrop-blur-md">
+  <div class="container-page flex h-20 items-center justify-between gap-6">
+    <!-- Логотип: знак-мост (плейсхолдер) + название -->
+    <a href="#" class="flex items-center gap-3">
+      <svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+        class="text-accent" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 46 L32 15 L52 46" />
+        <line x1="10" y1="47" x2="54" y2="47" />
+        <line x1="32" y1="15" x2="22" y2="47" />
+        <line x1="32" y1="15" x2="42" y2="47" />
+      </svg>
+      <span>
+        <span class="block font-display text-lg font-semibold tracking-wide text-fg">ФИДЕНТА</span>
+        <span class="block text-[0.6rem] uppercase tracking-[0.2em] text-muted">Архитектура капитала</span>
+      </span>
+    </a>
+
+    <!-- Навигация (только на десктопе ≥ lg) -->
+    <nav class="hidden items-center gap-8 lg:flex">
+      {navLinks.map((link) => (
+        <a href={link.href} class="text-sm text-fg/90 transition-colors hover:text-accent">{link.label}</a>
+      ))}
+    </nav>
+
+    <!-- Контакты + кнопка (десктоп) -->
+    <div class="hidden items-center gap-5 lg:flex">
+      <div class="text-right leading-tight">
+        <a href="tel:+79516633314" class="block text-sm font-semibold text-fg hover:text-accent">+7 951 663-33-14</a>
+        <span class="block text-xs text-muted">1-й Предпортовый пр., д. 14</span>
+      </div>
+      <Button variant="secondary">Личный кабинет</Button>
+    </div>
+
+    <!-- Кнопка-бургер (только на мобильных < lg) -->
+    <button id="menu-toggle" class="lg:hidden" aria-label="Открыть меню" aria-expanded="false">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-fg">
+        <line x1="4" y1="7" x2="20" y2="7" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="17" x2="20" y2="17" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Мобильное меню (скрыто по умолчанию, раскрывается по кнопке) -->
+  <nav id="mobile-menu" class="hidden border-t border-border bg-canvas lg:hidden">
+    <div class="container-page flex flex-col gap-1 py-4">
+      {navLinks.map((link) => (
+        <a href={link.href} class="rounded-lg px-3 py-2.5 text-sm text-fg/90 transition-colors hover:bg-surface hover:text-accent">{link.label}</a>
+      ))}
+      <a href="tel:+79516633314" class="mt-2 px-3 text-sm font-semibold text-accent">+7 951 663-33-14</a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Переключение мобильного меню. Скрипт минимальный: показываем/прячем меню
+  // и обновляем aria-expanded для доступности.
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  toggle?.addEventListener('click', () => {
+    const isHidden = menu?.classList.toggle('hidden');
+    toggle.setAttribute('aria-expanded', String(!isHidden));
+  });
+</script>

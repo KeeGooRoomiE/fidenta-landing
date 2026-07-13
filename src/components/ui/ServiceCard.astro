@@ -1,0 +1,23 @@
+---
+/*
+  UI-ЭЛЕМЕНТ — ServiceCard
+
+  Карточка услуги с крупным порядковым номером (01–06).
+  Блок «Почему выбирают Фидента» → перечень направлений работы.
+
+  Пример:
+    <ServiceCard number="01" title="Арендные отношения" text="Поиск надёжных арендаторов..." />
+*/
+interface Props {
+  number: string;
+  title: string;
+  text: string;
+}
+const { number, title, text } = Astro.props;
+---
+
+<article class="rounded-2xl border border-border bg-surface p-7 transition-colors duration-200 hover:border-accent/60">
+  <span class="font-display text-3xl font-semibold text-muted/40">{number}</span>
+  <h3 class="mt-4 text-xl">{title}</h3>
+  <p class="mt-3 text-sm leading-relaxed text-muted">{text}</p>
+</article>

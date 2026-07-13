@@ -1,7 +1,9 @@
-# Уведомления в Telegram о статусе воркфлоу
+# Уведомления в Telegram о статусе воркфлоу Build Check и Tests
 #
-# Триггер: завершение воркфлоу Deploy, Build Check или Tests
-# НЕ подписан на CTA Email — у него своя логика уведомлений об ошибке.
+# Триггер: завершение воркфлоу Build Check или Tests
+# НЕ подписан на:
+#   - Deploy   — у него своё inline-уведомление с ссылкой на сайт (см. deploy.yml)
+#   - CTA Email — у него своя логика уведомлений об ошибке (см. cta-email.yml)
 #
 # Отправляет в Telegram-бот сообщение с:
 #   - Статусом (✅ успех / ❌ ошибка / ⏹ отменён)
@@ -10,7 +12,8 @@
 #   - Ссылкой на лог воркфлоу
 #
 # ВАЖНО: workflow_run работает только если этот файл находится на ДЕФОЛТНОЙ ветке репо.
-# Дефолтная ветка — main. До первого мержа в main уведомления работать не будут.
+# Дефолтная ветка — main. До первого мержа в main эти уведомления работать не будут.
+# (Уведомления о деплое от этого не страдают — они inline в deploy.yml.)
 #
 # GitHub Secrets, которые нужно настроить в Settings → Secrets → Actions:
 #   TELEGRAM_BOT_TOKEN  — токен бота (формат: 123456789:ABC-...)
@@ -22,7 +25,6 @@ on:
   workflow_run:
     # Имена должны совпадать с полем `name:` в соответствующих воркфлоу точно
     workflows:
-      - Deploy
       - Build Check
       - Tests
     types:
@@ -77,13 +79,8 @@ jobs:
           REPO="keegooroomie/fidenta-landing"
           COMMIT_URL="https://github.com/${REPO}/commit/${FULL_SHA}"
 
-          MESSAGE="${EMOJI} <b>Fidenta Landing</b> — ${STATUS}
-
-🔄 Воркфлоу: <code>${WORKFLOW_NAME}</code>
-🌿 Ветка: <code>${BRANCH}</code>
-📝 Коммит: <a href=\"${COMMIT_URL}\">${SHORT_SHA}</a>
-
-<a href=\"${RUN_URL}\">Открыть лог →</a>"
+          MESSAGE=$(printf '%s <b>Fidenta Landing</b> — %s\n\n🔄 Воркфлоу: <code>%s</code>\n🌿 Ветка: <code>%s</code>\n📝 Коммит: <a href="%s">%s</a>\n\n<a href="%s">Открыть лог →</a>' \
+            "$EMOJI" "$STATUS" "$WORKFLOW_NAME" "$BRANCH" "$COMMIT_URL" "$SHORT_SHA" "$RUN_URL")
 
           RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \

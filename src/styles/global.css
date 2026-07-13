@@ -1,0 +1,94 @@
+/* ============================================================
+   ГЛОБАЛЬНЫЕ СТИЛИ И ДИЗАЙН-ТОКЕНЫ — Fidenta Landing
+   Tailwind CSS v4 (конфигурация CSS-first, без tailwind.config.js)
+   ============================================================
+
+   Как это работает:
+   - @import "tailwindcss"  подключает базовые стили, компоненты и утилиты Tailwind
+   - @theme { ... }         объявляет дизайн-токены. Каждый токен автоматически
+                            превращается в утилиты Tailwind. Примеры:
+                              --color-accent  → bg-accent, text-accent, border-accent
+                              --font-display  → font-display
+   - @layer base { ... }    базовые стили для «голых» HTML-тегов
+   - @utility name { ... }  собственные переиспользуемые утилиты (напр. container-page)
+
+   Значения цветов и шрифтов — ПРИБЛИЗИТЕЛЬНЫЕ (сняты с макета).
+   Финальные — уточнить по Figma и заменить здесь, в одном месте.
+   ============================================================ */
+
+@import "tailwindcss";
+
+@theme {
+  /* --- Цвета бренда ------------------------------------------------ */
+  --color-canvas: #0b241d;       /* основной фон страницы (тёмный изумруд)   → bg-canvas   */
+  --color-panel: #0e2a22;        /* фон отдельных секций                     → bg-panel    */
+  --color-surface: #123128;      /* фон карточек                             → bg-surface  */
+  --color-surface-2: #17392f;    /* приподнятая/hover-поверхность            → bg-surface-2*/
+  --color-border: #244a3d;       /* линии и рамки                           → border-border*/
+  --color-accent: #c6a15b;       /* золотой акцент (кнопки, цифры, ссылки)   → text-accent */
+  --color-accent-soft: #d9c08a;  /* светлое золото (hover)                   → text-accent-soft */
+  --color-fg: #ece7db;           /* основной текст (кремовый)                → text-fg     */
+  --color-muted: #8fa298;        /* приглушённый текст                       → text-muted  */
+
+  /* --- Шрифты (плейсхолдеры, заменить на брендовые) --------------- */
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif; /* заголовки */
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; /* текст     */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Заголовки — по умолчанию отображаемым (serif) шрифтом */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  /* Выделение текста в фирменных цветах */
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-canvas);
+  }
+
+  /* Плавный фокус-контур для доступности */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================
+   СОБСТВЕННЫЕ УТИЛИТЫ
+   ============================================================ */
+
+/* Центрирующий контейнер фиксированной ширины с боковыми отступами.
+   Используется во всех секциях: <div class="container-page"> */
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 75rem; /* 1200px */
+  padding-inline: 1.5rem;
+}
+
+/* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}

@@ -1,0 +1,65 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК Portfolio («Объекты под управлением»)
+
+  Заголовок + ряд фильтров (пока визуальные, без логики) + сетка карточек объектов.
+  Данные объектов — в массиве objects, карточки строятся циклом через ObjectCard.
+
+  id="portfolio" — якорь для ссылок из шапки и кнопки Hero.
+*/
+import SectionHeading from '../ui/SectionHeading.astro';
+import ObjectCard from '../ui/ObjectCard.astro';
+
+// Фильтры типов объектов. TODO: подключить интерактивную фильтрацию (JS) позже.
+const filters = ['Все', 'Офисы', 'Ритейл', 'Склады', 'Апартаменты'];
+
+const objects = [
+  { type: 'Офисы', title: 'БЦ «Нева Плаза»', address: 'В.О., 7-я линия, 76', gla: '4200', occupancy: '97%', since: 'с 2018' },
+  { type: 'Ритейл', title: 'ТЦ «Приморский»', address: 'Приморский пр., 54', gla: '6800', occupancy: '96%', since: 'с 2020' },
+  { type: 'Склад', title: 'СК «Кудрово»', address: 'Кудрово, Ленобласть', gla: '12500', occupancy: '100%', since: 'с 2021' },
+  { type: 'Апартаменты', title: 'Апарт «Московский»', address: 'Московский пр., 183', gla: '3100', occupancy: '94%', since: 'с 2022' },
+  { type: 'Офисы', title: 'БЦ «Адмирал»', address: 'наб. Мойки, 42', gla: '5400', occupancy: '98%', since: 'с 2019' },
+  { type: 'Ритейл', title: 'ТЦ «Лиговский»', address: 'Лиговский пр., 30', gla: '7300', occupancy: '95%', since: 'с 2021' },
+];
+---
+
+<section id="portfolio" class="py-20 md:py-28">
+  <div class="container-page">
+    <SectionHeading
+      eyebrow="Портфель"
+      title="Объекты под"
+      accent="управлением"
+      description="Примеры объектов из нашего портфеля на территории Санкт-Петербурга."
+    />
+
+    <!-- Фильтры -->
+    <div class="mt-8 flex flex-wrap gap-2">
+      {filters.map((filter, index) => (
+        <button
+          class:list={[
+            'rounded-lg border px-4 py-2 text-sm transition-colors',
+            index === 0
+              ? 'border-accent bg-accent/10 text-accent'
+              : 'border-border text-muted hover:border-accent hover:text-accent',
+          ]}
+        >
+          {filter}
+        </button>
+      ))}
+    </div>
+
+    <!-- Сетка карточек: 1 → 2 → 3 колонки по мере роста экрана -->
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {objects.map((obj) => (
+        <ObjectCard
+          type={obj.type}
+          title={obj.title}
+          address={obj.address}
+          gla={obj.gla}
+          occupancy={obj.occupancy}
+          since={obj.since}
+        />
+      ))}
+    </div>
+  </div>
+</section>

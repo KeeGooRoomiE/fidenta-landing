@@ -120,7 +120,10 @@ pnpm install
 pnpm dev
 ```
 
-Откройте браузер: [http://localhost:4321](http://localhost:4321)
+Откройте браузер: **http://localhost:4321/fidenta-landing/**
+
+> Путь `/fidenta-landing/` — это `base` из `astro.config.mjs` (тот же префикс, что на GitHub Pages).
+> По корню `http://localhost:4321/` будет 404 — открывайте адрес с префиксом.
 
 ---
 
@@ -170,43 +173,60 @@ fidenta-landing/
 ├── src/                            # Весь исходный код сайта
 │   │
 │   ├── layouts/                    # УРОВЕНЬ 1: Лейаут
-│   │   └── Layout.astro            # Базовая HTML-оболочка для всех страниц
+│   │   └── Layout.astro            # Базовая HTML-оболочка: <head>, шрифты, <slot/>
 │   │
 │   ├── pages/                      # УРОВЕНЬ 2: Страницы
-│   │   └── index.astro             # Главная страница (единственная для лендинга)
+│   │   └── index.astro             # Главная страница — только собирает блоки
 │   │
-│   ├── components/                 # УРОВЕНЬ 3 и 4: Компоненты
-│   │   ├── sections/               # Крупные блоки страницы
+│   ├── components/                 # УРОВНИ 3 и 4: Компоненты
+│   │   ├── sections/               # УРОВЕНЬ 3 — крупные блоки страницы
 │   │   │   ├── Header.astro        # Sticky-шапка с навигацией
-│   │   │   ├── Hero.astro          # Главный экран (hero-блок)
+│   │   │   ├── Hero.astro          # Главный экран + виджеты
+│   │   │   ├── HowWeWork.astro     # «От заявки до стабильного дохода» (5 шагов)
+│   │   │   ├── Portfolio.astro     # «Объекты под управлением»
+│   │   │   ├── WhyUs.astro         # «Почему выбирают Фидента» (статистика + услуги)
+│   │   │   ├── Testimonials.astro  # «Говорят собственники»
+│   │   │   ├── CtaForm.astro       # Форма заявки
 │   │   │   └── Footer.astro        # Подвал сайта
 │   │   │
-│   │   └── ui/                     # Атомарные UI-элементы
-│   │       ├── Button.astro        # Кнопка (переиспользуется везде)
-│   │       ├── Card.astro          # Карточка объекта недвижимости
-│   │       └── AnimatedEl.astro    # Пример анимированного элемента
+│   │   └── ui/                     # УРОВЕНЬ 4 — переиспользуемые атомы
+│   │       ├── Button.astro        # Кнопка (варианты primary/secondary/ghost)
+│   │       ├── SectionHeading.astro# Заголовок секции (eyebrow + title + accent)
+│   │       ├── Card.astro          # Универсальная карточка-обёртка
+│   │       ├── Tag.astro           # Метка-бейдж (Офисы/Ритейл/Склад)
+│   │       ├── Input.astro         # Поле формы
+│   │       ├── StepItem.astro      # Шаг процесса
+│   │       ├── ObjectCard.astro    # Карточка объекта недвижимости
+│   │       ├── StatBlock.astro     # Крупный показатель (12 лет, 98% …)
+│   │       ├── ServiceCard.astro   # Карточка услуги (01–06)
+│   │       ├── ReviewCard.astro    # Карточка отзыва
+│   │       └── FeatureBadge.astro  # Бейдж в Hero
 │   │
-│   └── styles/                     # Стили
-│       └── global.css              # Глобальный CSS: переменные, сброс, базовые стили
+│   ├── styles/                     # Стили
+│   │   └── global.css              # Tailwind v4 + дизайн-токены (@theme) + базовые стили
+│   │
+│   └── env.d.ts                    # Ссылка на типы Astro
 │
 ├── public/                         # Статические файлы (копируются as-is в dist/)
-│   ├── fonts/                      # Шрифты
-│   ├── images/                     # Изображения
-│   └── favicon.svg                 # Иконка сайта
+│   └── favicon.svg                 # Иконка сайта (плейсхолдер)
 │
 ├── scripts/                        # Вспомогательные скрипты
 │   └── send_cta.py                 # Python: приём данных формы и отправка на email
 │
-├── astro.config.mjs                # Конфигурация Astro (интеграции, base URL и т.д.)
-├── tailwind.config.mjs             # Конфигурация Tailwind CSS
+├── astro.config.mjs                # Конфигурация Astro (base URL, плагин Tailwind)
 ├── tsconfig.json                   # Конфигурация TypeScript
 ├── package.json                    # Список зависимостей и скрипты проекта
 ├── pnpm-lock.yaml                  # Зафиксированные версии всех пакетов (коммитится!)
+├── .nvmrc                          # Версия Node (20) для менеджеров версий
 ├── .env.example                    # Пример переменных окружения (без реальных значений)
 ├── .gitignore                      # Файлы, которые Git не отслеживает
 ├── LICENSE                         # Лицензия на использование кода
 └── README.md                       # Этот файл
 ```
+
+> **Tailwind CSS v4 — без `tailwind.config.js`.** В четвёртой версии настройка
+> идёт из CSS: дизайн-токены (цвета, шрифты) объявляются через `@theme` прямо
+> в `src/styles/global.css`. Плагин `@tailwindcss/vite` подключён в `astro.config.mjs`.
 
 > **Важно:** Папка `node_modules/` и файл `.env` не коммитятся в Git —  
 > они перечислены в `.gitignore`. Каждый разработчик создаёт их локально.

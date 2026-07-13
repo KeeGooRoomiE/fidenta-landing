@@ -6,8 +6,17 @@
 #   stage → keegooroomie.github.io/fidenta-landing/stage/
 #   dev   → keegooroomie.github.io/fidenta-landing/dev/
 #
+# После деплоя — уведомление в Telegram с АКТУАЛЬНОЙ ссылкой на задеплоенную ветку.
+# Уведомление встроено прямо сюда (а не в отдельный workflow_run), потому что:
+#   1. Нужна ссылка, зависящая от ветки — она вычисляется здесь же
+#   2. workflow_run требует, чтобы файл был на дефолтной ветке; inline-шаг работает сразу
+#
 # ВАЖНО: GitHub Pages должен быть настроен в Settings → Pages → Source: Deploy from a branch → gh-pages
 # Этот воркфлоу сам создаёт и обновляет ветку gh-pages.
+#
+# GitHub Secrets (Settings → Secrets and variables → Actions):
+#   TELEGRAM_BOT_TOKEN  — токен бота
+#   TELEGRAM_CHAT_ID    — ID чата для уведомлений
 
 name: Deploy
 
@@ -57,34 +66,30 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 5. Определяем base path, целевую папку и стратегию очистки в зависимости от ветки.
-      # base path нужен Astro, чтобы правильно строить ссылки на ресурсы.
-      # clean_exclude: при деплое main в корень gh-pages сохраняем папки stage/ и dev/,
-      # чтобы они не были удалены. Для stage/dev clean-exclude не нужен — target-folder
-      # изолирует очистку в рамках своей папки.
+      # 5. Определяем base path, целевую папку, стратегию очистки и URL сайта по ветке.
+      # base path нужен Astro для правильных ссылок на ресурсы.
+      # url — публичная ссылка на задеплоенную версию (домен Pages + base path).
+      # clean_exclude: при деплое main в корень сохраняем папки stage/ и dev/.
       - name: Set deploy config
         id: config
+        env:
+          OWNER: ${{ github.repository_owner }}
         run: |
           case "${{ github.ref_name }}" in
             main)
-              echo "base=/fidenta-landing/"   >> $GITHUB_OUTPUT
-              echo "target=."                 >> $GITHUB_OUTPUT
-              {
-                echo "clean_exclude<<EOF"
-                echo "stage"
-                echo "dev"
-                echo "EOF"
-              } >> $GITHUB_OUTPUT
+              BASE="/fidenta-landing/"
+              TARGET="."
+              CLEAN_EXCLUDE=$'stage\ndev'
               ;;
             stage)
-              echo "base=/fidenta-landing/stage/" >> $GITHUB_OUTPUT
-              echo "target=stage"                 >> $GITHUB_OUTPUT
-              echo "clean_exclude="               >> $GITHUB_OUTPUT
+              BASE="/fidenta-landing/stage/"
+              TARGET="stage"
+              CLEAN_EXCLUDE=""
               ;;
             dev)
-              echo "base=/fidenta-landing/dev/"   >> $GITHUB_OUTPUT
-              echo "target=dev"                   >> $GITHUB_OUTPUT
-              echo "clean_exclude="               >> $GITHUB_OUTPUT
+              BASE="/fidenta-landing/dev/"
+              TARGET="dev"
+              CLEAN_EXCLUDE=""
               ;;
             *)
               echo "::error::Неожиданная ветка: ${{ github.ref_name }}. Ожидается main, stage или dev."
@@ -92,20 +97,78 @@ jobs:
               ;;
           esac
 
-      # 6. Собираем Astro с нужным base path
-      # Результат попадает в папку dist/
+          # Публичная ссылка = домен GitHub Pages владельца + base path
+          URL="https://${OWNER}.github.io${BASE}"
+
+          echo "base=$BASE"     >> $GITHUB_OUTPUT
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+          echo "url=$URL"       >> $GITHUB_OUTPUT
+          # clean_exclude может быть многострочным — пишем через heredoc
+          {
+            echo "clean_exclude<<EOF"
+            echo "$CLEAN_EXCLUDE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      # 6. Собираем Astro с нужным base path. id: build — чтобы уведомление
+      # могло отличить провал сборки от провала деплоя.
       - name: Build
+        id: build
         env:
           ASTRO_BASE_PATH: ${{ steps.config.outputs.base }}
         run: pnpm build
 
-      # 7. Пушим dist/ в нужную подпапку ветки gh-pages
-      # clean: true — удаляет устаревшие файлы в целевой папке при каждом деплое.
-      # clean-exclude — защищает папки других веток при деплое main в корень.
+      # 7. Пушим dist/ в нужную подпапку gh-pages.
+      # clean: true чистит устаревшие файлы, clean-exclude защищает папки других веток.
       - name: Deploy to GitHub Pages
+        id: deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
           target-folder: ${{ steps.config.outputs.target }}
           clean: true
           clean-exclude: ${{ steps.config.outputs.clean_exclude }}
+
+      # 8. Уведомление в Telegram. if: always() — шаг выполняется даже если
+      # сборка или деплой упали, чтобы сообщить об ошибке.
+      # Все значения читаются через env (не интерполируются в shell) — защита от injection.
+      - name: Notify Telegram
+        if: always()
+        env:
+          BOT_TOKEN:      ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID:        ${{ secrets.TELEGRAM_CHAT_ID }}
+          BUILD_OUTCOME:  ${{ steps.build.outcome }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          SITE_URL:       ${{ steps.config.outputs.url }}
+          ACTOR:          ${{ github.actor }}
+          BRANCH:         ${{ github.ref_name }}
+          SHA:            ${{ github.sha }}
+          RUN_URL:        ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # Если секреты не заданы (например, форк без доступа) — молча выходим, не падаем
+          if [ -z "$BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "Telegram-секреты не заданы — уведомление пропущено."
+            exit 0
+          fi
+
+          SHORT_SHA="${SHA:0:7}"
+
+          # Текст зависит от результата шагов build и deploy.
+          # Если build не success — сначала сообщаем об ошибке сборки.
+          if [ "$BUILD_OUTCOME" = "success" ] && [ "$DEPLOY_OUTCOME" = "success" ]; then
+            TEXT=$(printf '✅ Деплой успешен — @%s\n🌿 Ветка: %s\n📝 Коммит: %s\n🌐 %s' "$ACTOR" "$BRANCH" "$SHORT_SHA" "$SITE_URL")
+          elif [ "$BUILD_OUTCOME" != "success" ]; then
+            TEXT=$(printf '❌ Ошибка сборки — @%s\n🌿 Ветка: %s\n📝 Коммит: %s\n📋 Логи: %s' "$ACTOR" "$BRANCH" "$SHORT_SHA" "$RUN_URL")
+          else
+            TEXT=$(printf '❌ Ошибка деплоя — @%s\n🌿 Ветка: %s\n📝 Коммит: %s\n📋 Логи: %s' "$ACTOR" "$BRANCH" "$SHORT_SHA" "$RUN_URL")
+          fi
+
+          # --data-urlencode безопасно кодирует текст (включая переносы строк и спецсимволы),
+          # в отличие от ручного %0A. Проверяем ответ API — молчаливый сбой хуже явного.
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${TEXT}" \
+            --data-urlencode "disable_web_page_preview=true")
+
+          echo "Telegram response: $RESPONSE"
+          echo "$RESPONSE" | grep -q '"ok":true' || echo "::warning::Telegram API вернул ошибку: $RESPONSE"

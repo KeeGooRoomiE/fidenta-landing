@@ -109,14 +109,9 @@ jobs:
           FORM_NAME: ${{ inputs.name }}
           FORM_PHONE: ${{ inputs.phone }}
         run: |
+          TEXT=$(printf '⚠️ <b>CTA Email: ошибка отправки!</b>\n\nЗаявка потеряна — нужна ручная обработка.\nКлиент: <code>%s</code>\nТелефон: <code>%s</code>\n\nПроверь логи Actions.' "$FORM_NAME" "$FORM_PHONE")
           curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
-            --data-urlencode "text=⚠️ <b>CTA Email: ошибка отправки!</b>
-
-Заявка потеряна — нужна ручная обработка.
-Клиент: <code>${FORM_NAME}</code>
-Телефон: <code>${FORM_PHONE}</code>
-
-Проверь логи Actions." \
+            --data-urlencode "text=${TEXT}" \
             --data-urlencode "parse_mode=HTML" \
             --data-urlencode "disable_web_page_preview=true"

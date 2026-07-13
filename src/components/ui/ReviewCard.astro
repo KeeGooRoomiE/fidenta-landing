@@ -1,0 +1,38 @@
+---
+/*
+  UI-ЭЛЕМЕНТ — ReviewCard
+
+  Карточка отзыва: пять звёзд, цитата, имя и роль автора.
+  Блок «Говорят собственники».
+
+  Пример:
+    <ReviewCard
+      quote="Передал бизнес-центр в управление в 2018 году..."
+      author="Андрей Васильев"
+      role="Собственник БЦ «Нева Плаза»"
+    />
+*/
+interface Props {
+  quote: string;
+  author: string;
+  role: string;
+  rating?: number; // количество звёзд, по умолчанию 5
+}
+const { quote, author, role, rating = 5 } = Astro.props;
+---
+
+<figure class="flex h-full flex-col rounded-2xl border border-border bg-surface p-7">
+  <!-- Звёзды рейтинга -->
+  <div class="mb-4 flex gap-1 text-accent" aria-label={`Оценка: ${rating} из 5`}>
+    {Array.from({ length: rating }).map(() => <span>★</span>)}
+  </div>
+
+  <blockquote class="flex-1 text-[0.95rem] italic leading-relaxed text-fg/90">
+    «{quote}»
+  </blockquote>
+
+  <figcaption class="mt-6 border-t border-border pt-4">
+    <p class="font-semibold text-fg">{author}</p>
+    <p class="text-sm text-muted">{role}</p>
+  </figcaption>
+</figure>
