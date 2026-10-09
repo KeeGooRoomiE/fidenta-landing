@@ -25,6 +25,7 @@
   --color-surface: #143A30;      /* surface: фон карточек                    → bg-surface   */
   --color-surface-2: #1C4A3D;    /* приподнятая/hover-поверхность            → bg-surface-2 */
   --color-border: #1C4A3D;       /* линии и рамки                           → border-border */
+  --color-footer: #101612;       /* фон футера (Figma: «Futer»)             → bg-footer     */
 
   /* --- Золото (металлик-диапазон) ---------------------------------- */
   --color-gold-hi: #EAD58A;      /* gold-100 · блик                         → text-gold-hi  */
