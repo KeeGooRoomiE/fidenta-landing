@@ -41,6 +41,7 @@
 
   /* --- Служебные --------------------------------------------------- */
   --color-success: #5FCF80;      /* «живой» индикатор / позитивный статус    → text-success  */
+  --color-plate-line: rgba(255, 241, 217, 0.95); /* сплошная кремовая рамка (кнопки/плитки/cookie) → border-plate-line */
 
   /* --- Металлик-градиент («plate») — для логотипа, золотого текста и кнопок ---
      Точный «Plat» из Figma: светлый блик → тёмное золото (с лёгкой прозрачностью). */
@@ -119,7 +120,11 @@
   color: transparent;
 }
 
-/* ---- Кнопки Hero (спека Figma: Forum 16, radius 9, padding 10/24, inset-тень) ---- */
+/* ---- Кнопки Hero (спека из Figma, узел 974:65347) ----
+   Общее: Forum 16, radius 9, padding 10/24, tracking -0.16px, тонкая text-shadow
+   под текстом (крепит контраст текста над градиентным фоном/фото).
+   Рамка везде СПЛОШНАЯ кремовая (border-plate-line), НЕ градиентная — градиентом
+   залиты только текст (.text-gold-plate) и фон primary-кнопки. */
 @utility btn-hero {
   display: inline-flex;
   align-items: center;
@@ -130,49 +135,34 @@
   letter-spacing: -0.01em;
   padding: 10px 24px;
   border-radius: 9px;
+  border: 1px solid var(--color-plate-line);
+  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.11);
   transition: filter 0.2s ease, opacity 0.2s ease;
 }
 
-/* Заливка плат-градиентом + тёмный текст + inset-тень (главная кнопка). */
+/* Заливка плат-градиентом + тёмный текст + inset-тень.
+   Инсет-тень — ТОЛЬКО у primary-кнопки (у outline-варианта её нет). */
 @utility btn-plat {
   background-image: var(--gradient-gold);
   color: var(--color-on-gold);
-  border: 1px solid transparent;
   box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
 }
 
-/* Прозрачная кнопка БЕЗ заливки, только плат-градиентная рамка (как в куки).
-   Рамка со скруглением рисуется через ::before с маской (середина прозрачная,
-   текст-потомок не маскируется). Текст — через <span class="text-gold-plate">. */
-.btn-plat-outline {
-  position: relative;
-  isolation: isolate;
+/* Прозрачная кнопка: только сплошная кремовая рамка (btn-hero), без заливки и тени.
+   Текст — обычно через <span class="text-gold-plate">, иногда сплошной (cookie). */
+@utility btn-outline {
   background: transparent;
 }
-.btn-plat-outline::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(140.35deg, rgba(255, 241, 217, 0.5) -25.71%, rgba(168, 133, 72, 0.5) 120.56%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  pointer-events: none;
-}
 
-/* Фростед-карточка (плитки Hero и т.п.): полупрозрачный зелёный фон #323F2F4D,
-   плат-градиентная рамка (полупрозрачная), размытие подложки, radius 9. */
+/* Полупрозрачная зелёная карточка (плитки Hero, cookie-баннер): сплошной фон,
+   сплошная кремовая рамка, radius 9 (по узлу 974:65574). БЕЗ blur — у плиток
+   в Figma размытия подложки нет (оно есть только у cookie, добавляется отдельно).
+   0.3 — подтверждённое значение из Figma (видно и на скриншоте: плитки тёмные,
+   не почти прозрачные). Если нужно светлее — меняем здесь в одном месте. */
 @utility plat-card {
-  background:
-    linear-gradient(rgba(50, 63, 47, 0.15), rgba(50, 63, 47, 0.15)) padding-box,
-    linear-gradient(140.35deg, rgba(255, 241, 217, 0.495) -25.71%, rgba(168, 133, 72, 0.5) 120.56%) border-box;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(50, 63, 47, 0.3);
+  border: 1px solid var(--color-plate-line);
+  border-radius: 9px;
 }
 
 /* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д.

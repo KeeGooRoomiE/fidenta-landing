@@ -1,24 +1,26 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК Hero (главный экран) — финальный дизайн
+  УРОВЕНЬ 3 — БЛОК Hero (главный экран)
+  Источник: Figma, файл Cz2upesn8p2Cd7cZTdg2WQ, узел 974:65347 (Header+Hero+Плитки+Cookie)
 
   Раскладка:
-   - Фон: тёмно-синий градиент + ночное фото Невы, прижатое к НИЗУ (сдвинуто вниз),
-     тёмный верх для читаемости заголовка, плавный переход в фон страницы снизу.
-   - Слева сверху: H1 (Forum 64, двухцветный) + подзаголовок + две кнопки.
-   - Внизу: три плитки-преимущества (фростед-стекло) с иконками.
+   - Фон: #091832 + ночное фото Невы, прижатое к низу, открывается к строке подзаголовка
+   - Слева сверху: H1 (Forum 64/0.89, двуцветный) + лид (Forum 20) + две кнопки
+   - Внизу: три плитки-преимущества (фростед-стекло, solid кремовая рамка)
 
-  Типографика H1 по спеке: Forum 400, 64px, line-height 89%, letter-spacing -2%.
-   «Коммерческая недвижимость,» — кремовый (#F4F1EA),
-   «открытая для частного инвестора» — плат-градиент (text-gold-plate).
+  Точные значения из Figma:
+   - H1: font-size 64, line-height 0.89 (89%), letter-spacing -1.28px (-2%)
+   - Лид: font-size 20, line-height 101.465%, letter-spacing 0.2px, gap до H1 — 12px
+   - Плитки: padding 30/40, gap icon↔text 30px, text line-height 17px (фикс, не %)
+   - Текст плитки двуцветный: первая фраза — плат-градиент, остаток — сплошной #f4f1ea
 */
 const base = import.meta.env.BASE_URL;
 
-// Плитки: иконка (реальный ассет из Figma) + две строки текста (шрифт Forum).
+// Плитки: иконка + текст, разбитый на gold-фразу (span1) и обычный остаток (span2).
 const tiles = [
-  { icon: 'tile-club.png', line1: 'Fidenta Invest Club -', line2: 'закрытое сообщество' },
-  { icon: 'tile-cycle.png', line1: 'Полный цикл сопровождения:', line2: 'аудит объекта - расчёт доходности' },
-  { icon: 'tile-ownership.png', line1: 'Реальное владение: доля в', line2: 'объекте закреплена договором' },
+  { icon: 'tile-club.png', gold: 'Fidenta Invest Club - ', rest: 'закрытое сообщество' },
+  { icon: 'tile-cycle.png', gold: 'Полный цикл сопровождения:', rest: 'аудит объекта - расчёт доходности', br: true },
+  { icon: 'tile-ownership.png', gold: 'Реальное владение: ', rest: 'доля в объекте закреплена договором' },
 ];
 ---
 
@@ -35,37 +37,38 @@ const tiles = [
     <div class="absolute inset-x-0 bottom-0 h-40" style="background: linear-gradient(180deg, rgba(10, 32, 25, 0) 0%, #0A2019 100%);"></div>
   </div>
 
-  <!-- КОНТЕНТ (сверху слева). flex-1 прижимает плитки к низу. pt-* очищает фикс-хедер. -->
-  <div class="container-page flex flex-1 flex-col justify-start pt-28 md:pt-36">
-    <div class="max-w-2xl">
-      <!-- H1: Forum 64/0.89, трекинг -2%. Двухцветный. -->
+  <!-- КОНТЕНТ (сверху слева). flex-1 прижимает плитки к низу. -->
+  <div class="container-page flex flex-1 flex-col justify-start pt-24 md:pt-32">
+    <div class="flex max-w-2xl flex-col gap-3">
+      <!-- H1: Forum 64/0.89, трекинг -2%. Двухцветный (первая строка cream, вторая — plat). -->
       <h1 class="font-accent font-normal leading-[0.89] tracking-[-0.02em] text-[2.5rem] sm:text-5xl md:text-[64px]">
-        <span class="block text-fg">Коммерческая недвижимость,</span>
+        <span class="block text-fg">Коммерческая недвижимость, </span>
         <span class="block text-gold-plate">открытая для частного инвестора</span>
       </h1>
-      <!-- Подзаголовок: кремовый (#F4F1EA) -->
-      <p class="mt-6 max-w-xl text-base leading-relaxed text-fg">
+      <!-- Лид: Forum 20/101.465%, tracking 0.2px, кремовый. max-w по спеке (~451px). -->
+      <p class="max-w-[451px] font-accent text-xl leading-[1.015] tracking-[0.01em] text-fg">
         Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами
         Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
       </p>
-      <!-- Кнопки: плат-заливка / плат-обводка (спека Figma) -->
-      <div class="mt-8 flex flex-wrap gap-4">
+      <!-- Кнопки: primary (плат-заливка + inset-тень) / outline (сплошная кремовая рамка) -->
+      <div class="mt-3 flex flex-wrap gap-1.5">
         <a href="#cta" class="btn-hero btn-plat hover:brightness-110">Доступ к сделкам</a>
-        <a href="#cta" class="btn-hero btn-plat-outline">
+        <a href="#cta" class="btn-hero btn-outline">
           <span class="text-gold-plate">Передать объект в управление</span>
         </a>
       </div>
     </div>
   </div>
 
-  <!-- ПЛИТКИ (прижаты к низу). Сетка: 1 колонка на мобиле, 3 на десктопе, gap 10px. -->
+  <!-- ПЛИТКИ (прижаты к низу). Сетка: 1 колонка на мобиле, 3 на десктопе, gap 43px. -->
   <div class="container-page pb-10 pt-16">
     <div class="grid gap-[43px] md:grid-cols-3">
       {tiles.map((tile) => (
-        <div class="plat-card flex items-center gap-4 px-6 py-4">
+        <div class="plat-card flex items-center gap-[30px] px-10 py-[30px]">
           <img src={`${base}icons/${tile.icon}`} width="63" height="58" alt="" class="h-14 w-auto shrink-0" />
-          <p class="font-accent text-[18px] leading-[1.15] tracking-[0.01em] text-fg">
-            {tile.line1}<br />{tile.line2}
+          <!-- line-height 17px — фиксированный px из Figma (не проценты) -->
+          <p class="font-accent text-[18px] tracking-[0.01em]" style="line-height: 17px;">
+            <span class="text-gold-plate">{tile.gold}</span>{tile.br && <br />}<span class="text-fg">{tile.rest}</span>
           </p>
         </div>
       ))}

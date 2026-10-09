@@ -1,15 +1,16 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК Header (шапка) — по финальному дизайну
+  УРОВЕНЬ 3 — БЛОК Header (шапка)
+  Источник: Figma, узел 974:65465 (внутри 974:65347)
 
-  Минималистичная прозрачная шапка поверх Hero (фото Невы просвечивает):
-    [☰ бургер] ....... [логотип по центру] ....... [Консультация]
-  Навигация спрятана за бургер (раскрывается выпадающей панелью на всех экранах).
+  Прозрачная шапка поверх Hero (фото Невы просвечивает), компактная (~40px):
+    [☰ бургер + адрес/телефон] ....... [логотип по центру] ....... [Консультация]
+  Навигация спрятана за бургер (раскрывается выпадающей панелью).
 
-  Раскладка — grid из 3 колонок 1fr/auto/1fr, чтобы логотип был строго по центру
+  Раскладка — grid из 3 колонок 1fr/auto/1fr, логотип строго по центру
   независимо от ширины левого/правого блоков.
 
-  Хедер fixed — лежит поверх контента, поэтому Hero имеет верхний отступ (pt-28).
+  Хедер fixed — лежит поверх контента, Hero имеет верхний отступ (pt-28/36) под него.
 */
 const base = import.meta.env.BASE_URL;
 
@@ -24,35 +25,40 @@ const navLinks = [
 ---
 
 <header class="fixed inset-x-0 top-0 z-50">
-  <div class="container-page grid h-20 grid-cols-[1fr_auto_1fr] items-center md:h-24">
-    <!-- ЛЕВО: бургер в рамке-боксе -->
-    <div class="justify-self-start">
+  <div class="container-page grid h-16 grid-cols-[1fr_auto_1fr] items-center md:h-20">
+    <!-- ЛЕВО: бургер + адрес/телефон рядом (по Figma это один блок, не только иконка) -->
+    <div class="flex items-center gap-3 justify-self-start">
       <button
         id="menu-toggle"
-        class="flex h-11 w-11 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
         aria-label="Открыть меню"
         aria-expanded="false"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
           <line x1="4" y1="7" x2="20" y2="7" />
           <line x1="4" y1="12" x2="20" y2="12" />
           <line x1="4" y1="17" x2="20" y2="17" />
         </svg>
       </button>
+      <!-- Адрес/телефон — видны только на md+ (на мобиле не помещаются рядом с бургером) -->
+      <div class="hidden font-accent text-sm leading-tight text-fg md:block">
+        <p class="m-0">Спб, Богатырский 18 к 4 ст2</p>
+        <p class="m-0">+7 (812) 000-00-00</p>
+      </div>
     </div>
 
     <!-- ЦЕНТР: логотип (знак-мост + wordmark золотым металликом) -->
     <a href="#" class="flex items-center gap-3 justify-self-center">
-      <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-8 w-auto" />
+      <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-7 w-auto" />
       <span class="leading-none">
-        <span class="block font-display text-xl tracking-[0.18em] text-gold-plate">ФИДЕНТА</span>
-        <span class="mt-1 block text-right text-[0.55rem] uppercase tracking-[0.2em] text-accent/80">архитектура капитала</span>
+        <span class="block font-display text-lg tracking-[0.18em] text-gold-plate">ФИДЕНТА</span>
+        <span class="mt-1 block text-right text-[0.5rem] uppercase tracking-[0.2em] text-accent/80">архитектура капитала</span>
       </span>
     </a>
 
-    <!-- ПРАВО: кнопка «Консультация» (стиль аутлайн-кнопки Hero, шрифт Forum) -->
+    <!-- ПРАВО: кнопка «Консультация» (сплошная кремовая рамка, плат-текст) -->
     <div class="justify-self-end">
-      <a href="#cta" class="btn-hero btn-plat-outline">
+      <a href="#cta" class="btn-hero btn-outline">
         <span class="text-gold-plate">Консультация</span>
       </a>
     </div>
