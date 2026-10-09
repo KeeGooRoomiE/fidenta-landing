@@ -18,12 +18,13 @@ import WhyUs from '../components/sections/WhyUs.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
 import CtaForm from '../components/sections/CtaForm.astro';
 import Footer from '../components/sections/Footer.astro';
-import CookieBanner from '../components/CookieBanner.astro';
 ---
 
 <Layout title="Фидента — инвестиции в коммерческую недвижимость">
   <Header />
   <main>
+    <!-- CookieBanner рендерится ВНУТРИ Hero (прижат вправо между заголовком и
+         плитками) — так в финальном дизайне, см. Hero.astro -->
     <Hero />
     <AboutAsset />
     <HowWeWork />
@@ -33,5 +34,4 @@ import CookieBanner from '../components/CookieBanner.astro';
     <CtaForm />
   </main>
   <Footer />
-  <CookieBanner />
 </Layout>

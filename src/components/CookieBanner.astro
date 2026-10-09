@@ -1,16 +1,21 @@
 ---
 /*
   КОМПОНЕНТ — CookieBanner (баннер согласия на cookie)
-  Источник: Figma, узел 974:65603 (внутри 974:65347)
+  Источник: Figma, узел 974:65603 (ручная правка пользователя, узел 974:65347)
 
-  Фростед-панель справа снизу поверх страницы (fixed — в макете статичный absolute,
-  fixed удобнее для реальной прокрутки страницы).
-   - фон rgba(50,63,47,0.3), сплошная кремовая рамка, radius 9 (через утилиту plat-card)
-   - backdrop-blur 100px — единственное место на сайте с таким сильным размытием
-     (у плиток Hero blur нет вообще). Тяжело для рендера, но так в Figma.
-   - padding 16/50/10/8 (top/right/bottom/left), gap между текстом и кнопкой — 32px
-   - текст "Принять" — СПЛОШНОЙ цвет (#f4f1ea), НЕ градиент (в отличие от других кнопок),
-     широкий tracking 2.24px — так в Figma именно у этой кнопки
+  ВАЖНО: это обычный блок в потоке документа (не fixed/overlay) — в финальной
+  версии пользователь поместил его между заголовком Hero и плитками, прижатым
+  вправо. Используется внутри Hero.astro: <div class="flex justify-end"><CookieBanner /></div>
+
+  Спека:
+   - фон rgba(50,63,47,0.3), сплошная кремовая рамка, backdrop-blur 100px, radius 9
+     (всё — через утилиту plat-card + отдельный backdrop-blur, см. global.css)
+   - padding 16/14 (top/x), gap между текстом и кнопкой — 32px
+   - текст обычным переносом (в Figma текст был разбит вручную на 4 строки фикс.
+     шириной — здесь НЕ повторяем, т.к. это ломает адаптивность; смысл тот же)
+   - ссылка «политикой использования cookie» — цвет #ddc386 (отдельный оттенок
+     золота, не входит в общую палитру — используется только здесь)
+   - кнопка «Принять» — текст СПЛОШНОЙ (#f4f1ea), НЕ градиент, tracking 2.24px
 
   Логика: после «Принять» баннер скрывается, выбор запоминается в localStorage,
   поэтому повторно не показывается. Обёрнуто в try/catch (приватный режим и т.п.).
@@ -18,13 +23,10 @@
 const base = import.meta.env.BASE_URL;
 ---
 
-<div
-  id="cookie-banner"
-  class="plat-card fixed bottom-6 right-6 z-[60] flex w-[340px] max-w-[calc(100vw-2rem)] flex-col gap-8 pb-2.5 pl-2 pr-[50px] pt-4 backdrop-blur-[100px]"
->
+<div id="cookie-banner" class="plat-card flex max-w-[340px] flex-col gap-8 px-3.5 py-4 backdrop-blur-[100px]">
   <p class="font-accent text-base leading-normal tracking-[-0.01em] text-fg">
     Мы используем cookie для корректной работы сайта и аналитики. Продолжая пользоваться сайтом,
-    вы соглашаетесь с <a href={`${base}cookie`} class="text-accent-soft underline decoration-from-font underline-offset-2 hover:text-accent">политикой использования cookie</a>.
+    вы соглашаетесь с <a href={`${base}cookie`} class="underline decoration-from-font underline-offset-2" style="color: #ddc386;">политикой использования cookie</a>.
   </p>
 
   <!-- Текст сплошной (не text-gold-plate), tracking шире обычного — так в Figma именно
