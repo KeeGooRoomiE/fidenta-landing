@@ -1,76 +1,59 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК Hero (главный экран) — по финальному дизайну
+  УРОВЕНЬ 3 — БЛОК Hero (главный экран) — финальный дизайн
 
-  Полноэкранный блок: ночное фото Невы на фоне, слева сверху — заголовок,
-  подзаголовок и две кнопки, внизу — ряд из трёх плиток-преимуществ.
+  Раскладка:
+   - Фон: тёмно-синий градиент + ночное фото Невы, прижатое к НИЗУ (сдвинуто вниз),
+     тёмный верх для читаемости заголовка, плавный переход в фон страницы снизу.
+   - Слева сверху: H1 (Forum 64, двухцветный) + подзаголовок + две кнопки.
+   - Внизу: три плитки-преимущества (фростед-стекло) с иконками.
 
-  Фон: сейчас градиент-плейсхолдер под ночную Неву. Когда появится файл фото —
-  положи его в public/images/hero-bg.webp и раскомментируй <img> ниже (одна строка).
-
-  Плитки (по спеке Figma): скругление 9px, паддинг 30/40, border 1px, blur +
-  полупрозрачный фон; текст — шрифт Forum 18px, плотный leading, трекинг 1%.
-  Иконки плиток — пока inline-SVG (золото), заменим на экспорт из Figma.
+  Типографика H1 по спеке: Forum 400, 64px, line-height 89%, letter-spacing -2%.
+   «Коммерческая недвижимость,» — кремовый (#F4F1EA),
+   «открытая для частного инвестора» — плат-градиент (text-gold-plate).
 */
-import Button from '../ui/Button.astro';
-
 const base = import.meta.env.BASE_URL;
 
-// Три плитки-преимущества. icon — имя inline-SVG (рисуем ниже по id через <use> нельзя,
-// поэтому держим иконки как мелкие компоненты-разметку в массиве через ключ).
+// Плитки: иконка (реальный ассет из Figma) + две строки текста (шрифт Forum).
 const tiles = [
-  {
-    key: 'club',
-    line1: 'Fidenta Invest Club -',
-    line2: 'закрытое сообщество',
-  },
-  {
-    key: 'cycle',
-    line1: 'Полный цикл сопровождения:',
-    line2: 'аудит объекта - расчёт доходности',
-  },
-  {
-    key: 'ownership',
-    line1: 'Реальное владение: доля в',
-    line2: 'объекте закреплена договором',
-  },
+  { icon: 'tile-club.png', line1: 'Fidenta Invest Club -', line2: 'закрытое сообщество' },
+  { icon: 'tile-cycle.png', line1: 'Полный цикл сопровождения:', line2: 'аудит объекта - расчёт доходности' },
+  { icon: 'tile-ownership.png', line1: 'Реальное владение: доля в', line2: 'объекте закреплена договором' },
 ];
 ---
 
 <section class="relative flex min-h-screen flex-col overflow-hidden">
-  <!-- ФОН: реальное ночное фото Невы + затемняющие слои для читаемости текста -->
-  <div class="absolute inset-0 -z-10">
-    <!-- object-bottom держит подсвеченную набережную в кадре, тёмное небо — за заголовком -->
-    <img src={`${base}images/hero-bg.webp`} alt="" class="h-full w-full object-cover object-bottom" />
-    <!-- Затемнение слева — чтобы заголовок читался поверх фото -->
-    <div
-      class="absolute inset-0"
-      style="background: linear-gradient(90deg, rgba(10, 32, 25, 0.75) 0%, rgba(10, 32, 25, 0.35) 45%, rgba(10, 32, 25, 0.1) 100%);"
-    >
-    </div>
-    <!-- Затемнение сверху (под хедер) и плавный переход в фон страницы снизу -->
-    <div
-      class="absolute inset-0"
-      style="background: linear-gradient(180deg, rgba(10, 32, 25, 0.5) 0%, rgba(10, 32, 25, 0) 25%, rgba(10, 32, 25, 0) 68%, #0A2019 100%);"
-    >
-    </div>
+  <!-- ФОН -->
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <!-- База: тёмно-синее небо → бренд-зелёный (на случай непокрытых краёв) -->
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, #0b1c36 0%, #0a1830 42%, #0A2019 100%);"></div>
+    <!-- Фото Невы прижато к низу (сдвинуто вниз). Верх фото (небо) уходит за край / под затемнение. -->
+    <img src={`${base}images/hero-bg.webp`} alt="" aria-hidden="true" class="absolute inset-x-0 bottom-0 w-full" />
+    <!-- Затемнение верха — чтобы заголовок читался; одновременно смешивает верх фото с небом -->
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(8, 18, 36, 0.9) 0%, rgba(8, 18, 36, 0.35) 26%, rgba(8, 18, 36, 0) 46%);"></div>
+    <!-- Плавный переход низа в фон страницы -->
+    <div class="absolute inset-x-0 bottom-0 h-40" style="background: linear-gradient(180deg, rgba(10, 32, 25, 0) 0%, #0A2019 100%);"></div>
   </div>
 
-  <!-- КОНТЕНТ (вверху слева). flex-1 растягивает область, прижимая плитки к низу. -->
-  <div class="container-page flex flex-1 flex-col justify-start pt-28 md:pt-32">
+  <!-- КОНТЕНТ (сверху слева). flex-1 прижимает плитки к низу. pt-* очищает фикс-хедер. -->
+  <div class="container-page flex flex-1 flex-col justify-start pt-28 md:pt-36">
     <div class="max-w-2xl">
-      <!-- H1: Playfair, вес 500, плотный трекинг. Переопределяем вес/leading базового h1. -->
-      <h1 class="font-medium leading-[1.08] tracking-[-0.01em] text-[2.5rem] sm:text-5xl md:text-[3.5rem]">
-        Коммерческая недвижимость, открытая для частного инвестора
+      <!-- H1: Forum 64/0.89, трекинг -2%. Двухцветный. -->
+      <h1 class="font-accent font-normal leading-[0.89] tracking-[-0.02em] text-[2.5rem] sm:text-5xl md:text-[64px]">
+        <span class="block text-fg">Коммерческая недвижимость,</span>
+        <span class="block text-gold-plate">открытая для частного инвестора</span>
       </h1>
-      <!-- Lead: Inter 20/1.45, вторичный светлый текст -->
-      <p class="mt-6 max-w-xl text-lg leading-[1.5] text-text-soft">
+      <!-- Подзаголовок: кремовый (#F4F1EA) -->
+      <p class="mt-6 max-w-xl text-base leading-relaxed text-fg">
         Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами
         Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
       </p>
+      <!-- Кнопки: плат-заливка / плат-обводка (спека Figma) -->
       <div class="mt-8 flex flex-wrap gap-4">
-        <Button variant="primary" href="#cta">Доступ к сделкам</Button>
-        <Button variant="secondary" href="#cta">Передать объект в управление</Button>
+        <a href="#cta" class="btn-hero btn-plat hover:brightness-110">Доступ к сделкам</a>
+        <a href="#cta" class="btn-hero btn-plat-outline">
+          <span class="text-gold-plate">Передать объект в управление</span>
+        </a>
       </div>
     </div>
   </div>
@@ -79,30 +62,8 @@ const tiles = [
   <div class="container-page pb-10 pt-16">
     <div class="grid gap-2.5 md:grid-cols-3">
       {tiles.map((tile) => (
-        <div class="flex items-center gap-4 rounded-[9px] border border-white/10 bg-canvas/40 px-10 py-[30px] backdrop-blur-md">
-          <!-- Иконка-бокс (плейсхолдер, заменить на экспорт из Figma) -->
-          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[9px] border border-accent/30 text-accent">
-            {tile.key === 'club' && (
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M22 2 11 13" />
-                <path d="M22 2 15 22 11 13 2 9 22 2Z" />
-              </svg>
-            )}
-            {tile.key === 'cycle' && (
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
-                <path d="M14 3v5h5" />
-                <path d="m9 15 2 2 4-4" />
-              </svg>
-            )}
-            {tile.key === 'ownership' && (
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M3 10h18M8 2v4M16 2v4" />
-              </svg>
-            )}
-          </div>
-          <!-- Текст плитки: шрифт Forum 18px, трекинг 1% (спека дизайнера) -->
+        <div class="plat-card flex min-h-[118px] items-center gap-4 px-10 py-[30px]">
+          <img src={`${base}icons/${tile.icon}`} width="63" height="58" alt="" class="h-14 w-auto shrink-0" />
           <p class="font-accent text-[18px] leading-[1.15] tracking-[0.01em] text-fg">
             {tile.line1}<br />{tile.line2}
           </p>

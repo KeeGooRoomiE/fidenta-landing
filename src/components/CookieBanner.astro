@@ -1,0 +1,61 @@
+---
+/*
+  КОМПОНЕНТ — CookieBanner (баннер согласия на cookie)
+
+  Фростед-панель справа снизу поверх страницы. По спеке Figma:
+   - фон #323F2F4D (полупрозрачный зелёный) + плат-градиентная рамка + размытие подложки
+   - radius 9, padding 16/50/10/8, ширина 340
+   - кнопка «Принять» — в стиле второй кнопки Hero (btn-plat-outline)
+
+  Логика: после «Принять» баннер скрывается, выбор запоминается в localStorage,
+  поэтому повторно не показывается. Обёрнуто в try/catch (приватный режим и т.п.).
+*/
+const base = import.meta.env.BASE_URL;
+---
+
+<div
+  id="cookie-banner"
+  class="fixed bottom-6 right-6 z-[60] flex w-[340px] max-w-[calc(100vw-2rem)] flex-col gap-8 pt-4 pr-[50px] pb-2.5 pl-2"
+  style="
+    background:
+      linear-gradient(rgba(50, 63, 47, 0.3), rgba(50, 63, 47, 0.3)) padding-box,
+      linear-gradient(140.35deg, rgba(255, 241, 217, 0.686) -25.71%, rgba(168, 133, 72, 0.7) 120.56%) border-box;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  "
+>
+  <p class="text-sm leading-relaxed text-text-soft">
+    Мы используем cookie для корректной работы сайта и аналитики. Продолжая пользоваться сайтом,
+    вы соглашаетесь с <a href={`${base}cookie`} class="text-accent underline underline-offset-2 hover:text-accent-soft">политикой использования cookie</a>.
+  </p>
+
+  <button id="cookie-accept" type="button" class="btn-hero btn-plat-outline self-start">
+    <span class="text-gold-plate">Принять</span>
+  </button>
+</div>
+
+<script>
+  // Показываем баннер только если согласие ещё не дано.
+  const banner = document.getElementById('cookie-banner');
+  const accept = document.getElementById('cookie-accept');
+  const KEY = 'fidenta-cookie-accepted';
+
+  try {
+    if (localStorage.getItem(KEY) === '1') {
+      banner?.remove();
+    }
+  } catch (_) {
+    /* localStorage недоступен — просто показываем баннер */
+  }
+
+  accept?.addEventListener('click', () => {
+    try {
+      localStorage.setItem(KEY, '1');
+    } catch (_) {
+      /* молча игнорируем, если хранилище недоступно */
+    }
+    banner?.remove();
+  });
+</script>
