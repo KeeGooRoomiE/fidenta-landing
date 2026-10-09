@@ -25,12 +25,12 @@ const tiles = [
 <section class="relative flex min-h-screen flex-col overflow-hidden">
   <!-- ФОН -->
   <div class="absolute inset-0 -z-10 overflow-hidden">
-    <!-- База: тёмно-синее небо → бренд-зелёный (на случай непокрытых краёв) -->
-    <div class="absolute inset-0" style="background: linear-gradient(180deg, #0b1c36 0%, #0a1830 42%, #0A2019 100%);"></div>
-    <!-- Фото Невы прижато к низу (сдвинуто вниз). Верх фото (небо) уходит за край / под затемнение. -->
+    <!-- База под фото — сплошной #091832 (фото прижато к низу, верх закрыт этим же цветом) -->
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, #091832 0%, #091832 72%, #0A2019 100%);"></div>
+    <!-- Фото Невы прижато к низу, натуральный размер (не растягиваем) -->
     <img src={`${base}images/hero-bg.webp`} alt="" aria-hidden="true" class="absolute inset-x-0 bottom-0 w-full" />
-    <!-- Затемнение верха — чтобы заголовок читался; одновременно смешивает верх фото с небом -->
-    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(8, 18, 36, 0.9) 0%, rgba(8, 18, 36, 0.35) 26%, rgba(8, 18, 36, 0) 46%);"></div>
+    <!-- Верхний слой #091832 закрывает фото сверху и «открывает» его к строке подзаголовка (~44%) -->
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, #091832 0%, #091832 44%, rgba(9, 24, 50, 0) 54%);"></div>
     <!-- Плавный переход низа в фон страницы -->
     <div class="absolute inset-x-0 bottom-0 h-40" style="background: linear-gradient(180deg, rgba(10, 32, 25, 0) 0%, #0A2019 100%);"></div>
   </div>
@@ -60,9 +60,9 @@ const tiles = [
 
   <!-- ПЛИТКИ (прижаты к низу). Сетка: 1 колонка на мобиле, 3 на десктопе, gap 10px. -->
   <div class="container-page pb-10 pt-16">
-    <div class="grid gap-2.5 md:grid-cols-3">
+    <div class="grid gap-[43px] md:grid-cols-3">
       {tiles.map((tile) => (
-        <div class="plat-card flex min-h-[118px] items-center gap-4 px-10 py-[30px]">
+        <div class="plat-card flex items-center gap-4 px-6 py-4">
           <img src={`${base}icons/${tile.icon}`} width="63" height="58" alt="" class="h-14 w-auto shrink-0" />
           <p class="font-accent text-[18px] leading-[1.15] tracking-[0.01em] text-fg">
             {tile.line1}<br />{tile.line2}

@@ -11,8 +11,6 @@
 
   Хедер fixed — лежит поверх контента, поэтому Hero имеет верхний отступ (pt-28).
 */
-import Button from '../ui/Button.astro';
-
 const base = import.meta.env.BASE_URL;
 
 const navLinks = [
@@ -25,7 +23,7 @@ const navLinks = [
 ];
 ---
 
-<header class="fixed inset-x-0 top-0 z-50 bg-canvas/20 backdrop-blur-md">
+<header class="fixed inset-x-0 top-0 z-50">
   <div class="container-page grid h-20 grid-cols-[1fr_auto_1fr] items-center md:h-24">
     <!-- ЛЕВО: бургер в рамке-боксе -->
     <div class="justify-self-start">
@@ -52,9 +50,11 @@ const navLinks = [
       </span>
     </a>
 
-    <!-- ПРАВО: кнопка «Консультация» -->
+    <!-- ПРАВО: кнопка «Консультация» (стиль аутлайн-кнопки Hero, шрифт Forum) -->
     <div class="justify-self-end">
-      <Button variant="secondary" href="#cta">Консультация</Button>
+      <a href="#cta" class="btn-hero btn-plat-outline">
+        <span class="text-gold-plate">Консультация</span>
+      </a>
     </div>
   </div>
 

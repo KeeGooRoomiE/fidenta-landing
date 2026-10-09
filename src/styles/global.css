@@ -129,34 +129,47 @@
   letter-spacing: -0.01em;
   padding: 10px 24px;
   border-radius: 9px;
-  box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
   transition: filter 0.2s ease, opacity 0.2s ease;
 }
 
-/* Заливка плат-градиентом + тёмный текст (главная кнопка). */
+/* Заливка плат-градиентом + тёмный текст + inset-тень (главная кнопка). */
 @utility btn-plat {
   background-image: var(--gradient-gold);
   color: var(--color-on-gold);
   border: 1px solid transparent;
+  box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
 }
 
-/* Прозрачная кнопка с плат-градиентной рамкой (текст — через <span class="text-gold-plate">).
-   Градиентная рамка со скруглением делается трюком padding-box/border-box. */
-@utility btn-plat-outline {
-  background:
-    linear-gradient(rgba(10, 32, 25, 0.25), rgba(10, 32, 25, 0.25)) padding-box,
-    linear-gradient(140.35deg, rgba(255, 241, 217, 0.5) -25.71%, rgba(168, 133, 72, 0.5) 120.56%) border-box;
-  border: 1px solid transparent;
+/* Прозрачная кнопка БЕЗ заливки, только плат-градиентная рамка (как в куки).
+   Рамка со скруглением рисуется через ::before с маской (середина прозрачная,
+   текст-потомок не маскируется). Текст — через <span class="text-gold-plate">. */
+.btn-plat-outline {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+.btn-plat-outline::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140.35deg, rgba(255, 241, 217, 0.5) -25.71%, rgba(168, 133, 72, 0.5) 120.56%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* Фростед-карточка (плитки Hero и т.п.): полупрозрачный зелёный фон #323F2F4D,
    плат-градиентная рамка (полупрозрачная), размытие подложки, radius 9. */
 @utility plat-card {
   background:
-    linear-gradient(rgba(50, 63, 47, 0.3), rgba(50, 63, 47, 0.3)) padding-box,
+    linear-gradient(rgba(50, 63, 47, 0.15), rgba(50, 63, 47, 0.15)) padding-box,
     linear-gradient(140.35deg, rgba(255, 241, 217, 0.495) -25.71%, rgba(168, 133, 72, 0.5) 120.56%) border-box;
   border: 1px solid transparent;
-  border-radius: 9px;
+  border-radius: 14px;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
 }
