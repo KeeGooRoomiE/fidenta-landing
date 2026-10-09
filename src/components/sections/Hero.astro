@@ -38,27 +38,20 @@ const tiles = [
 ---
 
 <section class="relative flex min-h-screen flex-col overflow-hidden">
-  <!-- ФОН -->
+  <!-- ФОН: реальное ночное фото Невы + затемняющие слои для читаемости текста -->
   <div class="absolute inset-0 -z-10">
-    <!-- РЕАЛЬНОЕ ФОТО: положи public/images/hero-bg.webp и раскомментируй строку ниже -->
-    <!-- <img src={`${base}images/hero-bg.webp`} alt="" class="h-full w-full object-cover" /> -->
-
-    <!-- Плейсхолдер: градиент под ночную Неву (тёмно-синее небо → тёплая набережная → бренд-зелёный) -->
+    <!-- object-bottom держит подсвеченную набережную в кадре, тёмное небо — за заголовком -->
+    <img src={`${base}images/hero-bg.webp`} alt="" class="h-full w-full object-cover object-bottom" />
+    <!-- Затемнение слева — чтобы заголовок читался поверх фото -->
     <div
       class="absolute inset-0"
-      style="background: linear-gradient(180deg, #0a1c34 0%, #0a1830 50%, #14233a 72%, #2a2414 87%, #0A2019 100%);"
+      style="background: linear-gradient(90deg, rgba(10, 32, 25, 0.75) 0%, rgba(10, 32, 25, 0.35) 45%, rgba(10, 32, 25, 0.1) 100%);"
     >
     </div>
-    <!-- Тёплое свечение у набережной (нижняя треть) -->
+    <!-- Затемнение сверху (под хедер) и плавный переход в фон страницы снизу -->
     <div
       class="absolute inset-0"
-      style="background: radial-gradient(60% 28% at 50% 86%, rgba(217, 160, 70, 0.18) 0%, rgba(217, 160, 70, 0) 70%);"
-    >
-    </div>
-    <!-- Лёгкое затемнение слева для читаемости заголовка -->
-    <div
-      class="absolute inset-0"
-      style="background: linear-gradient(90deg, rgba(10, 32, 25, 0.55) 0%, rgba(10, 32, 25, 0.1) 55%, rgba(10, 32, 25, 0) 100%);"
+      style="background: linear-gradient(180deg, rgba(10, 32, 25, 0.5) 0%, rgba(10, 32, 25, 0) 25%, rgba(10, 32, 25, 0) 68%, #0A2019 100%);"
     >
     </div>
   </div>

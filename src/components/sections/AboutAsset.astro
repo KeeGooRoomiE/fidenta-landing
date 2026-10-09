@@ -1,0 +1,102 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Превращаем недвижимость в актив» (о компании)
+
+  Структура по дизайну:
+   - Заголовок секции (eyebrow + H2 с золотым акцентом + подзаголовок)
+   - Верхний ряд: слева 3 карточки-аудитории (инвестор/собственник/объект),
+     справа — фото офиса на всю высоту стопки карточек
+   - Нижний ряд: слева карточка «Архитектура капитала», справа — широкий текст
+
+  Иконки карточек — inline-SVG (золото), плейсхолдеры под экспорт из Figma.
+*/
+import SectionHeading from '../ui/SectionHeading.astro';
+
+const base = import.meta.env.BASE_URL;
+
+// Три верхние карточки. key управляет тем, какую иконку рисуем.
+const cards = [
+  { key: 'investor', title: 'Для инвестора', text: 'Обеспечиваем прозрачные процессы, аналитику' },
+  { key: 'owner', title: 'Для собственника', text: 'Снимаем операционную нагрузку, повышаем доходность и сохраняем ценность актива' },
+  { key: 'object', title: 'Для объекта', text: 'Повышаем заполняемость и рыночную стоимость недвижимости.' },
+];
+---
+
+<section id="about" class="py-20 md:py-28">
+  <div class="container-page">
+    <SectionHeading
+      eyebrow="О компании"
+      title="Превращаем недвижимость"
+      accent="в актив"
+      description="Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а объект становился дороже с каждым годом."
+    />
+
+    <!-- ВЕРХНИЙ РЯД: 3 карточки слева + фото офиса справа (на всю высоту) -->
+    <div class="mt-12 grid gap-4 lg:grid-cols-2 lg:items-stretch">
+      <div class="flex flex-col gap-4">
+        {cards.map((card) => (
+          <article class="flex items-start gap-5 rounded-lg border border-border bg-surface p-6">
+            <!-- Иконка-бокс 56×56, золотой line-icon -->
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-accent/30 text-accent">
+              {card.key === 'investor' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 17 9 11l4 4 8-8" />
+                  <path d="M16 4h5v5" />
+                </svg>
+              )}
+              {card.key === 'owner' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
+                </svg>
+              )}
+              {card.key === 'object' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="4" y="3" width="16" height="18" rx="1" />
+                  <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+                </svg>
+              )}
+            </div>
+            <div>
+              <h3 class="font-medium text-xl">{card.title}</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-muted">{card.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Фото офиса. object-cover + h-full тянет по высоте стопки карточек слева. -->
+      <img
+        src={`${base}images/office.webp`}
+        alt="Офис управляющей компании «Фидента»"
+        class="h-full min-h-[320px] w-full rounded-lg object-cover"
+      />
+    </div>
+
+    <!-- НИЖНИЙ РЯД: «Архитектура капитала» + широкий текст -->
+    <div class="mt-4 grid gap-4 lg:grid-cols-2">
+      <article class="flex items-start gap-5 rounded-lg border border-border bg-surface p-6">
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-accent/30 text-accent">
+          <!-- Знак-мост (упрощённый line-icon) -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 18h20" />
+            <path d="M7 18V7M17 18V7" />
+            <path d="M7 7 2 14M7 7l5 7M17 7l-5 7M17 7l5 7" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-medium text-xl">Архитектура капитала</h3>
+          <p class="mt-1.5 text-sm leading-relaxed text-muted">Это наша философия. Мост соединяющий возможности.</p>
+        </div>
+      </article>
+
+      <div class="flex items-center rounded-lg border border-border bg-surface p-8">
+        <p class="leading-relaxed text-text-soft">
+          Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления,
+          оптимизации процессов и долгосрочной стратегии развития, превращая коммерческую
+          недвижимость в надёжный инвестиционный актив.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
