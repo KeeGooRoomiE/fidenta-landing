@@ -1,41 +1,60 @@
 ---
 /*
   КОМПОНЕНТ — CookieBanner (баннер согласия на cookie)
-  Источник: Figma, узел 974:65603 (ручная правка пользователя, узел 974:65347)
 
-  ВАЖНО: это обычный блок в потоке документа (не fixed/overlay) — в финальной
-  версии пользователь поместил его между заголовком Hero и плитками, прижатым
-  вправо. Используется внутри Hero.astro: <div class="flex justify-end"><CookieBanner /></div>
+  Переделан с нуля: раньше это была плавающая карточка (fixed, якорем за
+  правый/нижний край) — на некоторых экранах выглядела так, будто "уехала"
+  не туда (плавающий блок в углу читается как случайно забытый элемент,
+  особенно когда под ним большие секции с собственной композицией).
 
-  Спека:
-   - фон rgba(50,63,47,0.3), сплошная кремовая рамка, backdrop-blur 100px, radius 9
-     (всё — через утилиту plat-card + отдельный backdrop-blur, см. global.css)
-   - padding 16/14 (top/x), gap между текстом и кнопкой — 32px
-   - текст обычным переносом (в Figma текст был разбит вручную на 4 строки фикс.
-     шириной — здесь НЕ повторяем, т.к. это ломает адаптивность; смысл тот же)
-   - ссылка «политикой использования cookie» — цвет #ddc386 (отдельный оттенок
-     золота, не входит в общую палитру — используется только здесь)
-   - кнопка «Принять» — текст СПЛОШНОЙ (#f4f1ea), НЕ градиент, tracking 2.24px
-
-  Логика: после «Принять» баннер скрывается, выбор запоминается в localStorage,
-  поэтому повторно не показывается. Обёрнуто в try/catch (приватный режим и т.п.).
+  Теперь — простой прижатый к низу бар на всю ширину экрана: текст слева,
+  кнопка справа (на мобильном — друг под другом). У такой формы нет
+  вариативной позиции, которая могла бы "поехать" — она всегда ровно внизу,
+  во всю ширину, не зависит от разметки той секции, что сейчас на экране.
+  Рендерится отдельно в index.astro, вне разметки Hero.
 */
 const base = import.meta.env.BASE_URL;
 ---
 
-<div id="cookie-banner" class="plat-card flex max-w-[340px] flex-col gap-8 px-3.5 py-4 backdrop-blur-[100px]">
-  <p class="font-accent text-base leading-normal tracking-[-0.01em] text-fg">
-    Мы используем cookie для корректной работы сайта и аналитики. Продолжая пользоваться сайтом,
-    вы соглашаетесь с <a href={`${base}cookie`} class="underline decoration-from-font underline-offset-2" style="color: #ddc386;">политикой использования cookie</a>.
-  </p>
-
-  <!-- Текст сплошной (не text-gold-plate), tracking шире обычного — так в Figma именно
-       у этой кнопки. letter-spacing через inline style — надёжнее, чем перебивать
-       классом Tailwind значение из @utility btn-hero (конфликт порядка в CSS). -->
-  <button id="cookie-accept" type="button" class="btn-hero btn-outline self-start text-fg" style="letter-spacing: 0.14em;">
-    Принять
-  </button>
+<div id="cookie-banner" class="cookie-bar fixed inset-x-0 bottom-0 z-40">
+  <div class="container-page flex flex-col items-center gap-4 py-4 sm:flex-row sm:justify-between sm:gap-8 sm:py-5">
+    <p class="font-accent text-sm leading-normal text-fg/90 sm:text-base">
+      Мы используем cookie для корректной работы сайта и аналитики. Продолжая пользоваться сайтом,
+      вы соглашаетесь с <a href={`${base}cookie`} class="cookie-link">политикой использования cookie</a>.
+    </p>
+    <button id="cookie-accept" type="button" class="cookie-accept shrink-0">Принять</button>
+  </div>
 </div>
+
+<style>
+  .cookie-bar {
+    background: rgba(8, 17, 14, 0.92);
+    border-top: 1px solid rgba(199, 162, 75, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .cookie-link {
+    color: var(--color-accent-soft);
+    text-underline-offset: 2px;
+  }
+
+  .cookie-accept {
+    font-family: var(--font-accent);
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    padding: 0.625rem 1.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(199, 162, 75, 0.5);
+    color: var(--color-on-gold);
+    background-image: var(--gradient-gold);
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
+  .cookie-accept:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+</style>
 
 <script>
   // Показываем баннер только если согласие ещё не дано.

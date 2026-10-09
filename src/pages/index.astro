@@ -9,6 +9,7 @@
 */
 import Layout from '../layouts/Layout.astro';
 
+import CookieBanner from '../components/CookieBanner.astro';
 import Header from '../components/sections/Header.astro';
 import Hero from '../components/sections/Hero.astro';
 import AboutAsset from '../components/sections/AboutAsset.astro';
@@ -23,8 +24,6 @@ import Footer from '../components/sections/Footer.astro';
 <Layout title="Фидента — инвестиции в коммерческую недвижимость">
   <Header />
   <main>
-    <!-- CookieBanner рендерится ВНУТРИ Hero как fixed-блок внизу справа,
-         см. Hero.astro -->
     <Hero />
     <AboutAsset />
     <HowWeWork />
@@ -34,4 +33,6 @@ import Footer from '../components/sections/Footer.astro';
     <CtaForm />
   </main>
   <Footer />
+  <!-- Fixed-бар внизу экрана, независим от разметки любой секции -->
+  <CookieBanner />
 </Layout>
