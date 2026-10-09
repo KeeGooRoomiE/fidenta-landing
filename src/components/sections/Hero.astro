@@ -66,7 +66,7 @@ const cards = [
 
   <!-- Контент — уже на сплошном фоне секции, текст нигде не лежит поверх
        фото, поэтому читаемость не зависит от того, что именно на кадре. -->
-  <div class="container-page relative -mt-10 flex flex-col gap-16 pb-20 pt-0 md:-mt-[320px] md:gap-20 md:pb-10">
+  <div class="hero-content container-page relative -mt-10 flex flex-col gap-16 pb-20 pt-0 md:gap-20 md:pb-10">
     <div class="flex max-w-2xl flex-col gap-7">
       <h1 class="hero-title font-accent font-normal">
         <span class="block text-fg">Коммерческая недвижимость,</span>
@@ -103,6 +103,19 @@ const cards = [
 </section>
 
 <style>
+  /* Фото-баннер — aspect-ratio, его высота = 100vw * 9/21 на md+ (21:9).
+     Фиксированный margin-top: -320px (как просили) ломается при "резиновом"
+     ресайзе: при ширине < ~1493px высота баннера < 640px, и -320 утягивает
+     текст ВЫШЕ своей середины — на небо, а не на тёмные здания, как нужно.
+     max() держит верх текста не выше 320px от начала Hero ВСЕГДА: на узких
+     md-экранах подъём автоматически меньше 320px, на широких — ровно -320px
+     (как и было одобрено на 1440px). */
+  @media (min-width: 768px) {
+    .hero-content {
+      margin-top: max(-320px, calc(320px - 42.857vw));
+    }
+  }
+
   .hero-title {
     font-size: 2.75rem;
     line-height: 0.96;
@@ -162,23 +175,15 @@ const cards = [
 
   .hero-card {
     display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.75rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
     border-radius: 16px;
     /* Сплошная заливка — не размытое стекло: за карточками фото больше нет
        (оно осталось только в баннере выше), прозрачность/блюр тут ничего не
        показывали бы, кроме сплошного фона секции. */
     background: var(--color-surface);
     border: 1px solid rgba(199, 162, 75, 0.25);
-  }
-  /* На ПК — компактнее и иконка на одном уровне с текстом (не над ним). */
-  @media (min-width: 768px) {
-    .hero-card {
-      flex-direction: row;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.125rem 1.25rem;
-    }
   }
 </style>
