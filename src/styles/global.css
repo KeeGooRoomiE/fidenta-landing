@@ -12,27 +12,50 @@
    - @layer base { ... }    базовые стили для «голых» HTML-тегов
    - @utility name { ... }  собственные переиспользуемые утилиты (напр. container-page)
 
-   Значения цветов и шрифтов — ПРИБЛИЗИТЕЛЬНЫЕ (сняты с макета).
-   Финальные — уточнить по Figma и заменить здесь, в одном месте.
+   Значения взяты из UI Kit v2 (Figma). Меняешь токен — меняется весь сайт.
+   Правило 60-30-10: 60% зелёный фон, 30% текст, 10% золото (только акцент).
    ============================================================ */
 
 @import "tailwindcss";
 
 @theme {
-  /* --- Цвета бренда ------------------------------------------------ */
-  --color-canvas: #0b241d;       /* основной фон страницы (тёмный изумруд)   → bg-canvas   */
-  --color-panel: #0e2a22;        /* фон отдельных секций                     → bg-panel    */
-  --color-surface: #123128;      /* фон карточек                             → bg-surface  */
-  --color-surface-2: #17392f;    /* приподнятая/hover-поверхность            → bg-surface-2*/
-  --color-border: #244a3d;       /* линии и рамки                           → border-border*/
-  --color-accent: #c6a15b;       /* золотой акцент (кнопки, цифры, ссылки)   → text-accent */
-  --color-accent-soft: #d9c08a;  /* светлое золото (hover)                   → text-accent-soft */
-  --color-fg: #ece7db;           /* основной текст (кремовый)                → text-fg     */
-  --color-muted: #8fa298;        /* приглушённый текст                       → text-muted  */
+  /* --- Зелёная шкала (фоны и рамки) -------------------------------- */
+  --color-canvas: #0A2019;       /* bg-deep: самый тёмный фон страницы       → bg-canvas    */
+  --color-panel: #0C2A22;        /* bg: фон отдельных секций                 → bg-panel     */
+  --color-surface: #143A30;      /* surface: фон карточек                    → bg-surface   */
+  --color-surface-2: #1C4A3D;    /* приподнятая/hover-поверхность            → bg-surface-2 */
+  --color-border: #1C4A3D;       /* линии и рамки                           → border-border */
 
-  /* --- Шрифты (плейсхолдеры, заменить на брендовые) --------------- */
-  --font-display: "Playfair Display", Georgia, "Times New Roman", serif; /* заголовки */
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; /* текст     */
+  /* --- Золото (металлик-диапазон) ---------------------------------- */
+  --color-gold-hi: #EAD58A;      /* gold-100 · блик                         → text-gold-hi  */
+  --color-accent-soft: #D9BC6A;  /* gold-300 · hover primary                → text-accent-soft */
+  --color-accent: #C7A24B;       /* gold · база (кнопки, цифры, ссылки)      → text-accent   */
+  --color-gold-deep: #9C7E38;    /* gold-700 · тень / active                → text-gold-deep */
+
+  /* --- Нейтрали (текст) -------------------------------------------- */
+  --color-fg: #F4F1EA;           /* text: основной текст                    → text-fg       */
+  --color-text-soft: #C5D2CB;    /* text-soft: вторичный текст              → text-text-soft */
+  --color-muted: #9FB3AA;        /* text-muted: приглушённый                 → text-muted    */
+  --color-on-gold: #0A2019;      /* text-on-gold: текст на золотой заливке   → text-on-gold  */
+
+  /* --- Служебные --------------------------------------------------- */
+  --color-success: #5FCF80;      /* «живой» индикатор / позитивный статус    → text-success  */
+
+  /* --- Металлик-градиент («plate») — для логотипа и золотого текста ---
+     Основной градиент бренда по цветам: светлый блик → тёмное золото. */
+  --gradient-gold: linear-gradient(135deg, #FFF1D9 0%, #A88548 100%);
+
+  /* --- Радиусы (база 8px) ------------------------------------------ */
+  --radius-sm: 4px;              /* мелочи                                   → rounded-sm    */
+  --radius: 8px;                 /* кнопки/карточки (база)                   → rounded       */
+  --radius-lg: 12px;             /* блоки                                    → rounded-lg    */
+  --radius-xl: 16px;             /* крупные                                  → rounded-xl    */
+  --radius-full: 999px;          /* пилюли                                   → rounded-full  */
+
+  /* --- Шрифты ------------------------------------------------------ */
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif; /* заголовки и цифры */
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; /* текст и UI       */
+  --font-accent: "Forum", "Playfair Display", Georgia, serif;            /* акцентные подписи (плитки, цифры) → font-accent */
 }
 
 @layer base {
@@ -77,18 +100,33 @@
 @utility container-page {
   margin-inline: auto;
   width: 100%;
-  max-width: 75rem; /* 1200px */
+  max-width: 70rem; /* 1120px — как в UI Kit */
   padding-inline: 1.5rem;
 }
 
-/* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д. */
+/* Металлик-золото как фон (кнопки-plate, подложки). */
+@utility bg-gold-plate {
+  background-image: var(--gradient-gold);
+}
+
+/* Металлик-золото как заливка ТЕКСТА (обрезка градиента по глифам).
+   Пример: <span class="text-gold-plate font-display">ФИДЕНТА</span> */
+@utility text-gold-plate {
+  background-image: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д.
+   По киту: Inter 13px / 500 / letter-spacing 2.08px (0.16em) / caps / золото */
 @utility eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--color-accent);
 }

@@ -9,6 +9,9 @@
 */
 import Button from '../ui/Button.astro';
 
+// BASE_URL учитывает base из astro.config (напр. /fidenta-landing/) — нужен для ссылок на public/
+const base = import.meta.env.BASE_URL;
+
 // Данные навигации — массив. Меняем меню в одном месте, разметка строится циклом.
 const navLinks = [
   { label: 'О компании', href: '#why' },
@@ -21,17 +24,17 @@ const navLinks = [
 
 <header class="sticky top-0 z-50 border-b border-border/60 bg-canvas/80 backdrop-blur-md">
   <div class="container-page flex h-20 items-center justify-between gap-6">
-    <!-- Логотип: знак-мост (плейсхолдер) + название -->
+    <!-- Логотип: знак-мост (реальный ассет из Figma) + wordmark золотым металликом -->
     <a href="#" class="flex items-center gap-3">
-      <svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="currentColor"
-        class="text-accent" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 46 L32 15 L52 46" />
-        <line x1="10" y1="47" x2="54" y2="47" />
-        <line x1="32" y1="15" x2="22" y2="47" />
-        <line x1="32" y1="15" x2="42" y2="47" />
-      </svg>
+      <img
+        src={`${base}images/logo-mark.png`}
+        width="64"
+        height="29"
+        alt="Фидента"
+        class="h-7 w-auto"
+      />
       <span>
-        <span class="block font-display text-lg font-semibold tracking-wide text-fg">ФИДЕНТА</span>
+        <span class="block font-display text-lg font-semibold tracking-wide text-gold-plate">ФИДЕНТА</span>
         <span class="block text-[0.6rem] uppercase tracking-[0.2em] text-muted">Архитектура капитала</span>
       </span>
     </a>
