@@ -28,19 +28,25 @@ const tiles = [
 ---
 
 <section class="relative overflow-hidden">
-  <!-- ФОН: одно фото Невы на весь блок -->
+  <!-- ФОН: одно фото Невы на весь блок.
+       ВАЖНО: буквальный перенос transform-процентов из Figma (width 154.51% /
+       height 163.84%, offset -34.55%/-1.34%) оказался неверным — те значения
+       считались от чужого контейнера (1541×1183), который не совпадает с нашей
+       секцией. При переносе 1:1 картинка раздувалась в ~1.6 раза и обрезка
+       уходила выше моста — виден был только кусок неба. Вместо этого — обычный
+       object-fit: cover с привязкой к низу: мост гарантированно виден, адаптивно
+       на любой высоте секции. -->
   <div class="absolute inset-0 -z-10 overflow-hidden">
     <div class="absolute inset-0" style="background: #091832;"></div>
-    <!-- Точный crop из Figma (узел 974:64601 «image 25») -->
     <img
       src={`${base}images/hero-bg.webp`}
       alt=""
       aria-hidden="true"
-      class="absolute max-w-none"
-      style="width: 154.51%; height: 163.84%; left: -34.55%; top: -1.34%;"
+      class="absolute inset-0 h-full w-full object-cover object-bottom"
     />
-    <!-- Затемнение верха — чтобы заголовок читался поверх фото -->
-    <div class="absolute inset-0" style="background: linear-gradient(180deg, #091832 0%, #091832 28%, rgba(9, 24, 50, 0) 46%);"></div>
+    <!-- Затемнение верха — чтобы заголовок читался поверх фото (неба всё равно
+         меньше видно, но текст у нас всё равно начинается от самого верха) -->
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, #091832 0%, rgba(9, 24, 50, 0.55) 30%, rgba(9, 24, 50, 0) 55%);"></div>
   </div>
 
   <!-- КОНТЕНТ: title → cookie → tiles, естественный поток сверху вниз -->
