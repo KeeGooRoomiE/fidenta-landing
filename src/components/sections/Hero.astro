@@ -1,113 +1,215 @@
 ---
 /*
   УРОВЕНЬ 3 — БЛОК Hero (главный экран)
-  Источник: Figma, файл Cz2upesn8p2Cd7cZTdg2WQ, узел 974:65347 (ручная правка пользователя)
 
-  Раскладка (сверху вниз, высота = по контенту, БЕЗ принудительного min-h-screen —
-  так и в Figma: секция ровно такая высокая, сколько нужно контенту):
-   1. H1 + лид + кнопки (слева)
-   2. Cookie-баннер — обычный блок в потоке, прижат вправо (НЕ fixed/overlay)
-   3. Три плитки-преимущества
-   4. Фото-полоса-переход внизу (продолжение воды, затем fade в фон страницы)
+  Собран с нуля (без привязки к прежней реализации), по прямому брифу:
+  тайтл (2 строки, вторая — золотом) + сабтайтл + 2 кнопки + 3 карточки
+  с иконками поверх фонового фото вечерней набережной.
 
-  Фон: одно фото Невы на весь блок (header+title+cookie+tiles). Буквальный перенос
-  transform-процентов из Figma (154.51%/163.84%, offset -34.55%/-1.34%) оказался
-  неверным (считался от чужого контейнера) — заменён на aspect-ratio-рамку.
+  Идея композиции:
+   - Фон — одно фото (public/images/hero-bg.webp, вечерняя Нева/набережная),
+     растянутое на всю секцию через object-cover.
+   - Поверх фото — три слоя затемнения: (1) ровный тёмно-зелёный тон на всё
+     фото — держит фирменную зелёно-золотую гамму поверх синего неба на фото;
+     (2) градиент сверху — вблизи заголовка/кнопок фон практически сплошной
+     (монотонный, как просили), читаемость текста не зависит от того, что
+     именно на фото; (3) градиент снизу — плавный выход в сплошной --color-canvas,
+     чтобы секция без шва переходила в следующий блок.
+   - Карточки стоят в зоне, где верхний градиент уже сошёл на нет — там сквозь
+     затемнение проступает фото (огни набережной), плюс мягкое золотое свечение
+     (screen-blend) у них за спиной — карточки читаются на фоне "живого" кадра,
+     а не на плоской заливke.
+   - Шрифт — Forum везде (font-accent), включая подзаголовок и карточки.
 
-  РАСКЛАДКА ФОНА — CSS Grid с наложением слоёв в одну ячейку (grid-area: 1/1):
-  это единственный способ получить ОДНОВРЕМЕННО три свойства, которые обычный
-  absolute-подход дать не может разом:
-   1. Фото-рамка держит ТОЧНЫЕ пропорции самого кадра (aspect-[1440/1183]) —
-      cover не обрезает её по вертикали, крыши домов там же, где в оригинале.
-   2. Секция НИКОГДА не обрезает контент (мобильные: плитки в столбик — выше).
-   3. Фото-рамка НИКОГДА не вылезает за пределы секции, перекрывая следующий
-      блок — на широких экранах, где контент короче высоты рамки по аспекту,
-      рамка была position:absolute и не участвовала в высоте секции → вылезала
-      ниже и её перекрывал непрозрачный фон следующей секции (баг, видно было
-      только тонкую полоску фото). Grid-наложение решает это: высота ряда
-      становится max(высота контента, высота рамки) — рамка больше не может
-      вылезти за пределы ряда, а контент никогда не обрезается.
+  Cookie-баннер (функциональность, не часть брифа) вынесен в обычное fixed
+  положение внизу справа — стандартный паттерн, не завязан на раскладку Hero.
 */
 import CookieBanner from '../CookieBanner.astro';
 
 const base = import.meta.env.BASE_URL;
 
-// Плитки: иконка + текст, разбитый на gold-фразу (span1) и обычный остаток (span2).
-const tiles = [
-  { icon: 'tile-club.png', gold: 'Fidenta Invest Club - ', rest: 'закрытое сообщество' },
-  { icon: 'tile-cycle.png', gold: 'Полный цикл сопровождения:', rest: 'аудит объекта - расчёт доходности', br: true },
-  { icon: 'tile-ownership.png', gold: 'Реальное владение: ', rest: 'доля в объекте закреплена договором' },
+const cards = [
+  {
+    icon: 'tile-club.png',
+    lead: 'Fidenta Invest Club',
+    rest: ' — закрытое сообщество',
+  },
+  {
+    icon: 'tile-cycle.png',
+    lead: 'Полный цикл сопровождения:',
+    rest: ' аудит объекта — расчёт доходности',
+  },
+  {
+    icon: 'tile-ownership.png',
+    lead: 'Реальное владение:',
+    rest: ' доля в объекте закреплена договором',
+  },
 ];
 ---
 
-<section class="relative grid overflow-hidden">
-  <!-- Слой A — сплошной фон (#091832): растягивается на всю высоту ряда
-       (self-stretch), какой бы она ни оказалась — перекрывает всё, что
-       не покрыто фото-рамкой. -->
-  <div class="col-start-1 row-start-1 -z-10 self-stretch" style="background: #091832;"></div>
+<section class="relative isolate overflow-hidden bg-canvas">
+  <!--
+    ВАЖНО: `isolate` на секции обязателен. Без него `position: relative` САМО ПО
+    СЕБЕ не создаёт stacking context (его создаёт только явный z-index/isolation),
+    и слои с отрицательным z-index «проваливаются» в ближайший РЕАЛЬНЫЙ stacking
+    context — то есть в контекст всей страницы, где рисуются ПОСЛЕ фона body, но
+    ПЕРЕД всем обычным контентом страницы (а не только контентом этой секции).
+    Итог без isolate: фото оказывается полностью перекрыто всем, что ниже по
+    DOM — секция выглядит плоским сплошным цветом, фото не видно вообще.
+    (Проверено эмпирически через devtools-инспекцию стекинга при сборке блока.)
+  -->
 
-  <!-- Слой B — фото-рамка: своя высота СТРОГО по aspect-ratio (не тянется —
-       self-start), поэтому cover не обрезает фото по вертикали (крыши домов
-       там же, где в оригинале/Figma). Лежит в той же grid-ячейке (row-start-1),
-       что и контент — следовательно не может вылезти за пределы ряда. -->
-  <div class="col-start-1 row-start-1 -z-10 aspect-[1440/1183] w-full self-start overflow-hidden">
+  <!-- Фон: фото вечерней набережной -->
+  <div class="absolute inset-0 -z-20">
     <img
       src={`${base}images/hero-bg.webp`}
       alt=""
       aria-hidden="true"
       class="h-full w-full object-cover object-bottom"
     />
-    <!-- Затемнение верха рамки — чтобы заголовок читался поверх фото -->
-    <div class="absolute inset-0" style="background: linear-gradient(180deg, #091832 0%, rgba(9, 24, 50, 0.55) 30%, rgba(9, 24, 50, 0) 55%);"></div>
   </div>
 
-  <!-- Слой C — КОНТЕНТ: title → cookie → tiles, естественный поток сверху вниз.
-       Его собственная высота + высота фото-рамки — это ровно то, что задаёт
-       итоговую высоту ряда (max двух чисел), см. комментарий выше. -->
-  <div class="col-start-1 row-start-1 container-page flex flex-col pb-10 pt-24 md:pt-32">
-    <!-- Заголовок + лид + кнопки -->
-    <div class="flex max-w-2xl flex-col gap-3">
-      <!-- H1: Forum 64/0.89, трекинг -2%. Двухцветный. -->
-      <h1 class="font-accent font-normal leading-[0.89] tracking-[-0.02em] text-[2.5rem] sm:text-5xl md:text-[64px]">
-        <span class="block text-fg">Коммерческая недвижимость, </span>
-        <span class="block text-gold-plate">открытая для частного инвестора</span>
+  <!-- Ровный зелёный тон поверх фото — держит фирменную гамму -->
+  <div class="absolute inset-0 -z-10" style="background: rgba(10, 32, 25, 0.3);"></div>
+
+  <!--
+    Верхний градиент — ФИКСИРОВАННАЯ высота (не % от секции): держит зону
+    заголовка/сабтайтла/кнопок монотонной независимо от того, насколько высокой
+    окажется секция целиком (на мобиле карточки в столбик сильно растягивают
+    общую высоту — % от неё "отъехал" бы слишком низко и часть текста осталась
+    бы без подложки). Фото открывается уже примерно на уровне карточек.
+  -->
+  <div
+    class="absolute inset-x-0 top-0 -z-10 h-[560px] md:h-[760px]"
+    style="background: linear-gradient(180deg, #0A2019 0%, #0A2019 68%, rgba(10,32,25,.85) 85%, rgba(10,32,25,0) 100%);"
+  ></div>
+
+  <!-- Золотое свечение за карточками (screen-blend — только добавляет тепла, ничего не гасит) -->
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-64 mix-blend-screen md:h-80"
+    style="background: radial-gradient(55% 90% at 50% 100%, rgba(199,162,75,.16), transparent 72%);"
+  ></div>
+
+  <!-- Нижний градиент: плавный выход в сплошной фон страницы (тоже фикс. высота) -->
+  <div
+    class="absolute inset-x-0 bottom-0 -z-10 h-32 md:h-40"
+    style="background: linear-gradient(180deg, rgba(10,32,25,0) 0%, #0A2019 85%);"
+  ></div>
+
+  <!-- Контент -->
+  <div class="container-page relative flex flex-col gap-16 pb-20 pt-36 md:gap-20 md:pb-28 md:pt-44">
+    <div class="flex max-w-2xl flex-col gap-7">
+      <h1 class="hero-title font-accent font-normal">
+        <span class="block text-fg">Коммерческая недвижимость,</span>
+        <span class="hero-title-gold block">открытая для частного инвестора</span>
       </h1>
-      <!-- Лид: Forum 20/101.465%, tracking 0.2px, кремовый. -->
-      <p class="max-w-[451px] font-accent text-xl leading-[1.015] tracking-[0.01em] text-fg">
+
+      <p class="max-w-[30rem] font-accent text-lg leading-[1.4] tracking-[0.01em] text-text-soft md:text-xl">
         Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами
         Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
       </p>
-      <!-- Кнопки: primary (плат-заливка + inset-тень) / outline (сплошная кремовая рамка) -->
-      <div class="mt-3 flex flex-wrap gap-1.5">
-        <a href="#cta" class="btn-hero btn-plat hover:brightness-110">Доступ к сделкам</a>
-        <a href="#cta" class="btn-hero btn-outline">
-          <span class="text-gold-plate">Передать объект в управление</span>
-        </a>
+
+      <div class="flex flex-wrap gap-4 pt-2">
+        <a href="#cta" class="hero-btn hero-btn--primary">Доступ к сделкам</a>
+        <a href="#cta" class="hero-btn hero-btn--secondary">Передать объект в управление</a>
       </div>
     </div>
 
-    <!-- Cookie-баннер: обычный блок в потоке, прижат вправо (по правке пользователя) -->
-    <div class="mt-16 flex justify-end md:mt-24">
-      <CookieBanner />
-    </div>
-
-    <!-- ПЛИТКИ: 1 колонка на мобиле, 3 на десктопе, gap 43px -->
-    <div class="mt-8 grid gap-[43px] md:grid-cols-3">
-      {tiles.map((tile) => (
-        <div class="plat-card flex items-center gap-[30px] px-10 py-[30px]">
-          <img src={`${base}icons/${tile.icon}`} width="63" height="58" alt="" class="h-14 w-auto shrink-0" />
-          <!-- line-height 17px — фиксированный px из Figma (не проценты) -->
-          <p class="font-accent text-[18px] tracking-[0.01em]" style="line-height: 17px;">
-            <span class="text-gold-plate">{tile.gold}</span>{tile.br && <br />}<span class="text-fg">{tile.rest}</span>
+    <div class="grid gap-5 md:grid-cols-3">
+      {cards.map((card) => (
+        <div class="hero-card">
+          <img src={`${base}icons/${card.icon}`} width="56" height="56" alt="" class="h-14 w-14 shrink-0" />
+          <p class="font-accent text-[17px] leading-[1.4] tracking-[0.01em]">
+            <span class="hero-card-gold">{card.lead}</span><span class="text-fg">{card.rest}</span>
           </p>
         </div>
       ))}
     </div>
-  </div>
 
-  <!-- ФОТО-ПОЛОСА-ПЕРЕХОД: продолжение воды (узел 2007:16618), с fade в фон страницы -->
-  <div class="relative h-24 md:h-32">
-    <img src={`${base}images/hero-bottom-strip.webp`} alt="" aria-hidden="true" class="h-full w-full object-cover" />
-    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(10, 32, 25, 0) 0%, #0A2019 100%);"></div>
+    <!--
+      Cookie-баннер: на мобильном — обычный блок в потоке после карточек (fixed
+      поверх контента на узком экране перекрывал собой вторичную кнопку — её
+      было физически не нажать, пока баннер не закрыт). От sm и шире места
+      достаточно — там он всплывает fixed-плашкой снизу справа, как обычно
+      делают cookie-баннеры.
+    -->
+    <div class="mx-auto w-fit sm:mx-0 sm:fixed sm:inset-x-auto sm:right-6 sm:bottom-6 sm:z-40 sm:w-auto">
+      <CookieBanner />
+    </div>
   </div>
 </section>
+
+<style>
+  .hero-title {
+    font-size: 2.75rem;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 640px) {
+    .hero-title {
+      font-size: 3.75rem;
+    }
+  }
+  @media (min-width: 768px) {
+    .hero-title {
+      font-size: 4.5rem;
+    }
+  }
+
+  .hero-title-gold,
+  .hero-card-gold {
+    background-image: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-accent);
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    padding: 1rem 2rem;
+    border-radius: 999px;
+    transition: transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .hero-btn--primary {
+    background-image: var(--gradient-gold);
+    color: var(--color-on-gold);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 14px 32px -14px rgba(199, 162, 75, 0.65);
+  }
+  .hero-btn--primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  .hero-btn--secondary {
+    border: 1px solid rgba(199, 162, 75, 0.5);
+    color: var(--color-accent-soft);
+    /* Полупрозрачная тёмная подложка + блюр — кнопка лежит поверх фото, текст
+       должен читаться независимо от того, что именно под ней на кадре. */
+    background: rgba(8, 20, 16, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .hero-btn--secondary:hover {
+    border-color: var(--color-accent-soft);
+    background: rgba(8, 20, 16, 0.7);
+    transform: translateY(-1px);
+  }
+
+  .hero-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.75rem;
+    border-radius: 16px;
+    background: rgba(12, 42, 34, 0.55);
+    border: 1px solid rgba(199, 162, 75, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+</style>
