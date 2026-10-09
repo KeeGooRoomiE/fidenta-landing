@@ -1,16 +1,23 @@
 ---
 /*
   УРОВЕНЬ 3 — БЛОК Header (шапка)
-  Источник: Figma, узел 974:65465 (внутри 974:65347)
 
-  Прозрачная шапка поверх Hero (фото Невы просвечивает), компактная (~40px):
-    [☰ бургер + адрес/телефон] ....... [логотип по центру] ....... [Консультация]
-  Навигация спрятана за бургер (раскрывается выпадающей панелью).
+  Переделан: на самом верху страницы — прозрачная полоса поверх Hero (фото
+  просвечивает), как и раньше. Но при скролле (когда под хедером уже не фото,
+  а обычный контент секций) полоса не просто покрывается блюром на всю ширину —
+  она становится отдельной плавающей карточкой: с отступами от краёв, со своим
+  скруглением, золотой рамкой и тенью. Переключение — классом/атрибутом
+  `data-scrolled`, который вешает скролл-листенер ниже; вся анимация — на CSS
+  transition, JS только трогает один атрибут.
 
-  Раскладка — grid из 3 колонок 1fr/auto/1fr, логотип строго по центру
-  независимо от ширины левого/правого блоков.
-
-  Хедер fixed — лежит поверх контента, Hero имеет верхний отступ (pt-28/36) под него.
+  Логотип центрируется через `absolute` + `-translate-x-1/2` НЕЗАВИСИМО от
+  ширины левого/правого блоков (а не через grid 1fr/auto/1fr, как было раньше) —
+  это сознательно: при grid-раскладке на узких экранах левый/правый блок могли
+  столкнуться с центральным, если тот не помещался в оставшееся место (так и
+  было: лого наезжало на кнопку «Консультация» на мобильном). С `absolute`
+  такого столкновения по разметке быть не может; дополнительно логотип на
+  мобильном уменьшен и показывается в одну строку (без подписи «архитектура
+  капитала»), чтобы с запасом помещаться между бургером и кнопкой.
 */
 const base = import.meta.env.BASE_URL;
 
@@ -24,41 +31,42 @@ const navLinks = [
 ];
 ---
 
-<header class="fixed inset-x-0 top-0 z-50">
-  <div class="container-page grid h-16 grid-cols-[1fr_auto_1fr] items-center md:h-20">
-    <!-- ЛЕВО: бургер + адрес/телефон рядом (по Figma это один блок, не только иконка) -->
-    <div class="flex items-center gap-3 justify-self-start">
-      <button
-        id="menu-toggle"
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
-        aria-label="Открыть меню"
-        aria-expanded="false"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <line x1="4" y1="7" x2="20" y2="7" />
-          <line x1="4" y1="12" x2="20" y2="12" />
-          <line x1="4" y1="17" x2="20" y2="17" />
-        </svg>
-      </button>
-      <!-- Адрес/телефон — видны только на md+ (на мобиле не помещаются рядом с бургером) -->
-      <div class="hidden font-accent text-sm leading-tight text-fg md:block">
-        <p class="m-0">Спб, Богатырский 18 к 4 ст2</p>
-        <p class="m-0">+7 (812) 000-00-00</p>
+<header class="fixed inset-x-0 top-0 z-50" id="site-header" data-scrolled="false">
+  <div class="header-bar">
+    <div class="container-page relative flex h-16 items-center justify-between md:h-20">
+      <!-- ЛЕВО: бургер + адрес/телефон (адрес скрыт до md — не помещается рядом с бургером) -->
+      <div class="flex items-center gap-3">
+        <button
+          id="menu-toggle"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
+          aria-label="Открыть меню"
+          aria-expanded="false"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
+        <div class="hidden font-accent text-sm leading-tight text-fg md:block">
+          <p class="m-0">Спб, Богатырский 18 к 4 ст2</p>
+          <p class="m-0">+7 (812) 000-00-00</p>
+        </div>
       </div>
-    </div>
 
-    <!-- ЦЕНТР: логотип (знак-мост + wordmark золотым металликом) -->
-    <a href="#" class="flex items-center gap-3 justify-self-center">
-      <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-7 w-auto" />
-      <span class="leading-none">
-        <span class="block font-display text-lg tracking-[0.18em] text-gold-plate">ФИДЕНТА</span>
-        <span class="mt-1 block text-right text-[0.5rem] uppercase tracking-[0.2em] text-accent/80">архитектура капитала</span>
-      </span>
-    </a>
+      <!-- ЦЕНТР: логотип — всегда строго по центру полосы, независимо от ширины соседей.
+           На мобильном сильно компактнее (меньше знак, мельче и плотнее wordmark) —
+           иначе при true-center перекрывает бургер/кнопку на узких экранах. -->
+      <a href="#" class="absolute left-1/2 flex -translate-x-1/2 items-center gap-1.5 md:gap-3">
+        <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-4 w-auto md:h-7" />
+        <span class="leading-none">
+          <span class="block font-display text-xs tracking-[0.04em] text-gold-plate md:text-lg md:tracking-[0.18em]">ФИДЕНТА</span>
+          <span class="mt-1 hidden text-right text-[0.5rem] uppercase tracking-[0.2em] text-accent/80 md:block">архитектура капитала</span>
+        </span>
+      </a>
 
-    <!-- ПРАВО: кнопка «Консультация» (сплошная кремовая рамка, плат-текст) -->
-    <div class="justify-self-end">
-      <a href="#cta" class="btn-hero btn-outline">
+      <!-- ПРАВО: кнопка «Консультация» — компактная на мобильном, обычная от sm -->
+      <a href="#cta" class="header-cta btn-hero btn-outline shrink-0">
         <span class="text-gold-plate">Консультация</span>
       </a>
     </div>
@@ -80,6 +88,63 @@ const navLinks = [
   </nav>
 </header>
 
+<style>
+  .header-bar {
+    margin: 0 0.75rem;
+    border-radius: 1.25rem;
+    border: 1px solid transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition:
+      margin 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      border-radius 0.4s ease,
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease,
+      backdrop-filter 0.4s ease;
+  }
+
+  /* До скролла рамка выключена полностью: margin 0 у краёв контейнера страницы,
+     фон прозрачный — ровно то же ощущение, что было раньше поверх фото Hero. */
+  header[data-scrolled='false'] .header-bar {
+    margin-inline: 0;
+    border-radius: 0;
+  }
+
+  /* После скролла — плавающая карточка: отступ от краёв, скругление, золотая
+     рамка, тень и блюр. Не на всю ширину экрана и не прямоугольник. */
+  header[data-scrolled='true'] .header-bar {
+    margin: 0.625rem 0.75rem 0;
+    border-color: rgba(199, 162, 75, 0.28);
+    background: rgba(10, 20, 17, 0.64);
+    box-shadow: 0 16px 36px -18px rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  @media (min-width: 768px) {
+    header[data-scrolled='true'] .header-bar {
+      margin: 0.75rem auto 0;
+      max-width: 74rem;
+    }
+  }
+
+  /* Кнопка «Консультация»: своя, компактная на мобильном раскладка поверх
+     общей btn-hero/btn-outline — иначе на узких экранах задевает логотип. */
+  .header-cta {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .header-cta {
+      padding: 0.625rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
+</style>
+
 <script>
   // Бургер раскрывает/прячет панель навигации на всех экранах.
   const toggle = document.getElementById('menu-toggle');
@@ -97,4 +162,29 @@ const navLinks = [
       toggle?.setAttribute('aria-expanded', 'false');
     });
   });
+
+  // Переключаем data-scrolled у хедера, когда страница прокручена — вся
+  // визуальная разница (плавающая карточка) решается CSS-transition выше,
+  // здесь только булево состояние по порогу скролла.
+  const header = document.getElementById('site-header');
+  const SCROLL_THRESHOLD = 24;
+  let ticking = false;
+
+  function syncScrolledState() {
+    const isScrolled = window.scrollY > SCROLL_THRESHOLD;
+    header?.setAttribute('data-scrolled', String(isScrolled));
+    ticking = false;
+  }
+
+  syncScrolledState();
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(syncScrolledState);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
 </script>
