@@ -66,7 +66,7 @@ const cards = [
 
   <!-- Контент — уже на сплошном фоне секции, текст нигде не лежит поверх
        фото, поэтому читаемость не зависит от того, что именно на кадре. -->
-  <div class="container-page relative -mt-10 flex flex-col gap-16 pb-20 pt-0 md:-mt-16 md:gap-20 md:pb-28">
+  <div class="container-page relative -mt-10 flex flex-col gap-16 pb-20 pt-0 md:-mt-[320px] md:gap-20 md:pb-10">
     <div class="flex max-w-2xl flex-col gap-7">
       <h1 class="hero-title font-accent font-normal">
         <span class="block text-fg">Коммерческая недвижимость,</span>
@@ -92,7 +92,7 @@ const cards = [
       ></div>
       {cards.map((card) => (
         <div class="hero-card">
-          <img src={`${base}icons/${card.icon}`} width="56" height="56" alt="" class="h-14 w-14 shrink-0" />
+          <img src={`${base}icons/${card.icon}`} width="56" height="56" alt="" class="h-14 w-14 shrink-0 md:h-10 md:w-10" />
           <p class="font-accent text-[17px] leading-[1.4] tracking-[0.01em]">
             <span class="hero-card-gold">{card.lead}</span><span class="text-fg">{card.rest}</span>
           </p>
@@ -166,7 +166,19 @@ const cards = [
     gap: 1.25rem;
     padding: 1.75rem;
     border-radius: 16px;
-    background: rgba(12, 42, 34, 0.55);
+    /* Сплошная заливка — не размытое стекло: за карточками фото больше нет
+       (оно осталось только в баннере выше), прозрачность/блюр тут ничего не
+       показывали бы, кроме сплошного фона секции. */
+    background: var(--color-surface);
     border: 1px solid rgba(199, 162, 75, 0.25);
+  }
+  /* На ПК — компактнее и иконка на одном уровне с текстом (не над ним). */
+  @media (min-width: 768px) {
+    .hero-card {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.125rem 1.25rem;
+    }
   }
 </style>
