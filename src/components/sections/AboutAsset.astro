@@ -1,12 +1,21 @@
 ---
 /*
   УРОВЕНЬ 3 — БЛОК «Превращаем недвижимость в актив» (о компании)
+  Источник раскладки: Figma, узел 974:65230 — референс ТОЛЬКО по пропорциям
+  и группировке (там нет ни резиновости, ни нормальной размерной сетки,
+  фикс. пиксельные ширины 466/800px — не копируем буквально).
 
-  Структура по дизайну:
+  Структура:
    - Заголовок секции (eyebrow + H2 с золотым акцентом + подзаголовок)
-   - Верхний ряд: слева 3 карточки-аудитории (инвестор/собственник/объект),
-     справа — фото офиса на всю высоту стопки карточек
-   - Нижний ряд: слева карточка «Архитектура капитала», справа — широкий текст
+   - Левая колонка — 1/3: 4 карточки подряд (инвестор/собственник/объект/
+     архитектура капитала) — раньше «Архитектура капитала» была в отдельном
+     нижнем ряду 50/50 с текстом, из-за чего не было самого понятия «первая
+     часть» — теперь это одна левая колонка целиком.
+   - Правая колонка — 2/3: фото офиса сверху, широкая текстовая карточка снизу.
+   - lg:items-stretch + flex-1 на фото — правая колонка по высоте равна левой
+     (4 карточки), фото тянется, текстовая карточка снизу — auto.
+   - На мобильном/планшете — одна колонка, порядок как в разметке (карточки,
+     потом фото, потом текст).
 
   Иконки карточек — inline-SVG (золото), плейсхолдеры под экспорт из Figma.
 */
@@ -31,8 +40,8 @@ const cards = [
       description="Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а объект становился дороже с каждым годом."
     />
 
-    <!-- ВЕРХНИЙ РЯД: 3 карточки слева + фото офиса справа (на всю высоту) -->
-    <div class="mt-12 grid gap-4 lg:grid-cols-2 lg:items-stretch">
+    <!-- Левая колонка 1/3: 4 карточки. Правая колонка 2/3: фото + текст. -->
+    <div class="mt-12 grid gap-4 lg:grid-cols-[1fr_2fr] lg:items-stretch">
       <div class="flex flex-col gap-4">
         {cards.map((card) => (
           <article class="flex items-start gap-5 rounded-lg border border-border bg-surface p-6">
@@ -63,39 +72,44 @@ const cards = [
             </div>
           </article>
         ))}
+
+        <!-- «Архитектура капитала» — раньше стояла отдельным нижним рядом
+             50/50 с текстом; теперь часть той же левой колонки (1/3), как в
+             Figma-референсе. -->
+        <article class="flex items-start gap-5 rounded-lg border border-border bg-surface p-6">
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-accent/30 text-accent">
+            <!-- Знак-мост (упрощённый line-icon) -->
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 18h20" />
+              <path d="M7 18V7M17 18V7" />
+              <path d="M7 7 2 14M7 7l5 7M17 7l-5 7M17 7l5 7" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-medium text-xl">Архитектура капитала</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-muted">Это наша философия. Мост соединяющий возможности.</p>
+          </div>
+        </article>
       </div>
 
-      <!-- Фото офиса. object-cover + h-full тянет по высоте стопки карточек слева. -->
-      <img
-        src={`${base}images/office.webp`}
-        alt="Офис управляющей компании «Фидента»"
-        class="h-full min-h-[320px] w-full rounded-lg object-cover"
-      />
-    </div>
-
-    <!-- НИЖНИЙ РЯД: «Архитектура капитала» + широкий текст -->
-    <div class="mt-4 grid gap-4 lg:grid-cols-2">
-      <article class="flex items-start gap-5 rounded-lg border border-border bg-surface p-6">
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-accent/30 text-accent">
-          <!-- Знак-мост (упрощённый line-icon) -->
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M2 18h20" />
-            <path d="M7 18V7M17 18V7" />
-            <path d="M7 7 2 14M7 7l5 7M17 7l-5 7M17 7l5 7" />
-          </svg>
+      <!-- Правая колонка: фото (тянется, flex-1) + широкая текстовая карточка снизу (auto). -->
+      <div class="flex flex-col gap-4">
+        <div class="relative min-h-[320px] flex-1 overflow-hidden rounded-lg">
+          <img
+            src={`${base}images/office.webp`}
+            alt="Офис управляющей компании «Фидента»"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas/60 via-transparent to-transparent"></div>
         </div>
-        <div>
-          <h3 class="font-medium text-xl">Архитектура капитала</h3>
-          <p class="mt-1.5 text-sm leading-relaxed text-muted">Это наша философия. Мост соединяющий возможности.</p>
-        </div>
-      </article>
 
-      <div class="flex items-center rounded-lg border border-border bg-surface p-8">
-        <p class="leading-relaxed text-text-soft">
-          Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления,
-          оптимизации процессов и долгосрочной стратегии развития, превращая коммерческую
-          недвижимость в надёжный инвестиционный актив.
-        </p>
+        <div class="flex items-center rounded-lg border border-border bg-surface p-8">
+          <p class="leading-relaxed text-text-soft">
+            Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления,
+            оптимизации процессов и долгосрочной стратегии развития, превращая коммерческую
+            недвижимость в надёжный инвестиционный актив.
+          </p>
+        </div>
       </div>
     </div>
   </div>
