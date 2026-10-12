@@ -1,0 +1,80 @@
+---
+/*
+  СЛУЖЕБНАЯ СТРАНИЦА — /test-hero
+
+  Только для подбора фото в Hero дизайнером. НЕ часть основного сайта,
+  нигде не ссылается на себя и ниоткуда не ссылается. Собирает три
+  существующих блока как есть (Header, Hero, AboutAsset) — остальной
+  функционал не трогаем, никаких форков компонентов.
+
+  Кнопка «Консультация» в хедере здесь НЕ ведёт на форму (на странице нет
+  #cta) — скрипт ниже перехватывает клик и открывает системный диалог
+  выбора файла; выбранное фото через object URL подставляется в
+  #hero-bg-image (id добавлен в Hero.astro — больше он ни на что не влияет).
+  Можно грузить разные фото подряд — предыдущий object URL освобождается
+  (revokeObjectURL), чтобы не копить память за долгую сессию подбора.
+*/
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import AboutAsset from '../components/sections/AboutAsset.astro';
+---
+
+<Layout title="Тест Hero — подбор фото (служебная страница)">
+  <Header />
+  <main>
+    <Hero />
+    <AboutAsset />
+  </main>
+
+  <!-- Скрытый input — открывается программно по клику на «Консультация» -->
+  <input type="file" accept="image/*" id="hero-photo-input" class="hidden" aria-hidden="true" />
+
+  <!-- Подсказка для дизайнера: fixed, не часть дизайна блоков -->
+  <div class="fixed bottom-4 left-4 z-[60] max-w-xs rounded-lg border border-accent/30 bg-surface/95 p-4 text-sm text-fg shadow-lg backdrop-blur">
+    <p class="font-semibold text-accent">Тестовая страница подбора фото</p>
+    <p class="mt-1 text-text-soft">
+      Кнопка «Консультация» в хедере открывает выбор файла — фото подставится в фон Hero.
+    </p>
+    <button
+      id="hero-photo-reset"
+      type="button"
+      class="mt-3 rounded-md border border-border px-3 py-1.5 text-xs text-fg transition-colors hover:border-accent hover:text-accent"
+    >
+      Вернуть оригинал
+    </button>
+  </div>
+</Layout>
+
+<script>
+  const input = document.getElementById('hero-photo-input') as HTMLInputElement | null;
+  const cta = document.querySelector<HTMLAnchorElement>('.header-cta');
+  const heroImg = document.getElementById('hero-bg-image') as HTMLImageElement | null;
+  const resetBtn = document.getElementById('hero-photo-reset');
+
+  const originalSrc = heroImg?.getAttribute('src') ?? '';
+  let currentObjectUrl: string | null = null;
+
+  cta?.addEventListener('click', (e) => {
+    e.preventDefault();
+    input?.click();
+  });
+
+  input?.addEventListener('change', () => {
+    const file = input.files?.[0];
+    if (!file || !heroImg) return;
+
+    if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+    currentObjectUrl = URL.createObjectURL(file);
+    heroImg.src = currentObjectUrl;
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    if (currentObjectUrl) {
+      URL.revokeObjectURL(currentObjectUrl);
+      currentObjectUrl = null;
+    }
+    if (heroImg) heroImg.src = originalSrc;
+    if (input) input.value = '';
+  });
+</script>
