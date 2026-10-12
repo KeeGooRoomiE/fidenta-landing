@@ -97,8 +97,18 @@ const navLinks = [
     светлая плавающая карточка в той же логике, что и сама пилюля (те же
     отступы/скругление/тень) — продолжение одного и того же языка, а не
     второй отдельный стиль.
+
+    ВАЖНО: `absolute` обязателен. `<header>` — flex-col ФИКСИРОВАННОЙ высоты
+    (см. комментарий вверху файла про .header-pill), контент-роу внутри
+    прижат к низу через mt-auto. Без absolute nav-panel был бы ВТОРЫМ
+    flow-элементом в том же flex-col — при открытии меню он начинал
+    участвовать в расчёте высоты наравне с контент-роу, свободное место для
+    mt-auto схлопывалось, и контент-роу (лого/бургер/кнопка) прыгал к ВЕРХУ
+    капсулы вместо низа ("меню сдвигает весь хэдер внутри капсулы"). absolute
+    полностью убирает nav-panel из flex-потока — на контент-роу открытие
+    меню теперь вообще никак не влияет.
   -->
-  <nav id="nav-panel" class="nav-panel hidden">
+  <nav id="nav-panel" class="nav-panel absolute inset-x-0 top-full hidden">
       <div class="nav-panel-card mx-3 overflow-hidden md:mx-auto md:max-w-[74rem]">
         <div class="grid gap-1 p-4 sm:grid-cols-2">
           {navLinks.map((link) => (
