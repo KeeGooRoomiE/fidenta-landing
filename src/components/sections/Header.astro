@@ -2,15 +2,28 @@
 /*
   УРОВЕНЬ 3 — БЛОК Header (шапка)
 
-  На самом верху страницы — прозрачная полоса во всю ширину, флэш с краем
-  экрана (фото Hero просвечивает). При скролле полоса "отлипает" от края:
-  сжимается в золотистые поля, превращается в широкую белую пилюлю (fully
-  rounded, светлый фон вместо прозрачного/тёмного) — заметная, однозначная
-  смена состояния, а не просто более тёмный блюр. Цвета текста/иконок внутри
+  На самом верху страницы — прозрачная полоса во всю ширину (фото Hero
+  просвечивает). При скролле за полосой проявляется светло-серая
+  полупрозрачная пилюля (fully rounded) с блюром. Цвета текста/иконок внутри
   тоже переключаются (золото-на-тёмном → тёмно-зелёный на светлом), иначе
-  кремовый/золотой текст потерялся бы на белом. Переключение — атрибутом
-  `data-scrolled` на `<header>`, JS только считает порог скролла, вся
-  анимация — на CSS transition.
+  кремовый/золотой текст потерялся бы на светлом фоне. Переключение —
+  атрибутом `data-scrolled` на `<header>`, JS только считает порог скролла,
+  вся анимация — на CSS transition.
+
+  ВАЖНО про саму пилюлю (.header-pill): это ОТДЕЛЬНЫЙ `absolute`-слой под
+  контентом, а не контейнер, который сам меняет margin/max-width. Раньше
+  именно контейнер с контентом внутри менял размер (margin-inline/max-width
+  от "во всю ширину" до "узкая по центру") — при скролле вверх было ВИДНО,
+  как прямоугольник физически расширяется обратно (это и есть "растягивание",
+  на которое жаловались, причём дважды: синхронизация кривых анимации не
+  помогает, если МЕНЯЕТСЯ САМА ГЕОМЕТРИЯ). Теперь геометрия пилюли
+  (позиция/размер/скругление) ПОСТОЯННА на обоих состояниях — анимируется
+  ТОЛЬКО opacity (и вместе с ней фон/рамка/тень/блюр, т.к. это один и тот же
+  элемent). Контент (лого/навигация/кнопка) тоже не сдвигается между
+  состояниями — высота `<header>` фиксирована (не зависит от data-scrolled),
+  контент прижат к низу (`mt-auto`) ровно там, где раньше была нижняя граница
+  полосы. Визуально ничего не "растёт" и не "едет" — пилюля просто
+  проявляется/гаснет на своём месте.
 
   Логотип центрируется через `absolute` + `-translate-x-1/2` НЕЗАВИСИМО от
   ширины левого/правого блоков (а не через grid 1fr/auto/1fr, как было раньше) —
@@ -33,9 +46,12 @@ const navLinks = [
 ];
 ---
 
-<header class="fixed inset-x-0 top-0 z-50" id="site-header" data-scrolled="false">
-  <div class="header-bar">
-    <div class="container-page relative flex h-16 items-center justify-between md:h-20">
+<header class="fixed inset-x-0 top-0 z-50 flex h-[74px] flex-col md:h-[92px]" id="site-header" data-scrolled="false">
+  <!-- Пилюля-подложка: отдельный слой, геометрия ПОСТОЯННА (см. комментарий
+       вверху файла) — анимируется только opacity, никогда margin/width. -->
+  <div class="header-pill pointer-events-none absolute inset-x-3 top-2.5 bottom-0 md:inset-x-0 md:top-3 md:mx-auto md:max-w-[74rem]" aria-hidden="true"></div>
+
+  <div class="container-page relative mt-auto flex h-16 items-center justify-between md:h-20">
       <!-- ЛЕВО: бургер + адрес/телефон (адрес скрыт до md — не помещается рядом с бургером) -->
       <div class="flex items-center gap-3">
         <button
@@ -71,7 +87,6 @@ const navLinks = [
       <a href="#cta" class="header-cta btn-hero btn-outline shrink-0">
         <span class="header-cta-label text-gold-plate">Консультация</span>
       </a>
-    </div>
   </div>
 
   <!-- ВЫПАДАЮЩАЯ ПАНЕЛЬ НАВИГАЦИИ (скрыта по умолчанию) -->
@@ -91,55 +106,25 @@ const navLinks = [
 </header>
 
 <style>
-  .header-bar {
-    margin: 0 0.75rem;
-    border-radius: 1.25rem;
-    border: 1px solid transparent;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    /*
-      ВАЖНО: одна и та же длительность+кривая на ВСЕХ свойствах. Раньше у
-      margin/max-width была своя кривая (cubic-bezier), а у остальных —
-      другая (ease) — при одинаковой длительности это всё равно разные
-      промежуточные значения в каждый момент времени, из-за чего форма
-      (растяжение полей/скругления) и цвет/прозрачность визуально
-      рассинхронизировались: было видно, как плашка сначала "вырастает",
-      и только потом отдельно проявляется/гаснет цвет. Единая кривая для
-      всего — форма и цвет меняются синхронно, одним движением.
-    */
-    transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* До скролла рамка выключена полностью: margin 0 у краёв контейнера страницы,
-     фон прозрачный — ровно то же ощущение, что было раньше поверх фото Hero. */
-  header[data-scrolled='false'] .header-bar {
-    margin-inline: 0;
-    border-radius: 0;
-  }
-
-  /* После скролла — полоса "отлипает": поля по бокам, ПОЛНОЕ скругление
-     (pill, не просто rounded-2xl) и смена фона на светло-серый ПОЛУПРОЗРАЧНЫЙ
-     (не сплошной белый/кремовый) — сквозь него слегка видно то, что
-     скроллится под хедером, плюс блюр держит текст читаемым поверх этого. */
-  header[data-scrolled='true'] .header-bar {
-    margin: 0.625rem 0.75rem 0;
+  /*
+    Пилюля — ОДИН раз зафиксированная геометрия (позиция/размер/скругление
+    заданы в разметке через Tailwind-классы и никогда не меняются). Здесь
+    анимируется ТОЛЬКО opacity — вместе с ней естественным образом "гаснут"
+    фон/рамка/тень/блюр, т.к. всё это один и тот же элемент. Никакого
+    margin/width transition — значит нечему визуально "растягиваться".
+  */
+  .header-pill {
     border-radius: 999px;
-    border-color: rgba(20, 22, 20, 0.12);
+    border: 1px solid rgba(20, 22, 20, 0.12);
     background: rgba(221, 223, 219, 0.72);
     box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  @media (min-width: 768px) {
-    header[data-scrolled='true'] .header-bar {
-      margin: 0.75rem auto 0;
-      max-width: 74rem;
-    }
+  header[data-scrolled='true'] .header-pill {
+    opacity: 1;
   }
 
   /* Текст/иконки были рассчитаны на тёмный фон (кремовый/золотой) — на белой
@@ -153,7 +138,7 @@ const navLinks = [
   .header-logo-sub,
   .header-cta,
   .header-cta-label {
-    /* Та же длительность+кривая, что и у .header-bar выше — текст и фон
+    /* Та же длительность+кривая, что и у .header-pill выше — текст и фон
        пилюли должны проявляться синхронно, одним движением. */
     transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
