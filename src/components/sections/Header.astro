@@ -89,18 +89,30 @@ const navLinks = [
       </a>
   </div>
 
-  <!-- ВЫПАДАЮЩАЯ ПАНЕЛЬ НАВИГАЦИИ (скрыта по умолчанию) -->
-  <nav id="nav-panel" class="hidden border-t border-white/10 bg-canvas/95 backdrop-blur-md">
-    <div class="container-page grid gap-1 py-6 sm:grid-cols-2">
-      {navLinks.map((link) => (
-        <a href={link.href} class="rounded-lg px-4 py-3 text-base text-fg/90 transition-colors hover:bg-surface hover:text-accent">
-          {link.label}
-        </a>
-      ))}
-    </div>
-    <div class="container-page flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-white/10 py-4 text-sm text-muted">
-      <a href="tel:+78120000000" class="font-semibold text-fg hover:text-accent">+7 (812) 000-00-00</a>
-      <span>СПб, Богатырский 18 к 4 ст2</span>
+  <!--
+    ВЫПАДАЮЩАЯ ПАНЕЛЬ НАВИГАЦИИ (скрыта по умолчанию).
+    Раньше была сплошной тёмно-зелёной полосой во всю ширину с жёсткими
+    углами — на верхнем (прозрачном) состоянии ещё туда-сюда, но под белой
+    плавающей пилюлёй смотрелась чужеродным тёмным блоком. Теперь это
+    светлая плавающая карточка в той же логике, что и сама пилюля (те же
+    отступы/скругление/тень) — продолжение одного и того же языка, а не
+    второй отдельный стиль.
+  -->
+  <nav id="nav-panel" class="nav-panel hidden">
+    <div class="container-page">
+      <div class="nav-panel-card overflow-hidden">
+        <div class="grid gap-1 p-4 sm:grid-cols-2">
+          {navLinks.map((link) => (
+            <a href={link.href} class="rounded-lg px-4 py-3 text-base text-canvas/90 transition-colors hover:bg-canvas/5 hover:text-gold-deep">
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-canvas/10 px-6 py-4 text-sm text-canvas/70">
+          <a href="tel:+78120000000" class="font-semibold text-canvas hover:text-gold-deep">+7 (812) 000-00-00</a>
+          <span>СПб, Богатырский 18 к 4 ст2</span>
+        </div>
+      </div>
     </div>
   </nav>
 </header>
@@ -198,6 +210,25 @@ const navLinks = [
     .header-cta {
       padding: 0.625rem 1.5rem;
       font-size: 1rem;
+    }
+  }
+
+  /* Выпадающая панель навигации — светлая плавающая карточка, тот же язык,
+     что у .header-pill (см. комментарий в разметке выше). Ширина карточки
+     выровнена с пилюлёй (74rem на md+) через переопределение max-width
+     у вложенного .container-page. */
+  .nav-panel-card {
+    margin-top: 0.5rem;
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(20, 22, 20, 0.1);
+    box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  @media (min-width: 768px) {
+    .nav-panel > .container-page {
+      max-width: 74rem;
     }
   }
 </style>
