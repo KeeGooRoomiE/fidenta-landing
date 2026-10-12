@@ -99,14 +99,20 @@ const navLinks = [
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    transition:
-      margin 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      border-radius 0.4s ease,
-      background-color 0.4s ease,
-      border-color 0.4s ease,
-      box-shadow 0.4s ease,
-      backdrop-filter 0.4s ease;
+    /*
+      ВАЖНО: одна и та же длительность+кривая на ВСЕХ свойствах. Раньше у
+      margin/max-width была своя кривая (cubic-bezier), а у остальных —
+      другая (ease) — при одинаковой длительности это всё равно разные
+      промежуточные значения в каждый момент времени, из-за чего форма
+      (растяжение полей/скругления) и цвет/прозрачность визуально
+      рассинхронизировались: было видно, как плашка сначала "вырастает",
+      и только потом отдельно проявляется/гаснет цвет. Единая кривая для
+      всего — форма и цвет меняются синхронно, одним движением.
+    */
+    transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* До скролла рамка выключена полностью: margin 0 у краёв контейнера страницы,
@@ -117,17 +123,17 @@ const navLinks = [
   }
 
   /* После скролла — полоса "отлипает": поля по бокам, ПОЛНОЕ скругление
-     (pill, не просто rounded-2xl) и смена фона на светлый (тёплый кремовый
-     --color-fg) вместо тёмного стекла. Это сознательно заметная смена
-     состояния, а не просто более тёмный блюр того же прямоугольника. */
+     (pill, не просто rounded-2xl) и смена фона на светло-серый ПОЛУПРОЗРАЧНЫЙ
+     (не сплошной белый/кремовый) — сквозь него слегка видно то, что
+     скроллится под хедером, плюс блюр держит текст читаемым поверх этого. */
   header[data-scrolled='true'] .header-bar {
     margin: 0.625rem 0.75rem 0;
     border-radius: 999px;
-    border-color: rgba(10, 32, 25, 0.1);
-    background: var(--color-fg);
+    border-color: rgba(20, 22, 20, 0.12);
+    background: rgba(221, 223, 219, 0.72);
     box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
   @media (min-width: 768px) {
     header[data-scrolled='true'] .header-bar {
@@ -147,7 +153,10 @@ const navLinks = [
   .header-logo-sub,
   .header-cta,
   .header-cta-label {
-    transition: color 0.35s ease, border-color 0.35s ease, background-color 0.35s ease;
+    /* Та же длительность+кривая, что и у .header-bar выше — текст и фон
+       пилюли должны проявляться синхронно, одним движением. */
+    transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   header[data-scrolled='true'] .header-burger {
