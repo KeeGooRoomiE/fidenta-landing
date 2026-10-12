@@ -99,8 +99,7 @@ const navLinks = [
     второй отдельный стиль.
   -->
   <nav id="nav-panel" class="nav-panel hidden">
-    <div class="container-page">
-      <div class="nav-panel-card overflow-hidden">
+      <div class="nav-panel-card mx-3 overflow-hidden md:mx-auto md:max-w-[74rem]">
         <div class="grid gap-1 p-4 sm:grid-cols-2">
           {navLinks.map((link) => (
             <a href={link.href} class="rounded-lg px-4 py-3 text-base text-canvas/90 transition-colors hover:bg-canvas/5 hover:text-gold-deep">
@@ -113,7 +112,6 @@ const navLinks = [
           <span>СПб, Богатырский 18 к 4 ст2</span>
         </div>
       </div>
-    </div>
   </nav>
 </header>
 
@@ -214,9 +212,12 @@ const navLinks = [
   }
 
   /* Выпадающая панель навигации — светлая плавающая карточка, тот же язык,
-     что у .header-pill (см. комментарий в разметке выше). Ширина карточки
-     выровнена с пилюлёй (74rem на md+) через переопределение max-width
-     у вложенного .container-page. */
+     что у .header-pill (см. комментарий в разметке выше). Ширина/отступы —
+     mx-3 / md:mx-auto md:max-w-[74rem] прямо в разметке, ТА ЖЕ техника, что
+     у .header-pill (inset-x-3 / md:inset-x-0 md:mx-auto md:max-w-[74rem]) —
+     раньше тут был .container-page с собственным padding-inline, из-за
+     которого карточка оказывалась уже пилюли на 48px (24px с каждой
+     стороны) — видимое рассогласование краёв при открытии меню. */
   .nav-panel-card {
     margin-top: 0.5rem;
     border-radius: 1.25rem;
@@ -225,11 +226,6 @@ const navLinks = [
     box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-  }
-  @media (min-width: 768px) {
-    .nav-panel > .container-page {
-      max-width: 74rem;
-    }
   }
 </style>
 
