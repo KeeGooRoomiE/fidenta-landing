@@ -1,0 +1,51 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Фидента - команда» (фото + заголовок)
+  Источник: Figma, узел 974:65889
+
+  Простой блок: eyebrow (линия+текст) → H2 (ОДНОЦВЕТНЫЙ, не плат-градиент —
+  в отличие от соседних блоков, здесь обычный #f4f1ea) → подзаголовок →
+  фото в толстой золотой рамке (16px, radius 9).
+
+  ⚠️ В тексте H2 похоже на опечатку: «стань часть сильной команды» — скорее
+  всего должно быть «стань частью сильной команды». Не правлю молча — текст
+  взят из Figma дословно, опечатку нужно подтвердить/поправить у клиента
+  (это не плейсхолдер вида [ДАННЫЕ: ...], а обычная строка контента, поэтому
+  не трогаю без запроса — другое дело, если это окажется реальной ошибкой).
+
+  Фото (public/images/team-silhouettes.webp) — стоковое изображение-плейсхолдер
+  из Figma (силуэты у окна + наложенные цифры биржевого тикера), явно НЕ
+  настоящая команда Фиденты. Скачано скриншотом узла и обрезано от золотой
+  рамки Figma (рамку рисуем сами через CSS border, чтобы не задваивать).
+*/
+const base = import.meta.env.BASE_URL;
+---
+
+<section class="py-20 md:py-28">
+  <div class="container-page">
+    <!-- Заголовок блока -->
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Команда</span>
+      </div>
+      <h2 class="font-accent text-4xl leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+        Фидента - команда, стань часть сильной команды
+      </h2>
+      <p class="max-w-[860px] font-accent text-xl leading-[1.2] text-fg">
+        Фидента объединяет людей, которые думают о своем будущем
+      </p>
+    </div>
+
+    <!-- Фото в золотой рамке -->
+    <div class="mt-12 overflow-hidden rounded-[9px] border-[16px] border-[#fff1d9] md:mt-16">
+      <img
+        src={`${base}images/team-silhouettes.webp`}
+        alt="Команда Фидента"
+        width="1154"
+        height="648"
+        class="aspect-[1154/648] w-full object-cover"
+      />
+    </div>
+  </div>
+</section>
