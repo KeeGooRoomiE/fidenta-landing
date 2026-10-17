@@ -35,6 +35,9 @@
 
   /* --- Нейтрали (текст) -------------------------------------------- */
   --color-fg: #F4F1EA;           /* text: основной текст                    → text-fg       */
+  --color-fg-dim: #D4D4D4;       /* нейтральный (не кремовый) светлый текст — встречается
+                                     в отдельных блоках (напр. «Крупный актив»), светлее
+                                     muted, но холоднее/темнее fg      → text-fg-dim   */
   --color-text-soft: #C5D2CB;    /* text-soft: вторичный текст              → text-text-soft */
   --color-muted: #9FB3AA;        /* text-muted: приглушённый                 → text-muted    */
   --color-on-gold: #0A2019;      /* text-on-gold: текст на золотой заливке   → text-on-gold  */
