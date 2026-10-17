@@ -1,0 +1,226 @@
+---
+/*
+  СЛУЖЕБНАЯ СТРАНИЦА /auth-demo — буквальная копия Figma, БЕЗ адаптации
+
+  В отличие от продового сайта (src/components/sections/*), здесь НЕ используются
+  наши токены (--color-accent, text-gold-plate, btn-hero и т.д.) и НЕ делается
+  никакой responsive-адаптации под мобильные — это намеренно: цель страницы
+  «ровно так, как есть из Figma» — 1:1 перенос сырого экспорта (get_design_context)
+  с минимальными правками (className→class, style-объекты→строки, ссылки на
+  ассеты Figma → локальные файлы в public/images/auth-demo/).
+
+  Собирается по тем же узлам Figma, что и продовые блоки (см. .claude/CONTEXT.md),
+  но здесь — без упрощений. Источник этого блока: узел 974:65347 (Header+Hero+
+  Плитки+Cookie), файл Cz2upesn8p2Cd7cZTdg2WQ.
+
+  Полный фрейм «весь сайт» (974:64597) нельзя вытащить одним запросом — тот же
+  лимит MCP (~41 КБ), что и при сборке продового сайта. Страница заполняется
+  по частям, по мере того как добавляются блоки.
+*/
+import Layout from '../layouts/Layout.astro';
+
+const base = import.meta.env.BASE_URL;
+const img = (name: string) => `${base}images/auth-demo/${name}`;
+---
+
+<Layout title="Fidenta — auth-demo (буквальная копия Figma)">
+  <!-- ======================= БЛОК: Header + Hero (Figma 974:65347) ======================= -->
+  <div class="content-stretch flex flex-col items-start justify-between pt-[36px] relative size-full" data-node-id="974:65347" data-name="Main">
+    <div aria-hidden="true" class="absolute inset-0 pointer-events-none">
+      <img alt="" class="absolute max-w-none object-cover size-full" src={img('main-bg-fallback.webp')} />
+      <div class="absolute inset-0 overflow-hidden">
+        <img alt="" class="absolute h-[163.84%] left-[-34.55%] max-w-none top-[-1.34%] w-[154.51%]" src={img('neva-photo.webp')} />
+      </div>
+    </div>
+
+    <div class="content-stretch flex flex-col gap-[10px] h-[1181px] items-end justify-center mb-[-128px] px-[76px] relative shrink-0 w-full" data-node-id="2007:16619" data-name="Contents">
+      <div class="h-[641px] relative shrink-0 w-full" data-node-id="974:65348">
+        <div class="absolute content-stretch flex gap-[373px] h-[474px] items-start left-0 right-0 top-[167px]" data-node-id="974:65349">
+          <div class="content-stretch flex flex-col gap-[12px] items-start relative shrink-0 w-[577px]" data-node-id="974:65350" data-name="Title">
+            <div class="content-stretch flex flex-col gap-[12px] items-start py-px relative shrink-0 w-full" data-node-id="974:65351">
+              <div class="h-[228px] relative shrink-0 w-full" data-node-id="974:65352" data-name="Title BIG"></div>
+              <div class="content-stretch flex items-center justify-center px-px relative shrink-0" data-node-id="974:65353" data-name="Title SEC">
+                <p
+                  class="[word-break:break-word] font-['Forum:Regular'] leading-[101.46499633789062%] not-italic relative shrink-0 text-[#f4f1ea] text-[20px] tracking-[0.2px] w-[451px]"
+                  data-node-id="974:65354"
+                >
+                  Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
+                </p>
+              </div>
+            </div>
+            <div class="content-stretch flex gap-[6px] items-center py-px relative shrink-0" data-node-id="974:65355">
+              <div class="border border-[#fff1d9] border-solid content-stretch flex items-center justify-center px-[24px] py-[10px] relative rounded-[9px] shrink-0" data-node-id="974:65356" data-name="Button Object">
+                <div
+                  aria-hidden="true"
+                  class="absolute inset-0 pointer-events-none rounded-[9px]"
+                  style="background-image: linear-gradient(169.12894884301295deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+                ></div>
+                <p
+                  class="[word-break:break-word] bg-black bg-clip-text font-['Forum:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-[transparent] text-shadow-[0px_4px_4px_rgba(0,0,0,0.11)] tracking-[-0.16px] whitespace-nowrap"
+                  data-node-id="974:65357"
+                >
+                  Доступ к сделкам
+                </p>
+                <div class="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_3px_4px_9.2px_0px_rgba(217,188,106,0.26)]"></div>
+              </div>
+              <div class="border border-[rgba(255,241,217,0.99)] border-solid content-stretch flex items-center justify-center px-[24px] py-[10px] relative rounded-[9px] shrink-0" data-node-id="974:65358" data-name="Button QUEST">
+                <p
+                  class="[word-break:break-word] bg-clip-text font-['Forum:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-[transparent] text-shadow-[0px_4px_4px_rgba(0,0,0,0.11)] tracking-[-0.16px] whitespace-nowrap"
+                  data-node-id="974:65359"
+                  style="background-image: linear-gradient(175.75509175808986deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+                >
+                  Передать объект в управление
+                </p>
+              </div>
+            </div>
+          </div>
+          <p
+            class="[word-break:break-word] absolute font-['SF_Pro_Rounded:Regular'] h-[232px] leading-[0] left-px not-italic text-[#1c4a3d] text-[64px] top-0 tracking-[-1.28px] w-[577px]"
+            data-node-id="974:65361"
+          >
+            <span class="font-['Forum:Regular'] leading-[0.89] text-[#f4f1ea]">Коммерческая недвижимость, </span>
+            <span
+              class="bg-clip-text font-['Forum:Regular'] leading-[0.89] text-[transparent]"
+              style="background-image: linear-gradient(161.56907659688898deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+            >
+              открытая для частного инвестора
+            </span>
+          </p>
+        </div>
+
+        <div class="absolute h-[38px] left-0 right-0 top-0" data-node-id="974:65465" data-name="Header">
+          <div class="absolute border border-[#fff1d9] border-solid content-stretch flex items-center justify-center left-[1144px] px-[24px] py-[10px] rounded-[9px] top-0 w-[136px]" data-node-id="974:65481" data-name="Button Heder">
+            <p
+              class="[word-break:break-word] bg-clip-text font-['Forum:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-[transparent] text-shadow-[0px_4px_4px_rgba(0,0,0,0.11)] tracking-[-0.16px] whitespace-nowrap"
+              data-node-id="974:65482"
+              style="background-image: linear-gradient(170.26945710412008deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+            >
+              Консультация
+            </p>
+          </div>
+          <div class="absolute content-stretch flex gap-[6px] items-start left-[528px] top-0 w-[254px]" data-node-id="974:65484">
+            <div class="h-[42px] relative shrink-0 w-[95.666px]" data-node-id="974:65485">
+              <div class="absolute inset-[-0.19%_0_-0.18%_0]">
+                <img alt="" class="block max-w-none size-full" src={img('logo-bridge.svg')} />
+              </div>
+            </div>
+            <div class="absolute content-stretch flex flex-col gap-[5px] h-[38px] items-center left-[96px] top-[2px] w-[143px]" data-node-id="974:65538">
+              <div class="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0" data-node-id="974:65539">
+                <div class="col-1 h-[23px] ml-0 mt-0 relative row-1 w-[138.001px]" data-node-id="974:65540" data-name="Group">
+                  <div class="absolute inset-[-0.87%_0_-0.33%_0]">
+                    <img alt="" class="block max-w-none size-full" src={img('logo-wordmark.svg')} />
+                  </div>
+                </div>
+              </div>
+              <div class="h-[10px] relative shrink-0 w-[126.001px]" data-node-id="974:65548" data-name="архитектура капитала">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src={img('logo-subtitle.svg')} />
+              </div>
+            </div>
+          </div>
+          <div class="absolute h-[38px] left-[-1px] top-0 w-[41px]" data-node-id="974:65568">
+            <img alt="" class="absolute block inset-0 max-w-none size-full" src={img('burger-icon.svg')} />
+          </div>
+        </div>
+
+        <div class="absolute content-stretch flex h-[56px] items-center justify-center left-[34px] p-[10px] top-[-7px] w-[203px]" data-node-id="974:65572">
+          <div
+            class="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Forum:Regular'] justify-center leading-[0] left-[16px] not-italic text-[16px] text-[#f4f1ea] top-[28px] whitespace-nowrap"
+            data-node-id="974:65573"
+          >
+            <p class="leading-[normal] mb-0">Спб, Богатырский 18 к 4 ст2</p>
+            <p class="leading-[normal]">+7 (812) 000-00-00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cookie -->
+      <div
+        class="backdrop-blur-[100px] bg-[rgba(50,63,47,0.3)] border border-[rgba(255,241,217,0.98)] border-solid content-stretch flex flex-col gap-[32px] items-start px-[14px] py-[16px] relative rounded-[9px] shrink-0"
+        data-node-id="974:65603"
+        data-name="Cookie"
+      >
+        <div class="[word-break:break-word] font-['Forum:Regular'] leading-[0] not-italic relative shrink-0 text-[#f4f1ea] text-[16px] tracking-[-0.16px] whitespace-nowrap" data-node-id="974:65604">
+          <p class="leading-[normal] mb-0 whitespace-pre">Мы используем cookie для корректной </p>
+          <p class="leading-[normal] mb-0 whitespace-pre">работы сайта и аналитики. Продолжая </p>
+          <p class="leading-[normal] mb-0 whitespace-pre">пользоваться сайтом, вы соглашаетесь </p>
+          <p class="whitespace-pre">
+            <span class="leading-[normal] text-[#f4f1ea]">с </span>
+            <a class="decoration-from-font decoration-solid leading-[normal] text-[#ddc386] underline" href="#cookies" target="_blank">политикой использования cookie</a>
+            <span class="leading-[normal] text-[#f4f1ea]">.</span>
+          </p>
+        </div>
+        <div class="border border-[#fff1d9] border-solid content-stretch flex items-center justify-center px-[24px] py-[10px] relative rounded-[9px] shrink-0" data-node-id="974:65605" data-name="Button Object">
+          <p
+            class="[word-break:break-word] font-['Forum:Regular'] leading-[normal] not-italic relative shrink-0 text-[16px] text-[#f4f1ea] text-shadow-[0px_4px_4px_rgba(0,0,0,0.11)] tracking-[2.24px] whitespace-nowrap"
+            data-node-id="974:65606"
+          >
+            Принять
+          </p>
+        </div>
+      </div>
+
+      <!-- Плитки -->
+      <div class="content-stretch flex flex-[1_0_0] gap-[43px] items-center min-h-px relative w-full" data-node-id="974:65574" data-name="pLITKI">
+        <div class="bg-[rgba(50,63,47,0.3)] border border-[rgba(255,241,217,0.99)] border-solid content-stretch flex flex-col items-start px-[40px] py-[30px] relative rounded-[9px] shrink-0" data-node-id="974:65575">
+          <div class="content-stretch flex gap-[30px] items-center relative shrink-0 w-[260px]" data-node-id="974:65576">
+            <div class="h-[58px] relative shrink-0 w-[63px]" data-node-id="974:65577">
+              <img alt="" class="absolute block inset-0 max-w-none size-full" src={img('tile-icon-1.svg')} />
+            </div>
+            <p
+              class="[word-break:break-word] font-['Playfair_Display:Regular'] font-normal leading-[0] not-italic relative shrink-0 text-[0px] text-[rgba(199,162,75,0.9)] tracking-[0.18px] w-[188px]"
+              data-node-id="974:65579"
+            >
+              <span
+                class="bg-clip-text font-['Forum:Regular'] leading-[17px] text-[18px] text-[transparent]"
+                style="background-image: linear-gradient(171.47514178641865deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+              >Fidenta Invest Club - </span>
+              <span class="font-['Forum:Regular'] leading-[17px] text-[#f4f1ea] text-[18px]">закрытое сообщество</span>
+            </p>
+          </div>
+        </div>
+        <div class="bg-[rgba(50,63,47,0.3)] border border-[rgba(255,241,217,0.99)] border-solid content-stretch flex flex-col items-start px-[40px] py-[30px] relative rounded-[9px] shrink-0" data-node-id="974:65580">
+          <div class="content-stretch flex gap-[30px] items-center relative shrink-0 w-[362px]" data-node-id="974:65581">
+            <div class="h-[58px] relative shrink-0 w-[63px]" data-node-id="974:65582">
+              <img alt="" class="absolute block inset-0 max-w-none size-full" src={img('tile-icon-2.svg')} />
+            </div>
+            <p
+              class="[word-break:break-word] font-['Playfair_Display:Regular'] font-normal leading-[0] not-italic relative shrink-0 text-[0px] text-[rgba(199,162,75,0.9)] tracking-[0.18px] w-[308px]"
+              data-node-id="974:65584"
+            >
+              <span
+                class="bg-clip-text font-['Forum:Regular'] leading-[17px] text-[18px] text-[transparent]"
+                style="background-image: linear-gradient(174.77232942394596deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+              >Полный цикл сопровождения:</span>
+              <span class="font-['Forum:Regular'] leading-[17px] text-[#ead58a] text-[18px]"><br /></span>
+              <span class="font-['Forum:Regular'] leading-[17px] text-[#f4f1ea] text-[18px]">аудит объекта - расчёт доходности</span>
+            </p>
+          </div>
+        </div>
+        <div class="bg-[rgba(50,63,47,0.3)] border border-[rgba(255,241,217,0.99)] border-solid content-stretch flex flex-col items-start px-[40px] py-[30px] relative rounded-[9px] shrink-0 w-[412px]" data-node-id="974:65585">
+          <div class="content-stretch flex gap-[30px] items-center relative shrink-0 w-[337px]" data-node-id="974:65586">
+            <div class="bg-[#0d221c] border-[0.9px] border-[rgba(255,241,217,0.99)] border-solid content-stretch flex flex-col h-[58px] items-start pb-[13px] pl-[17px] pr-[11px] pt-[12px] relative rounded-[20px] shrink-0 w-[63px]" data-node-id="974:65587">
+              <div class="h-[33px] relative shrink-0 w-[35.002px]" data-node-id="974:65588">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src={img('tile-icon-3.svg')} />
+              </div>
+            </div>
+            <p
+              class="[word-break:break-word] bg-clip-text font-['Forum:Regular'] leading-[0] not-italic relative shrink-0 text-[0px] text-[transparent] tracking-[0.18px] w-[244px]"
+              data-node-id="974:65600"
+              style="background-image: linear-gradient(173.41195281772025deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);"
+            >
+              <span class="leading-[17px] text-[18px]">Реальное владение: </span>
+              <span class="leading-[17px] text-[#f4f1ea] text-[18px]">доля в объекте закреплена договором</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[128px] relative shrink-0 w-full" data-node-id="2007:16618">
+      <img alt="" class="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img('bottom-strip.webp')} />
+    </div>
+  </div>
+  <!-- ======================= /Header + Hero ======================= -->
+
+  <!-- Дальше блоки добавляются по мере обработки — см. .claude/CONTEXT.md -->
+</Layout>
