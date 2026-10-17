@@ -1,36 +1,191 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК HowWeWork («От заявки до стабильного дохода»)
+  УРОВЕНЬ 3 — БЛОК «Прозрачно — от заявки до выхода из сделки» (процесс)
+  Источник: Figma, узел 974:66005 («block 8 OT AND DO»)
 
-  Заголовок секции + пять шагов процесса. Шаги живут в массиве steps
-  и рендерятся циклом через переиспользуемый компонент StepItem.
+  Композиция сверху вниз:
+    1. Заголовок (eyebrow + двухцветный H2 + подзаголовок) — слева сверху.
+    2. Фото вантового моста справа. Мост — метафора «пролёта» от заявки до
+       выхода: его полотно ложится ровно на линию таймлайна под ним.
+       Слева внизу, над линией, — фраза «Наша цель…».
+    3. Таймлайн «пролёт · опоры»: горизонтальная линия + 6 узлов-кружков
+       с вертикальными «опорами» вниз, по одному над центром каждого шага.
+    4. Шесть шагов в колонках: номер → название → описание → hairline →
+       «На руках» → «Срок».
+
+  Как сделано наложение заголовка и моста: обе части лежат в ОДНОЙ ячейке
+  CSS-грида (col-start-1 row-start-1). Так высота блока = max(текст, фото),
+  и ничего не вылезает на соседнюю секцию — в отличие от absolute, который
+  в высоту родителя не входит. Фото прижато вправо-вниз (self-end
+  justify-self-end), текст — поверх него (z-10).
+
+  Фото: в Figma картинка 1024×342 растянута в рамку 826×383 (пропорции
+  чуть вытянуты по вертикали — так задумано дизайнером, башни выше).
+  Повторяем ту же рамку (aspect 826/383 + object-fill), ширина — та же
+  доля от ширины макета: 826/1280 ≈ 64.5%. PNG с прозрачностью → webp
+  с альфа-каналом (public/images/process-bridge.webp).
+
+  Узлы таймлайна в Figma — SVG-кружок (заливка фоном страницы + золотая
+  обводка). Рисуем его CSS-ом: два фона — сплошной на padding-box
+  и градиент на border-box — дают градиентную рамку без SVG-файла.
+
+  Таймлайн имеет смысл только когда 6 шагов стоят в один ряд → показываем
+  его с lg. На узких экранах шаги идут сеткой 1/2/3 колонки без линии.
+
+  ⚠️ Тексты взяты из Figma дословно, включая похожие на опечатки места —
+  НЕ правлю молча, нужно подтверждение клиента:
+    - подзаголовок: «что будет происходит» (видимо, «что будет происходить»);
+    - цель: «управлять недвижимость» (видимо, «недвижимостью»);
+    - шаг 04: «за период иди доступ» (видимо, «или доступ»).
+  Плейсхолдеры [ДАННЫЕ: ...] — тоже из Figma, не выдуманы.
 */
-import SectionHeading from '../ui/SectionHeading.astro';
-import StepItem from '../ui/StepItem.astro';
+const base = import.meta.env.BASE_URL;
 
 const steps = [
-  { number: 1, title: 'Заявка', text: 'Оставляете заявку, обсуждаем объект и ваши цели.' },
-  { number: 2, title: 'Аудит', text: 'Выезжаем на осмотр, оцениваем состояние и доходность.' },
-  { number: 3, title: 'Договор', text: 'Согласуем условия и прозрачную структуру вознаграждения.' },
-  { number: 4, title: 'Передача', text: 'Берём объект под полный операционный контроль.' },
-  { number: 5, title: 'Управление', text: 'Ведём объект и присылаем отчётность каждый месяц.' },
+  {
+    number: '01',
+    title: 'Консультация',
+    text: 'Выбираете объект и формат участия',
+    inHand: 'Карточка объекта: адрес, арендатор, срок договора',
+    term: '1 рабочий день',
+  },
+  {
+    number: '02',
+    title: 'Договор и доля',
+    text: 'Читаете договор и подписываете у нотариуса',
+    inHand: 'Договор и нотариальное удостоверение',
+    term: '[ДАННЫЕ: срок]',
+  },
+  {
+    number: '03',
+    title: 'Запуск объекта',
+    text: 'Ремонт, аренда, эксплуатация — весь цикл ведёт Фидента',
+    inHand: 'План работ по объекту и сроки',
+    term: '[ДАННЫЕ: срок]',
+  },
+  {
+    number: '04',
+    title: 'Первая выплата',
+    text: 'Доля арендных поступлений пропорционально владению',
+    inHand: 'Отчёт по объекту за период иди доступ к управлению',
+    term: '[ДАННЫЕ: срок до первой выплаты]',
+  },
+  {
+    number: '05',
+    title: 'Отчётность',
+    text: 'Вы видите те же цифры, что и мы, в один и тот же день',
+    inHand: 'Кабинет: начислено · удержано · к выплате',
+    term: 'раз в [ДАННЫЕ] месяцев',
+  },
+  {
+    number: '06',
+    title: 'Выход из сделки',
+    text: 'Продаёте долю — или получаете доход дальше',
+    inHand: '[ДАННЫЕ: порядок продажи доли]',
+    term: 'срок продажи не гарантирован',
+  },
 ];
 ---
 
-<section class="bg-panel py-20 md:py-28">
+<section class="py-20 md:py-28">
   <div class="container-page">
-    <SectionHeading
-      eyebrow="Как работаем"
-      title="От заявки до"
-      accent="стабильного дохода"
-      description="Прозрачный процесс передачи объекта под управление — пять понятных шагов."
-    />
+    <!-- 1–2. Заголовок + мост: одна ячейка грида, слои наложены -->
+    <div class="grid isolate">
+      <!-- Текстовый слой: заголовок сверху, «цель» прижата к низу (mt-auto) -->
+      <div class="z-10 col-start-1 row-start-1 flex flex-col">
+        <div class="flex flex-col gap-3.5">
+          <div class="flex items-center gap-3">
+            <span class="h-px w-7 shrink-0" style="background-image: var(--gradient-gold);"></span>
+            <span class="font-accent text-xl uppercase leading-[26px] tracking-[0.15em] text-gold-plate">
+              Как это идёт
+            </span>
+          </div>
+          <h2 class="font-accent text-4xl leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
+            <span class="text-gold-plate">Прозрачно</span> — от заявки до выхода из сделки
+          </h2>
+          <p class="max-w-[735px] font-accent text-xl leading-[28px] text-fg">
+            Прозрачный процесс передачи объекта под управление. Шесть шагов определяющих что будет
+            происходит с объектом, что остаётся у вас на руках и в какой срок.
+          </p>
+        </div>
 
-    <!-- Сетка шагов: 2 колонки на планшете, 5 в ряд на десктопе -->
-    <div class="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-5">
-      {steps.map((step) => (
-        <StepItem number={step.number} title={step.title} text={step.text} />
-      ))}
+        <!-- lg:translate-y — фраза заходит на 15px ниже ячейки грида, чтобы
+             встать в 8px над линией таймлайна (как в Figma; см. -mb у фото) -->
+        <p class="mt-10 max-w-[412px] font-accent text-xl leading-[1.2] text-fg lg:mt-auto lg:translate-y-[15px]">
+          Наша цель - не просто управлять недвижимость, а увеличить её стоимость и ваш доход
+        </p>
+      </div>
+
+      <!-- Фото моста: на lg — тот же слой грида, справа снизу; на мобиле —
+           отдельной строкой под текстом во всю ширину.
+           lg:-mb-[23px]: линия таймлайна идёт на 23px ниже его верхнего края,
+           отрицательный отступ опускает фото так, что полотно моста
+           ложится ровно на линию (таймлайн рисуется поверх). -->
+      <img
+        src={`${base}images/process-bridge.webp`}
+        alt=""
+        aria-hidden="true"
+        width="1024"
+        height="342"
+        loading="lazy"
+        class="row-start-2 mt-8 aspect-[826/383] w-full object-fill opacity-[0.92] lg:col-start-1 lg:row-start-1 lg:-mb-[23px] lg:mt-0 lg:w-[64.5%] lg:self-end lg:justify-self-end"
+      />
     </div>
+
+    <!-- 3. Таймлайн «пролёт · опоры» (только десктоп, где шаги в один ряд).
+         Узлы стоят в той же 6-колоночной сетке, что и шаги, → всегда
+         точно над центром своей колонки при любой ширине контейнера. -->
+    <div class="relative hidden h-[46px] lg:block" aria-hidden="true">
+      <!-- Пролёт: линия по центру высоты, затухает к краям -->
+      <span
+        class="absolute inset-x-0 top-[23px] h-px"
+        style="background-image: linear-gradient(90deg, rgba(255,241,217,0.15) 0%, rgba(255,241,217,0.9) 15%, rgba(255,241,217,0.9) 85%, rgba(168,133,72,0.15) 100%);"
+      ></span>
+      <div class="absolute inset-0 grid grid-cols-6 gap-4">
+        {steps.map(() => (
+          <div class="relative">
+            <!-- Опора: от линии вниз до края таймлайна -->
+            <span class="absolute left-1/2 top-[23px] h-[23px] w-px -translate-x-1/2 bg-[rgba(244,241,234,0.22)]"></span>
+            <!-- Узел: кружок с градиентной обводкой (см. шапку файла) -->
+            <span
+              class="absolute left-1/2 top-[18px] size-[11px] -translate-x-1/2 rounded-full border border-transparent"
+              style="background: linear-gradient(var(--color-canvas), var(--color-canvas)) padding-box, linear-gradient(140deg, rgba(255,241,217,0.95), rgba(168,133,72,0.95)) border-box;"
+            ></span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- 4. Шаги.
+         На lg колонка шага ~165px (в Figma 200px при холсте 1280), и часть
+         названий переносится на 2 строки. Чтобы hairline'ы и подписи
+         «На руках»/«Срок» всё равно стояли на одной высоте во всех колонках,
+         каждый шаг — subgrid из 6 строк общей сетки (row-span-6 +
+         grid-rows-subgrid): высота строки = максимум по всем шагам.
+         lg:gap-y-2.5 — subgrid раскладывается по трекам РОДИТЕЛЯ, вместе с
+         его межстрочным gap, поэтому родительский gap на lg = внутреннему
+         (10px), иначе между пунктами шага были бы дыры по 40px. -->
+    <ol class="mt-12 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:mt-[39px] lg:grid-cols-6 lg:gap-y-2.5">
+      {steps.map((step) => (
+        <li class="flex flex-col gap-2.5 font-accent lg:row-span-6 lg:grid lg:grid-rows-subgrid">
+          <span class="text-sm leading-[18px] tracking-[0.14em] text-gold-plate">{step.number}</span>
+          <!-- font-accent/font-normal явно: базовый стиль h3 в global.css
+               ставит Playfair 600, наследование от <li> его не перебивает -->
+          <h3 class="font-accent text-[26px] font-normal leading-[26px] text-fg">{step.title}</h3>
+          <p class="text-base leading-[19px] text-muted">{step.text}</p>
+
+          <span class="h-px w-full bg-[rgba(244,241,234,0.13)]"></span>
+
+          <div class="flex flex-col gap-[3px]">
+            <span class="text-xs uppercase leading-[13px] tracking-[0.1em] text-gold-plate">На руках</span>
+            <p class="text-base leading-[18px] text-fg/85">{step.inHand}</p>
+          </div>
+          <div class="flex flex-col gap-[3px]">
+            <span class="text-xs uppercase leading-[13px] tracking-[0.1em] text-gold-plate">Срок</span>
+            <p class="text-base leading-[18px] text-muted">{step.term}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>
