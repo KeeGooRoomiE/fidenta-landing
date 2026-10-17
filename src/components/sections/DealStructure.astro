@@ -1,0 +1,112 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Что именно вы покупаете» (структура сделки)
+  Источник: Figma, узел 974:65817 («block 3 Sdelka»)
+
+  Два столбца на lg+ (на мобиле — друг под другом):
+   - слева: 4 пронумерованных шага сделки, hairline ПЕРЕД каждым шагом
+     (включая первый) и один завершающий — после последнего
+   - справа: карточка «Что остаётся у вас на руках» (6 документов), hairline
+     ТОЛЬКО между пунктами (не до первого и не после последнего)
+
+  Hairline-реализация: border-top на каждом элементе (+border-bottom на обёртке
+  для левой колонки) вместо отдельных <div>-разделителей — меньше разметки,
+  не нужны JSX-фрагменты в .map().
+
+  Плейсхолдеры [ДАННЫЕ: ...] — так в Figma (точные формулировки ещё не
+  согласованы с клиентом/юристом), оставлены как есть, а не выдуманы — тот же
+  принцип, что и "00 лет" в InvestmentTerms.
+*/
+const steps = [
+  {
+    num: '01',
+    title: 'Объект уже под управлением',
+    text: 'Фидента ведёт объект физически — и вела его до того, как он открылся для инвесторов.',
+  },
+  {
+    num: '02',
+    title: 'Объект открывается для входа',
+    text: 'Адрес, арендатор, срок договора аренды и цена входа опубликованы до сделки. На объект можно приехать.',
+  },
+  {
+    num: '03',
+    title: 'Вы подписываете документы',
+    text: '[ДАННЫЕ: точная конструкция сделки]. Подпись удостоверяет нотариус, ваш экземпляр остаётся у вас.',
+  },
+  {
+    num: '04',
+    title: 'Право фиксируется в реестре',
+    text: 'Запись о вас вносится в [ДАННЫЕ: ЕГРН / ЕГРЮЛ]. Выписку вы можете заказать сами, без нашего участия.',
+  },
+];
+
+const docs = [
+  { title: 'Договор', text: '[ДАННЫЕ: точное название договора]' },
+  { title: 'Нотариальное удостоверение', text: 'Сделка проходит через нотариуса' },
+  { title: 'Выписка из государственного реестра', text: 'На ваше имя, заказывается без нас' },
+  { title: 'Соглашение сособственников', text: '[ДАННЫЕ: порядок решений и выхода]' },
+  { title: 'Отчёт оценщика по объекту', text: '[ДАННЫЕ: кем и когда проведена оценка]' },
+  { title: 'Копия договора аренды', text: 'С действующим арендатором, со сроком' },
+];
+
+// Альфа-значения hairline-линий разные у двух колонок — так в Figma, не унифицируем
+const hairlineLeft = 'rgba(244, 241, 234, 0.16)';
+const hairlineRight = 'rgba(244, 241, 234, 0.12)';
+---
+
+<section class="py-20 md:py-28">
+  <div class="container-page">
+    <!-- Заголовок блока -->
+    <div class="flex flex-col gap-3.5">
+      <div class="flex items-center gap-3">
+        <span class="h-px w-7 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span class="font-accent text-xl uppercase tracking-[0.15em] text-gold-plate">Структура сделки</span>
+      </div>
+      <h2 class="font-accent text-4xl leading-[1.16] text-gold-plate sm:text-5xl md:text-[50px]">
+        Что именно вы покупаете
+      </h2>
+      <p class="max-w-[860px] text-xl leading-[1.4] text-fg/75">
+        Не пай и не обещание. Долю в конкретном объекте, право на которую подтверждает
+        государственный реестр, и договор, который вы читаете до перевода денег.
+      </p>
+    </div>
+
+    <div class="mt-11 grid gap-10 lg:grid-cols-2">
+      <!-- Левая колонка: шаги сделки -->
+      <div class="flex flex-col">
+        <p class="font-accent text-[13px] uppercase tracking-[0.15em] text-gold-plate">Как проходит сделка</p>
+        <div class="mt-3.5 flex flex-col" style={`border-bottom: 1px solid ${hairlineLeft};`}>
+          {steps.map((step) => (
+            <div class="flex items-start gap-5 py-4" style={`border-top: 1px solid ${hairlineLeft};`}>
+              <p class="shrink-0 font-accent text-base leading-6 text-gold-plate">{step.num}</p>
+              <div class="flex flex-col gap-1.5">
+                <p class="text-[22px] leading-7 text-fg">{step.title}</p>
+                <p class="text-[15px] leading-[21px] text-muted">{step.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Правая колонка: карточка документов -->
+      <div
+        class="flex flex-col gap-3 rounded-[9px] border px-8 py-[26px]"
+        style="border-color: rgba(255, 241, 217, 0.7); background: rgba(50, 63, 47, 0.1);"
+      >
+        <p class="font-accent text-[13px] uppercase tracking-[0.15em] text-gold-plate">Что остаётся у вас на руках</p>
+        {docs.map((doc, i) => (
+          <div
+            class="flex items-start gap-3.5 pt-3 first:pt-0"
+            style={i > 0 ? `border-top: 1px solid ${hairlineRight};` : undefined}
+          >
+            <span class="shrink-0 text-[15px] leading-[22px] text-gold-plate">—</span>
+            <div class="flex flex-col gap-0.5">
+              <p class="text-[17px] leading-[23px] text-fg">{doc.title}</p>
+              <p class="text-sm leading-[19px] text-muted">{doc.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
