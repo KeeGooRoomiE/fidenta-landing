@@ -206,6 +206,8 @@ const copy = {
 </script>
 
 <style is:global>
+  /* Кнопки-переключатели .aud-btn — общие, лежат в styles/global.css
+     (используются и в CtaForm, и в FAQ). */
   /* Поле ввода по спеке Figma: фон #143a30, рамка #1c4a3d, radius 9, высота 52 */
   .cta-input {
     height: 52px;
@@ -225,28 +227,5 @@ const copy = {
   }
   .cta-input:focus {
     border-color: #c7a24b;
-  }
-  /* Кнопки-переключатели аудитории: активная — золото, неактивная — рамка */
-  .aud-btn {
-    border: 1px solid #fff1d9;
-    border-radius: 9px;
-    padding: 9px 17px;
-    font-family: var(--font-accent);
-    font-size: 20px;
-    line-height: 1.2;
-    background-image: none;
-    color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
-    background-image: var(--gradient-gold);
-    transition: filter 0.15s;
-  }
-  .aud-btn[aria-pressed='true'] {
-    background-clip: border-box;
-    -webkit-background-clip: border-box;
-    color: #0a2019;
-  }
-  .aud-btn:hover {
-    filter: brightness(1.1);
   }
 </style>

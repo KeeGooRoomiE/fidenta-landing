@@ -1,0 +1,214 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Остались вопросы?» (FAQ-аккордеон)
+  Источник: Figma, узел 974:66156 («block 11 faq»)
+
+  Поведение (JS внизу файла):
+    1. Переключатель «Инвестору / Собственнику» подменяет СПИСОК вопросов
+       (два готовых списка в разметке, неактивный скрыт атрибутом hidden).
+       При переключении список возвращается в исходное состояние: видны
+       4 вопроса, открыт первый, кнопка «Ещё вопросы» снова на месте.
+    2. Аккордеон: одновременно открыт ТОЛЬКО ОДИН вопрос (открыли другой —
+       прежний закрывается). Раскрытие анимировано: ответ лежит в grid-ячейке
+       и меняет grid-template-rows 0fr → 1fr (трюк, позволяющий анимировать
+       «height: auto» без JS-замеров высоты).
+    3. «Ещё вопросы» открывает ещё 3 вопроса (4 → 7) и пропадает.
+
+  Доступность: заголовок вопроса — <button aria-expanded aria-controls>,
+  ответ — region; при prefers-reduced-motion анимация отключается.
+
+  ДАННЫЕ: в Figma нарисован только список инвестора и только первый ответ
+  (с плейсхолдерами [ДАННЫЕ]). Остальные ответы и ВЕСЬ список собственника —
+  МОК-ДАННЫЕ (lorem ipsum по просьбе заказчика, вопросы для собственника и
+  дополнительные вопросы инвестора — придуманные для демонстрации);
+  заменить реальным контентом. Массив faq — единственное место правки.
+
+  Иконка «+» повернута на 45° у открытого вопроса (становится «×»). В Figma
+  она почти неотличима от фона (#143a30 на #0a2019) — сделали видимой
+  (цвет muted); если нужно строго как в макете, поменять цвет в .faq-icon.
+*/
+const lorem =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+
+const faq = {
+  investor: [
+    {
+      q: 'Чем я владею, когда инвестирую через Фиденту?',
+      a: '[ДАННЫЕ: точная юридическая конструкция сделки]. Право подтверждается записью в [ДАННЫЕ: ЕГРН / ЕГРЮЛ] на ваше имя — выписку можно заказать самостоятельно, без нашего участия. Объект можно посмотреть до перевода денег: адрес открыт, арендатор действующий.',
+    },
+    { q: 'Какой минимальный порог входа?', a: lorem },
+    { q: 'Как и когда выплачивается доход?', a: lorem },
+    { q: 'Какие комиссии и расходы вычитаются до моей выплаты?', a: lorem },
+    // --- «Ещё вопросы» (мок) ---
+    { q: 'Что будет, если арендатор съедет?', a: lorem },
+    { q: 'Можно ли продать долю раньше срока?', a: lorem },
+    { q: 'Какие налоги я плачу с дохода?', a: lorem },
+  ],
+  owner: [
+    { q: 'Какие объекты вы берёте в управление?', a: lorem },
+    { q: 'Сколько стоит управление объектом?', a: lorem },
+    { q: 'Что остаётся в моей зоне ответственности?', a: lorem },
+    { q: 'Как быстро вы выходите на объект после заявки?', a: lorem },
+    // --- «Ещё вопросы» (мок) ---
+    { q: 'Как вы отчитываетесь о доходах и расходах?', a: lorem },
+    { q: 'Можно ли расторгнуть договор управления?', a: lorem },
+    { q: 'Занимаетесь ли вы ремонтом и редевелопментом?', a: lorem },
+  ],
+};
+
+const VISIBLE = 4; // сколько вопросов видно до нажатия «Ещё вопросы»
+const audiences = [
+  { key: 'investor', label: 'Инвестору' },
+  { key: 'owner', label: 'Собственнику' },
+] as const;
+---
+
+<section id="faq" class="py-20 md:py-28" data-faq data-visible={VISIBLE}>
+  <div class="container-page">
+    <!-- Заголовок блока -->
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-center gap-2.5">
+        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Вопросы</span>
+      </div>
+      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-gold-plate sm:text-5xl md:text-[50px]">
+        Остались вопросы?
+      </h2>
+      <p class="mt-1 max-w-[860px] font-accent text-xl leading-[1.47] text-fg">
+        Вопросы, которые задают до перевода денег. Отдельно — то, что спрашивают собственники объектов.
+      </p>
+    </div>
+
+    <!-- Переключатель аудитории -->
+    <div class="mt-12 flex gap-5" role="group" aria-label="Для кого вопросы">
+      {audiences.map((a, i) => (
+        <button type="button" class="aud-btn" data-audience={a.key} aria-pressed={String(i === 0)}>{a.label}</button>
+      ))}
+    </div>
+
+    <!-- Списки вопросов: по одному на аудиторию, неактивный скрыт -->
+    {audiences.map((a, listIdx) => (
+      <div data-list={a.key} hidden={listIdx !== 0} class="mt-4">
+        {faq[a.key].map((item, i) => (
+          <div
+            class:list={['faq-item border border-[#1c4a3d]', i > 0 && '-mt-px']}
+            data-item
+            data-extra={i >= VISIBLE ? '' : undefined}
+            hidden={i >= VISIBLE}
+          >
+            <h3 class="m-0 font-accent text-base font-normal">
+              <button
+                type="button"
+                class="faq-q flex w-full items-center justify-between gap-4 px-5 py-[18px] text-left font-accent text-base leading-[25.6px] text-fg"
+                aria-expanded="false"
+                aria-controls={`faq-${a.key}-${i}`}
+                id={`faq-q-${a.key}-${i}`}
+              >
+                <span>{item.q}</span>
+                <span class="faq-icon" aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <!-- Анимируемая обёртка: 0fr ↔ 1fr -->
+            <div class="faq-a" id={`faq-${a.key}-${i}`} role="region" aria-labelledby={`faq-q-${a.key}-${i}`}>
+              <div class="overflow-hidden">
+                <p class="px-5 pb-[18px] font-accent text-base leading-[22.4px] text-fg">{item.a}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    ))}
+
+    <!-- «Ещё вопросы»: показывает ещё 3, затем исчезает -->
+    <div class="flex justify-center pt-[22px]" data-more-wrap>
+      <button
+        type="button"
+        data-more
+        class="rounded-[4px] border border-[#fff1d9] px-10 py-4 font-accent text-xl leading-6 transition-colors hover:bg-[rgba(255,241,217,0.08)]"
+      >
+        <span class="text-gold-plate">Ещё вопросы</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-faq]');
+
+  if (root) {
+    const lists = root.querySelectorAll<HTMLElement>('[data-list]');
+    const moreWrap = root.querySelector<HTMLElement>('[data-more-wrap]')!;
+
+    function setOpen(item: HTMLElement, open: boolean) {
+      item.toggleAttribute('data-open', open);
+      item.querySelector('.faq-q')!.setAttribute('aria-expanded', String(open));
+    }
+
+    // Аккордеон: клик по вопросу; открытым остаётся только один во всём списке
+    root.addEventListener('click', (e) => {
+      const q = (e.target as Element).closest<HTMLElement>('.faq-q');
+      if (!q) return;
+      const item = q.closest<HTMLElement>('[data-item]')!;
+      const wasOpen = item.hasAttribute('data-open');
+      item.closest('[data-list]')!.querySelectorAll<HTMLElement>('[data-item]').forEach((it) => setOpen(it, false));
+      setOpen(item, !wasOpen);
+    });
+
+    // «Ещё вопросы»: раскрыть скрытые (в обоих списках), кнопку убрать
+    root.querySelector('[data-more]')!.addEventListener('click', () => {
+      root.querySelectorAll<HTMLElement>('[data-extra]').forEach((it) => (it.hidden = false));
+      moreWrap.hidden = true;
+    });
+
+    // Переключатель аудитории: показать свой список и вернуть его в исходный вид
+    root.querySelectorAll<HTMLElement>('[data-audience]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.audience;
+        root.querySelectorAll('[data-audience]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        lists.forEach((list) => {
+          list.hidden = list.dataset.list !== key;
+          list.querySelectorAll<HTMLElement>('[data-item]').forEach((it, i) => {
+            setOpen(it, i === 0 && list.dataset.list === key);
+            it.hidden = it.hasAttribute('data-extra');
+          });
+        });
+        moreWrap.hidden = false;
+      }),
+    );
+
+    // Первый вопрос открыт по умолчанию (как в макете), у каждого списка — свой первый
+    lists.forEach((list) => setOpen(list.querySelector<HTMLElement>('[data-item]')!, true));
+  }
+</script>
+
+<style is:global>
+  /* Анимация раскрытия: grid-template-rows 0fr → 1fr */
+  .faq-a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+  .faq-item[data-open] .faq-a {
+    grid-template-rows: 1fr;
+  }
+  /* Скрытый ответ не должен ловить фокус/читаться — после закрытия прячем визуально */
+  .faq-a > div {
+    min-height: 0;
+  }
+  .faq-icon {
+    font-family: var(--font-accent);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--color-muted);
+    transition: transform 0.35s ease;
+  }
+  .faq-item[data-open] .faq-icon {
+    transform: rotate(45deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-a,
+    .faq-icon {
+      transition: none;
+    }
+  }
+</style>
