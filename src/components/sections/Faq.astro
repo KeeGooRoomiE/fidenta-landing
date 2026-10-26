@@ -82,7 +82,7 @@ const audiences = [
     <!-- Переключатель аудитории -->
     <div class="mt-12 flex gap-5" role="group" aria-label="Для кого вопросы">
       {audiences.map((a, i) => (
-        <button type="button" class="aud-btn" data-audience={a.key} aria-pressed={String(i === 0)}>{a.label}</button>
+        <button type="button" class="aud-btn" data-audience={a.key} aria-pressed={i === 0 ? 'true' : 'false'}>{a.label}</button>
       ))}
     </div>
 
