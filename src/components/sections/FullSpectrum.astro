@@ -1,0 +1,81 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Полный спектр управления недвижимостью» (услуги для собственника)
+  Источник: Figma, узел 974:65689 («block 3 Full Spectr U»)
+
+  Стилизованная таблица 3×2 (3 колонки × 2 ряда) без отступов между ячейками:
+  ячейки разделены тонкими линиями, у каждой — лёгкая внутренняя тень со
+  стороны внешнего края (как в макете: «вдавленная» панель), а по центру
+  нижней границы сидит плашка с иконкой моста.
+
+  Интерактив (по просьбе заказчика, в макете его нет): при наведении на
+  ячейку она слегка подсвечивается золотым тинтом (hover:bg-...).
+
+  Отличия рядов в Figma — разные верхние отступы текста (44px в 1-м ряду,
+  18px во 2-м); повторяем, чтобы заголовки стояли как в макете.
+
+  Это БЛОК-ЗАМЕНА сетки «направлений 01–06», которая раньше жила в WhyUs
+  (там она удалена, чтобы не дублировать).
+
+  Иконка: public/images/icon-bridge.svg (экспорт из Figma, группа «Group 97»).
+*/
+const base = import.meta.env.BASE_URL;
+
+// shadow — внутренняя тень каждой ячейки (из Figma: уходит к внешнему краю таблицы)
+const items = [
+  { title: 'Арендные отношения', text: 'Поиск надёжных арендаторов, юридическое оформление договоров, контроль расчётов и своевременное пополнение вакансий', shadow: '4px 4px 5px' },
+  { title: 'Техническая эксплуатация', text: 'Плановое и аварийное техобслуживание, регламентные работы по инженерным системам, надзор за подрядчиками', shadow: '0 4px 5px' },
+  { title: 'Юридическое сопровождение', text: 'Договорная работа, взаимодействие с контролирующими органами, защита интересов собственника и инвестора.', shadow: '-4px 4px 5px' },
+  { title: 'Финансовое управление', text: 'Бюджетирование, ведение реестра платежей, регулярная отчётность для собственника и инвестора.', shadow: '4px -4px 5px' },
+  { title: 'Клининг и благоустройство', text: 'Профессиональная уборка общих зон и территории, контроль подрядчика, ведение графика работ', shadow: '0 -4px 5px' },
+  { title: 'Консалтинг и оценка', text: 'Аудит объекта, анализ доходности, рекомендации по повышению ликвидности и капитализации', shadow: '-4px -4px 5px' },
+];
+---
+
+<section class="py-20 md:py-28">
+  <div class="container-page">
+    <!-- Заголовок блока -->
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-center gap-2.5">
+        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Услуги для собственника</span>
+      </div>
+      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+        <span class="text-gold-plate">Полный спектр</span><br />управления недвижимостью
+      </h2>
+      <p class="mt-1 max-w-[584px] font-accent text-xl leading-5 text-fg">
+        Берём на себя все задачи по управлению объектом, чтобы вы могли сосредоточиться на развитии капитала.
+      </p>
+    </div>
+
+    <!-- Таблица 3×2. relative — для плашки с иконкой, сидящей на нижней границе.
+         Линии: border-t/l у контейнера + border-b/r у ячеек дают единую сетку 1px. -->
+    <div class="relative mt-16 md:mt-[75px]">
+      <div
+        class="grid grid-cols-1 border-l border-t border-[rgba(202,215,209,0.3)] md:grid-cols-2 lg:grid-cols-3 [&>*]:border-b [&>*]:border-r [&>*]:border-[rgba(202,215,209,0.3)]"
+      >
+        {items.map((item, i) => (
+          <div
+            class:list={[
+              'bg-[rgba(50,63,47,0.1)] px-6 pb-14 font-accent transition-colors duration-200 hover:bg-[rgba(199,162,75,0.09)] lg:min-h-[300px]',
+              i < 3 ? 'pt-11' : 'pt-[18px]',
+            ]}
+            style={`box-shadow: inset ${item.shadow} rgba(0,0,0,0.3);`}
+          >
+            <!-- font-accent явно: базовый стиль h3 в global.css ставит Playfair 600 -->
+            <h3 class="font-accent text-2xl font-normal leading-[34px] text-fg">{item.title}</h3>
+            <p class="mt-[11px] max-w-[341px] text-xl leading-[1.2] text-gold-plate">{item.text}</p>
+          </div>
+        ))}
+      </div>
+
+      <!-- Плашка с иконкой на нижней границе по центру -->
+      <div
+        class="pointer-events-none absolute bottom-0 left-1/2 flex h-[84px] w-[86px] -translate-x-1/2 translate-y-[40%] items-center justify-center rounded-[20px] border border-[#fff1d9] bg-[#0d231d]"
+        aria-hidden="true"
+      >
+        <img src={`${base}images/icon-bridge.svg`} alt="" width="68" height="34" class="w-[68px]" />
+      </div>
+    </div>
+  </div>
+</section>
