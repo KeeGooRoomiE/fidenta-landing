@@ -1,63 +1,136 @@
 ---
 /*
-  UI-ЭЛЕМЕНТ — ObjectCard
+  УРОВЕНЬ 4 — UI-ЭЛЕМЕНТ «Карточка объекта» (Figma: block 9 Object, карточки 1pic…6pic)
 
-  Карточка объекта недвижимости в блоке «Объекты под управлением».
-  Сверху — плейсхолдер под фото (сюда вставится изображение из Figma),
-  бейдж типа объекта, ниже — название, адрес и три показателя.
+  Вверху — галерея 3–4 фото с «авито-превью»: пока курсор ведут по ширине
+  фото, показывается кадр, соответствующий позиции курсора (ширина делится
+  на N равных зон). Внизу фото — полоски-индикаторы (по одной на кадр).
+  Сама логика — в скрипте секции Portfolio.astro (делегирование по
+  [data-gallery]); здесь только разметка и стили.
 
-  Пример:
-    <ObjectCard
-      type="Офисы"
-      title="БЦ «Нева Плаза»"
-      address="В.О., 7-я линия, 76"
-      gla="4200"
-      occupancy="97%"
-      since="с 2018"
-    />
+  Как это устроено:
+    - все кадры лежат стопкой (absolute inset-0), видим только один — data-active;
+    - первый кадр — фото из Figma, остальные — стоковые плейсхолдеры (заменить
+      на реальные фото объекта);
+    - на тач-экранах работает свайп пальцем (touch-action: pan-y оставляет
+      вертикальную прокрутку страницы, а горизонтальное движение отдаёт скрипту).
+
+  Цветокоррекция «grade · единый» из Figma — 4 полупрозрачных слоя поверх фото
+  (color / multiply / soft-light / вертикальный градиент): все фото получаются
+  в одной тёмно-зелёной гамме с золотым теплом.
+
+  Тексты вида [ДАННЫЕ: ...] — плейсхолдеры из Figma, не выдуманы.
 */
-import Tag from './Tag.astro';
-
 interface Props {
-  type: string;
+  type: string; // бейдж на фото
   title: string;
   address: string;
-  gla: string;        // площадь, м² GLA
-  occupancy: string;  // заполняемость, %
-  since: string;      // с какого года в управлении
+  lead: string; // строка-описание над метриками
+  gla: string;
+  occupancy: string;
+  since: string;
+  photos: string[]; // 3–4 URL, первый — основной
+  hidden?: boolean; // карточки «под кнопкой»: скрыты, пока не нажали «Показать ещё»
 }
-const { type, title, address, gla, occupancy, since } = Astro.props;
+
+const { type, title, address, lead, gla, occupancy, since, photos, hidden = false } = Astro.props;
 ---
 
-<article class="overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-200 hover:border-accent/60">
-  <!-- Плейсхолдер под фото объекта (заменить на <img> из Figma).
-       aspect-[16/10] держит пропорции, бейдж позиционируется поверх. -->
-  <div class="relative aspect-[16/10] bg-gradient-to-br from-surface-2 to-canvas">
-    <div class="absolute left-4 top-4">
-      <Tag>{type}</Tag>
+<article
+  class:list={[
+    'overflow-hidden rounded-[9px] border border-border bg-canvas font-accent text-fg',
+    hidden && 'hidden',
+  ]}
+  data-extra={hidden ? '' : undefined}
+>
+  <!-- Галерея. aria-label — для скринридеров; сами кадры декоративны -->
+  <div
+    class="group relative aspect-[402/214] touch-pan-y select-none overflow-hidden"
+    data-gallery
+    role="img"
+    aria-label={`Фото объекта: ${title}`}
+  >
+    {photos.map((src, i) => (
+      <img
+        src={src}
+        alt=""
+        width="960"
+        height="640"
+        loading="lazy"
+        draggable="false"
+        data-slide
+        data-active={i === 0 ? '' : undefined}
+        class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-150 data-[active]:opacity-100"
+      />
+    ))}
+
+    <!-- Единая цветокоррекция (см. шапку файла) -->
+    <div class="pointer-events-none absolute inset-0 bg-[rgba(20,58,48,0.1)] mix-blend-color"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[rgba(10,32,25,0.1)] mix-blend-multiply"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[rgba(200,163,102,0.3)] mix-blend-soft-light"></div>
+    <div
+      class="pointer-events-none absolute inset-0"
+      style="background-image: linear-gradient(180deg, rgba(10,32,25,0.125) 0%, rgba(10,32,25,0.01) 42%, rgba(10,32,25,0.016) 72%, rgba(10,32,25,0.106) 100%);"
+    >
+    </div>
+
+    <!-- Бейдж типа объекта -->
+    <!-- Плашка и текст — РАЗНЫЕ элементы: text-gold-plate = background-clip:text,
+         и фон плашки на том же элементе «вырезался» бы по буквам -->
+    <span
+      class="absolute left-[11px] top-[11px] rounded-full bg-[rgba(10,32,25,0.7)] px-3 py-[3px] backdrop-blur-[3px]"
+    >
+      <span class="text-xs uppercase leading-[19px] tracking-[0.08em] text-gold-plate">{type}</span>
+    </span>
+
+    <!-- Индикаторы кадров (полоски, как в галерее Авито) -->
+    <div class="pointer-events-none absolute inset-x-3 bottom-2.5 flex gap-1" aria-hidden="true">
+      {photos.map((_, i) => (
+        <span
+          data-bar
+          data-active={i === 0 ? '' : undefined}
+          class="h-[3px] flex-1 rounded-full bg-[rgba(244,241,234,0.35)] transition-colors duration-150 data-[active]:bg-[#fff1d9]"
+        ></span>
+      ))}
     </div>
   </div>
 
-  <div class="p-6">
-    <h3 class="text-xl">{title}</h3>
-    <p class="mt-1 flex items-center gap-1 text-sm text-muted">
-      <span class="text-accent">◍</span>{address}
+  <!-- Текстовая часть -->
+  <div class="px-6 pt-4">
+    <h3 class="font-accent text-[28px] font-normal leading-[34px] text-fg">{title}</h3>
+
+    <p class="mt-1 flex items-center gap-1.5 text-[13px] leading-[20.8px] text-fg">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="shrink-0">
+        <path
+          d="M10.5 5C10.5 8.5 6 11.5 6 11.5C6 11.5 1.5 8.5 1.5 5C1.5 3.8 1.97 2.66 2.82 1.82C3.66 0.97 4.81 0.5 6 0.5C7.19 0.5 8.34 0.97 9.18 1.82C10.03 2.66 10.5 3.8 10.5 5Z"
+          stroke="currentColor"></path>
+        <path d="M7.5 5C7.5 5.83 6.83 6.5 6 6.5C5.17 6.5 4.5 5.83 4.5 5C4.5 4.17 5.17 3.5 6 3.5C6.83 3.5 7.5 4.17 7.5 5Z" stroke="currentColor"></path>
+      </svg>
+      {address}
     </p>
 
-    <!-- Три показателя объекта -->
-    <dl class="mt-5 grid grid-cols-3 gap-2 border-t border-border pt-5">
-      <div>
-        <dt class="text-lg font-semibold text-fg">{gla}</dt>
-        <dd class="text-xs uppercase tracking-wide text-muted">м² GLA</dd>
+    <p class="mt-5 text-base leading-[1.2] text-fg">{lead}</p>
+
+    <!-- Метрики: значение 20px + подпись 12px caps -->
+    <dl class="mt-2 flex gap-6">
+      <div class="flex flex-col gap-[3px]">
+        <dd class="order-1 text-xl leading-8 text-fg">{gla}</dd>
+        <dt class="order-2 text-xs uppercase leading-[19px] tracking-[0.06em]">м² GLA</dt>
       </div>
-      <div>
-        <dt class="text-lg font-semibold text-fg">{occupancy}</dt>
-        <dd class="text-xs uppercase tracking-wide text-muted">заполнено</dd>
+      <div class="flex flex-col gap-[3px]">
+        <dd class="order-1 text-xl leading-8 text-fg">{occupancy}</dd>
+        <dt class="order-2 text-xs uppercase leading-[19px] tracking-[0.06em]">заполнено</dt>
       </div>
-      <div>
-        <dt class="text-lg font-semibold text-fg">{since}</dt>
-        <dd class="text-xs uppercase tracking-wide text-muted">в управлении</dd>
+      <div class="flex flex-col gap-[3px]">
+        <dd class="order-1 text-xl leading-8 text-fg">{since}</dd>
+        <dt class="order-2 text-xs uppercase leading-[19px] tracking-[0.06em]">в управлении</dt>
       </div>
     </dl>
+  </div>
+
+  <!-- Подвал карточки -->
+  <div class="mt-5 px-6 pb-[22px]">
+    <div class="h-px w-full bg-border"></div>
+    <p class="mt-3 text-[13px] leading-[18px] text-[#eee9d9]">данные на [ДАННЫЕ] · договор до [ДАННЫЕ]</p>
   </div>
 </article>
