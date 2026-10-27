@@ -212,3 +212,11 @@
   font-size: 15px;
   padding: 7px 12px;
 }
+
+/* Компактный вариант .aud-btn только на мобильных (CtaForm) */
+@media (max-width: 767px) {
+  .aud-btn--sm-mobile {
+    font-size: 15px;
+    padding: 7px 12px;
+  }
+}
