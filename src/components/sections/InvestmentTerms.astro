@@ -43,7 +43,7 @@ const doesNotFitIf = [
         <span class="block text-fg">Инвестиции для тех,</span>
         <span class="terms-gold block">кто ценит время</span>
       </h2>
-      <p class="max-w-2xl text-lg text-fg md:ml-auto">
+      <p class="max-w-2xl text-base text-fg md:ml-auto md:text-lg">
         Берём на себя все задачи по управлению объектом, чтобы вы могли сосредоточиться на развитии капитала.
       </p>
     </div>
@@ -52,14 +52,15 @@ const doesNotFitIf = [
     <div class="mt-10 flex flex-col gap-8 md:mt-16">
       <div class="h-px w-full" style="background-image: var(--gradient-gold);"></div>
 
-      <div class="grid gap-10 md:grid-cols-[1fr_auto_1fr] md:gap-0">
-        <div class="flex flex-col gap-6 md:pr-10">
-          <p class="font-accent text-2xl text-fg">Подходит, если</p>
-          <ul class="flex flex-col gap-[18px]">
+      <div class="grid gap-8 md:grid-cols-[1fr_auto_1fr] md:gap-0">
+        <div class="flex flex-col gap-4 md:gap-6 md:pr-10">
+          <p class="font-accent text-xl text-fg md:text-2xl">Подходит, если</p>
+          <ul class="flex flex-col gap-3 md:gap-[18px]">
             {fitsIf.map((text) => (
-              <li class="flex items-center gap-4">
-                <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-                <span class="font-accent text-lg leading-[1.55] text-fg">{text}</span>
+              <li class="flex items-start gap-3 md:gap-4">
+                <!-- Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта -->
+                <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5" style="background-image: var(--gradient-gold);"></span>
+                <span class="font-accent text-base leading-[1.4] text-fg md:text-lg md:leading-[1.55]">{text}</span>
               </li>
             ))}
           </ul>
@@ -67,13 +68,14 @@ const doesNotFitIf = [
 
         <div class="hidden md:block md:w-px md:self-stretch md:justify-self-center" style="background-image: var(--gradient-gold);"></div>
 
-        <div class="flex flex-col gap-6 md:pl-10">
-          <p class="font-accent text-2xl text-fg">Не подходит, если</p>
-          <ul class="flex flex-col gap-[18px]">
+        <div class="flex flex-col gap-4 md:gap-6 md:pl-10">
+          <p class="font-accent text-xl text-fg md:text-2xl">Не подходит, если</p>
+          <ul class="flex flex-col gap-3 md:gap-[18px]">
             {doesNotFitIf.map((text) => (
-              <li class="flex items-center gap-4">
-                <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-                <span class="font-accent text-lg leading-[1.55] text-fg">{text}</span>
+              <li class="flex items-start gap-3 md:gap-4">
+                <!-- Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта -->
+                <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5" style="background-image: var(--gradient-gold);"></span>
+                <span class="font-accent text-base leading-[1.4] text-fg md:text-lg md:leading-[1.55]">{text}</span>
               </li>
             ))}
           </ul>
@@ -83,7 +85,7 @@ const doesNotFitIf = [
       <div class="h-px w-full" style="background-image: var(--gradient-gold);"></div>
 
       <div class="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-        <p class="terms-gold max-w-3xl font-accent text-base leading-relaxed">
+        <p class="terms-gold max-w-3xl font-accent text-sm leading-relaxed md:text-base">
           Горизонт участия — 2–10 лет · Выплаты арендного дохода — раз в 00 месяцев · Что оформляется на инвестора — доля собственности
         </p>
         <a href="#cta" class="btn-hero btn-outline w-full justify-center text-center md:w-auto">
