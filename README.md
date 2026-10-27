@@ -189,7 +189,7 @@ fidenta-landing/
 │   │   │   ├── AboutAsset.astro    # О нашем активе
 │   │   │   ├── InvestmentTerms.astro # Условия инвестирования
 │   │   │   ├── AssetAccess.astro   # «Крупный актив — без крупного капитала»
-│   │   │   ├── DealStructure.astro # «Что именно вы покупаете» (шаги + документы)
+│   │   │   ├── DealStructure.astro # «Что именно вы покупаете» — НЕ подключён к странице (убран по правке дизайнера)
 │   │   │   ├── TeamIntro.astro     # «Фидента — команда»
 │   │   │   ├── ComparisonTable.astro # Сравнительная таблица 7×4
 │   │   │   ├── HowWeWork.astro     # «От заявки до выхода из сделки» (мост + таймлайн)
@@ -402,18 +402,17 @@ const { title, variant = 'primary' } = Astro.props;
 | 2 | О нашем активе | `AboutAsset.astro` | `#about` | по Figma |
 | 3 | Условия инвестирования | `InvestmentTerms.astro` | `#terms` | по Figma |
 | 4 | Крупный актив — без крупного капитала | `AssetAccess.astro` | — | по Figma |
-| 5 | Что именно вы покупаете | `DealStructure.astro` | — | по Figma |
-| 6 | Фидента — команда | `TeamIntro.astro` | — | по Figma (фото-плейсхолдер) |
-| 7 | Сравнительная таблица | `ComparisonTable.astro` | — | по Figma |
-| 8 | От заявки до выхода из сделки | `HowWeWork.astro` | — | по Figma |
-| 9 | Объекты под управлением | `Portfolio.astro` | `#portfolio` | по Figma |
-| 10 | Ваш объект — наша ответственность | `ManagementBanner.astro` | — | по Figma |
-| 11 | Почему выбирают Фидента | `WhyUs.astro` | `#why` | **заготовка** (ждёт Figma) |
-| 12 | Полный спектр управления | `FullSpectrum.astro` | `#services` | по Figma |
-| 13 | Отзывы | `Testimonials.astro` | — | **заготовка** (ждёт Figma) |
-| 14 | Остались вопросы? | `Faq.astro` | `#faq` | по Figma, данные — мок |
-| 15 | Заявка | `CtaForm.astro` | `#cta` | по Figma, отправка не подключена |
-| 16 | Контакты и карта | `ContactsMap.astro` | `#contacts` | по Figma |
+| 5 | Фидента — команда | `TeamIntro.astro` | — | по Figma (фото-плейсхолдер) |
+| 6 | Сравнительная таблица | `ComparisonTable.astro` | — | по Figma |
+| 7 | От заявки до выхода из сделки | `HowWeWork.astro` | — | по Figma |
+| 8 | Объекты под управлением | `Portfolio.astro` | `#portfolio` | по Figma |
+| 9 | Ваш объект — наша ответственность | `ManagementBanner.astro` | — | по Figma |
+| 10 | Почему выбирают Фидента | `WhyUs.astro` | `#why` | **заготовка** (ждёт Figma) |
+| 11 | Полный спектр управления | `FullSpectrum.astro` | `#services` | по Figma |
+| 12 | Отзывы | `Testimonials.astro` | — | **заготовка** (ждёт Figma) |
+| 13 | Остались вопросы? | `Faq.astro` | `#faq` | по Figma, данные — мок |
+| 14 | Заявка | `CtaForm.astro` | `#cta` | по Figma, отправка не подключена |
+| 15 | Контакты и карта | `ContactsMap.astro` | `#contacts` | по Figma |
 | — | Подвал | `Footer.astro` | — | по Figma |
 
 ### Что нужно знать про интерактивные блоки
