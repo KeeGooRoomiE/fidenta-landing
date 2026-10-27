@@ -43,42 +43,44 @@ const info = [
 ];
 ---
 
-<section id="contacts" class="py-20 md:py-28">
+<section id="contacts" class="py-14 md:py-28">
   <div class="container-page">
    <!-- Нижняя линия блока из Figma (кремовая 1px) — на внутренней обёртке, чтобы не залезала под боковые поля -->
-   <div class="border-b pb-12" style="border-color: #fff1d9;">
+   <div class="border-b pb-8 md:pb-12" style="border-color: #fff1d9;">
     <!-- Заголовок блока -->
     <div class="flex flex-col gap-4">
       <div class="flex items-center gap-3">
         <span class="h-px w-5 shrink-0 bg-[#6e8078]"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Контакты</span>
+        <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Контакты</span>
       </div>
-      <h2 class="font-accent text-4xl font-normal leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
+      <h2 class="font-accent text-3xl font-normal leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
         Приехать можно <span class="text-gold-plate">на любой объект</span>
       </h2>
-      <p class="font-accent text-xl leading-7 text-fg">
+      <p class="font-accent text-base leading-snug text-fg md:text-xl md:leading-7">
         Офис в Петербурге и все объекты под управлением — на одной карте. Адреса открыты, приезжайте и смотрите.
       </p>
     </div>
 
     <!-- Реквизиты | карта -->
-    <div class="mt-8 flex flex-col gap-10 lg:flex-row lg:gap-[60px] lg:pt-10">
-      <div class="flex flex-col gap-7 lg:w-[460px] lg:shrink-0">
-        {info.map((block) => (
-          <div class="flex flex-col gap-2">
+    <!-- Мобильный порядок (правка дизайнера: контактов слишком много перед картой): карта ПЕРВОЙ
+         (max-lg:order-1), реквизиты после неё компактно: Офис и Связь в 2 колонки, мелкий шрифт -->
+    <div class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-[60px] lg:pt-10">
+      <div class="grid grid-cols-2 gap-x-4 gap-y-5 max-lg:order-2 lg:flex lg:w-[460px] lg:shrink-0 lg:flex-col lg:gap-7">
+        {info.map((block, bi) => (
+          <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
             <span class="h-px w-full" style="background-image: var(--gradient-gold);"></span>
-            <span class="font-accent text-sm uppercase leading-5 tracking-[0.09em] text-gold-plate">{block.label}</span>
-            <div class="font-accent text-lg leading-7 text-fg">
+            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
+            <div class="font-accent text-sm leading-snug text-fg lg:text-lg lg:leading-7">
               {block.lines.map((line) => <p>{line}</p>)}
             </div>
           </div>
         ))}
       </div>
 
-      <div class="flex min-w-0 flex-1 flex-col gap-3" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
+      <div class="flex min-w-0 flex-1 flex-col gap-3 max-lg:order-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
         <!-- Карта. isolate + z-0: у Leaflet свои z-index (до 1000) — не даём им
              перекрыть шапку сайта и cookie-плашку -->
-        <div class="isolate z-0 h-[320px] overflow-hidden rounded-[9px] border-[5px] border-[#525252] md:h-[433px]">
+        <div class="isolate z-0 h-[280px] overflow-hidden rounded-[9px] border-[5px] border-[#525252] md:h-[433px]">
           <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
         </div>
 
