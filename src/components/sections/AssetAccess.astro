@@ -29,32 +29,31 @@
 
 <section class="py-20 md:py-28">
   <div class="container-page">
-    <div class="flex max-w-[570px] flex-col items-start gap-6">
+    <div class="flex max-w-[570px] flex-col items-start gap-4 md:gap-6">
       <!-- Eyebrow: короткая линия, ПОТОМ текст -->
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Инвестиции в недвижимость</span>
+        <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Инвестиции в недвижимость</span>
       </div>
 
       <!-- H2: двухцветный -->
-      <h2 class="font-accent text-4xl leading-[1.2] tracking-[-0.02em] sm:text-5xl md:text-[50px]">
+      <h2 class="font-accent text-3xl leading-[1.2] tracking-[-0.02em] sm:text-5xl md:text-[50px]">
         <span class="block text-fg-dim">Крупный актив —</span>
         <span class="block text-gold-plate">без крупного капитала</span>
       </h2>
 
-      <!-- Текст: три отдельных абзаца (как в Figma), плотный line-height -->
-      <div class="flex flex-col gap-1 font-accent text-xl leading-[1.3] text-fg-dim">
-        <p>Инвестировать в коммерческую недвижимость можно без необходимости приобретать объект целиком.</p>
+      <!-- Текст: два абзаца (в макете было три; по правке дизайнера первая фраза убрана, а её смысл «без необходимости приобретать объект целиком» перенесён в конец последнего абзаца, слово «официально» убрано), плотный line-height -->
+      <div class="flex flex-col gap-2 font-accent text-base leading-[1.4] text-fg-dim md:gap-1 md:text-xl md:leading-[1.3]">
         <p>Фидента объединяет средства нескольких инвесторов в один пул, и вместе они получают доступ к объектам, которые были бы недоступны каждому по отдельности.</p>
-        <p>Каждый инвестор официально владеет долей в объекте и получает доход.</p>
+        <p>Каждый инвестор владеет долей в объекте и получает доход — без необходимости приобретать объект целиком.</p>
       </div>
 
       <!-- Кнопка: крупнее обычной (Forum 24, padding 14/24), текст приглушённый -->
       <a
         href="#cta"
-        class="mt-10 inline-flex items-center justify-center rounded-[9px] border border-plate-line px-6 py-[14px] text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:mt-16"
+        class="mt-4 inline-flex w-full items-center justify-center rounded-[9px] md:w-auto border border-plate-line px-6 py-[14px] text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:mt-16"
       >
-        <span class="font-accent text-2xl tracking-[-0.01em] text-gold-plate" style="opacity: 0.76;">
+        <span class="font-accent text-xl tracking-[-0.01em] text-gold-plate md:text-2xl" style="opacity: 0.76;">
           Узнать больше об участии
         </span>
       </a>
