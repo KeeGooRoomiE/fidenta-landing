@@ -20,24 +20,25 @@ const base = import.meta.env.BASE_URL;
 <section class="py-10 md:py-16">
   <div class="container-page">
     <div
-      class="grid items-center gap-8 rounded-[9px] border p-6 lg:grid-cols-[1fr_416px] lg:gap-10 lg:py-[27px] lg:pl-[23px] lg:pr-[26px]"
+      class="grid items-center gap-8 rounded-[9px] border p-5 sm:p-6 lg:grid-cols-[1fr_416px] lg:gap-10 lg:py-[27px] lg:pl-[23px] lg:pr-[26px]"
       style="border-color: rgba(255,241,217,0.99);"
     >
       <!-- Текст -->
       <div class="flex flex-col gap-2.5">
         <div class="flex items-center gap-2.5">
           <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-          <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Как работаем</span>
+          <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Как работаем</span>
         </div>
-        <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+        <!-- Мобильный размер подобран так, чтобы «наша ответственность» помещалась в одну строку на 360–375px -->
+        <h2 class="font-accent text-[1.65rem] font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
           Ваш объект<br /><span class="text-gold-plate">наша ответственность</span>
         </h2>
-        <p class="max-w-[713px] font-accent text-xl leading-5 text-fg">
+        <p class="max-w-[713px] font-accent text-base leading-snug text-fg md:text-xl md:leading-5">
           Передайте комерческую недвижимость под управление ФИДЕНТА - от текущей эксплуатации до редевелопмента и
           роста стоимости актива
         </p>
-        <div class="mt-3">
-          <a href="#cta" class="btn-hero btn-plat text-[15px]">Передать объект под управление</a>
+        <div class="mt-2 md:mt-3">
+          <a href="#cta" class="btn-hero btn-plat w-full text-[15px] md:w-auto">Передать объект под управление</a>
         </div>
       </div>
 
