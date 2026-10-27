@@ -17,6 +17,11 @@
   Это БЛОК-ЗАМЕНА сетки «направлений 01–06», которая раньше жила в WhyUs
   (там она удалена, чтобы не дублировать).
 
+  МОБИЛЬНАЯ ВЕРСИЯ (по правке дизайнера): ячейки — раскрывающиеся пункты
+  (аккордеон): виден только заголовок + «+», по нажатию раскрывается описание
+  (анимация 0fr→1fr), открытым может быть только один пункт. С md и шире —
+  прежняя таблица 3×2, описания всегда видны.
+
   Иконка: public/images/icon-bridge.svg (экспорт из Figma, группа «Group 97»).
 */
 const base = import.meta.env.BASE_URL;
@@ -38,40 +43,58 @@ const items = [
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Услуги для собственника</span>
+        <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Услуги для собственника</span>
       </div>
-      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+      <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
         <span class="text-gold-plate">Полный спектр</span><br />управления недвижимостью
       </h2>
-      <p class="mt-1 max-w-[584px] font-accent text-xl leading-5 text-fg">
+      <p class="mt-1 max-w-[584px] font-accent text-base leading-snug text-fg md:text-xl md:leading-5">
         Берём на себя все задачи по управлению объектом, чтобы вы могли сосредоточиться на развитии капитала.
       </p>
     </div>
 
     <!-- Таблица 3×2. relative — для плашки с иконкой, сидящей на нижней границе.
          Линии: border-t/l у контейнера + border-b/r у ячеек дают единую сетку 1px. -->
-    <div class="relative mt-16 md:mt-[75px]">
+    <div class="relative mt-10 md:mt-[75px]">
       <div
         class="grid grid-cols-1 border-l border-t border-[rgba(202,215,209,0.3)] md:grid-cols-2 lg:grid-cols-3 [&>*]:border-b [&>*]:border-r [&>*]:border-[rgba(202,215,209,0.3)]"
       >
         {items.map((item, i) => (
           <div
             class:list={[
-              'bg-[rgba(50,63,47,0.1)] px-6 pb-14 font-accent transition-colors duration-200 hover:bg-[rgba(199,162,75,0.09)] lg:min-h-[300px]',
-              i < 3 ? 'pt-11' : 'pt-[18px]',
+              'svc-item bg-[rgba(50,63,47,0.1)] font-accent transition-colors duration-200 hover:bg-[rgba(199,162,75,0.09)] md:px-6 md:pb-14 lg:min-h-[300px]',
+              i < 3 ? 'md:pt-11' : 'md:pt-[18px]',
             ]}
             style={`box-shadow: inset ${item.shadow} rgba(0,0,0,0.3);`}
           >
-            <!-- font-accent явно: базовый стиль h3 в global.css ставит Playfair 600 -->
-            <h3 class="font-accent text-2xl font-normal leading-[34px] text-fg">{item.title}</h3>
-            <p class="mt-[11px] max-w-[341px] text-xl leading-[1.2] text-gold-plate">{item.text}</p>
+            <!-- font-accent явно: базовый стиль h3 в global.css ставит Playfair 600.
+                 На мобильном заголовок — кнопка-аккордеон; с md кнопка «выключена»
+                 (pointer-events-none), описание всегда раскрыто -->
+            <h3 class="m-0 font-accent text-xl font-normal leading-snug text-fg md:text-2xl md:leading-[34px]">
+              <button
+                type="button"
+                class="svc-q flex w-full items-center justify-between gap-4 px-5 py-4 text-left md:pointer-events-none md:p-0"
+                aria-expanded="false"
+              >
+                <span>{item.title}</span>
+                <span class="svc-icon md:hidden" aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <!-- Раскрываемая часть: 0fr ↔ 1fr на мобильном, всегда 1fr с md -->
+            <div class="svc-a">
+              <div class="overflow-hidden">
+                <p class="max-w-[341px] px-5 pb-5 text-base leading-snug text-gold-plate md:mt-[11px] md:px-0 md:pb-0 md:text-xl md:leading-[1.2]">
+                  {item.text}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
 
-      <!-- Плашка с иконкой на нижней границе по центру -->
+      <!-- Плашка с иконкой на нижней границе по центру (на мобильном скрыта — перекрывала последний пункт) -->
       <div
-        class="pointer-events-none absolute bottom-0 left-1/2 flex h-[84px] w-[86px] -translate-x-1/2 translate-y-[40%] items-center justify-center rounded-[20px] border border-[#fff1d9] bg-[#0d231d]"
+        class="pointer-events-none absolute bottom-0 left-1/2 hidden h-[84px] md:flex w-[86px] -translate-x-1/2 translate-y-[40%] items-center justify-center rounded-[20px] border border-[#fff1d9] bg-[#0d231d]"
         aria-hidden="true"
       >
         <img src={`${base}images/icon-bridge.svg`} alt="" width="68" height="34" class="w-[68px]" />
@@ -79,3 +102,58 @@ const items = [
     </div>
   </div>
 </section>
+
+<script>
+  // Аккордеон (только мобильный вид: с md кнопки заголовков pointer-events-none).
+  // Открытым остаётся один пункт.
+  const items = document.querySelectorAll<HTMLElement>('.svc-item');
+  items.forEach((item) =>
+    item.querySelector('.svc-q')!.addEventListener('click', () => {
+      const wasOpen = item.hasAttribute('data-open');
+      items.forEach((it) => {
+        it.removeAttribute('data-open');
+        it.querySelector('.svc-q')!.setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        item.setAttribute('data-open', '');
+        item.querySelector('.svc-q')!.setAttribute('aria-expanded', 'true');
+      }
+    }),
+  );
+</script>
+
+<style is:global>
+  /* Раскрытие описания: на мобильном 0fr → 1fr по data-open, с md всегда раскрыто */
+  .svc-a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+  .svc-item[data-open] .svc-a {
+    grid-template-rows: 1fr;
+  }
+  .svc-a > div {
+    min-height: 0;
+  }
+  .svc-icon {
+    font-family: var(--font-accent);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--color-muted);
+    transition: transform 0.35s ease;
+  }
+  .svc-item[data-open] .svc-icon {
+    transform: rotate(45deg);
+  }
+  @media (min-width: 768px) {
+    .svc-a {
+      grid-template-rows: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .svc-a,
+    .svc-icon {
+      transition: none;
+    }
+  }
+</style>
