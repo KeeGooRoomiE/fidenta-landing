@@ -16,9 +16,12 @@
   Плейсхолдер [ДАННЫЕ: порядок и срок] — как и в остальных блоках, взят
   из Figma дословно, не выдуман.
 
-  На мобильных — горизонтальный скролл (overflow-x-auto); таблица с таким
-  количеством колонок не умещается на узком экране, и это нормальный
-  паттерн для сравнительных таблиц, а не костыль.
+  МОБИЛЬНАЯ ВЕРСИЯ (по правке дизайнера, до md): таблица 7×4 на телефоне не
+  помещается, поэтому вместо неё — «Фидента против одного»: переключатель из
+  трёх альтернатив («Банковский вклад» / «Квартира» / «ЗПИФ») и две колонки —
+  слева всегда наша (подсвечена #6E8078), справа выбранная. Данные те же
+  (массивы columns/rows), поэтому правятся в одном месте. Полная таблица
+  показывается с md и шире (hidden md:block), мобильный вид — md:hidden.
 */
 const columns = ['Доля в объекте с Фидентой', 'Банковский вклад', 'Квартира под аренду', 'ЗПИФ недвижимости'];
 
@@ -88,8 +91,38 @@ const rows = [
       <p class="font-accent text-xl text-fg">Семь основных различий</p>
     </div>
 
-    <!-- Таблица: горизонтальный скролл на узких экранах -->
-    <div class="mt-10 overflow-x-auto">
+    <!-- МОБИЛЬНЫЙ ВИД: «Фидента против …» с переключателем (md:hidden) -->
+    <div class="mt-8 md:hidden" data-compare>
+      <div class="flex flex-wrap gap-2" role="group" aria-label="С чем сравнить">
+        {columns.slice(1).map((col, i) => (
+          <button type="button" class="aud-btn aud-btn--sm" data-alt={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {col}
+          </button>
+        ))}
+      </div>
+
+      {columns.slice(1).map((col, i) => (
+        <div data-panel={i} hidden={i !== 0} class="mt-6">
+          <!-- Шапка двух колонок -->
+          <div class="grid grid-cols-2 gap-px font-accent text-base">
+            <div class="px-3 py-2 text-fg" style="background: #6E8078;">{columns[0]}</div>
+            <div class="px-3 py-2 text-gold-plate">{col}</div>
+          </div>
+          {rows.map((row, ri) => (
+            <div style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`} class="mt-0">
+              <p class="px-0 pb-1 pt-3 font-accent text-sm text-gold-plate">{row.label}</p>
+              <div class="grid grid-cols-2 gap-px font-accent text-[15px] leading-snug text-fg">
+                <p class="px-3 py-2" style="background: #6E8078;">{row.values[0]}</p>
+                <p class="px-3 py-2">{row.values[i + 1]}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+
+    <!-- Полная таблица: md и шире (на узких экранах скрыта — см. мобильный вид выше) -->
+    <div class="mt-10 hidden overflow-x-auto md:block">
       <table class="w-full min-w-[960px] border-collapse font-accent">
         <thead>
           <tr>
@@ -123,3 +156,14 @@ const rows = [
     </div>
   </div>
 </section>
+
+<script>
+  // Мобильный переключатель: показываем панель выбранной альтернативы
+  const root = document.querySelector<HTMLElement>('[data-compare]');
+  root?.querySelectorAll<HTMLElement>('[data-alt]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      root.querySelectorAll<HTMLElement>('[data-alt]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== btn.dataset.alt));
+    }),
+  );
+</script>
