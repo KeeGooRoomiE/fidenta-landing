@@ -96,11 +96,11 @@ const cards = [
       <!-- Правая колонка: фото (тянется, flex-1) + широкая текстовая карточка снизу (auto). -->
       <!-- Правая колонка. На мобильном (max-lg:order-1) идёт первой: фото, под ним подпись -->
       <div class="flex flex-col gap-3 max-lg:order-1 lg:gap-4">
-        <div class="relative aspect-[16/10] flex-1 overflow-hidden rounded-lg lg:aspect-auto lg:min-h-[320px]">
+        <div class="relative aspect-[2/1] flex-1 overflow-hidden rounded-lg lg:aspect-auto lg:min-h-[320px]">
           <img
             src={`${base}images/office.webp`}
             alt="Офис управляющей компании «Фидента»"
-            class="absolute inset-0 h-full w-full object-cover object-right lg:object-center"
+            class="absolute inset-0 h-full w-full object-cover object-[right_30%] lg:object-center"
           />
           <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas/60 via-transparent to-transparent"></div>
         </div>
@@ -108,9 +108,15 @@ const cards = [
         <!-- На мобильном — простая подпись под фото (без рамки и фона), на lg — карточка -->
         <div class="flex items-center lg:rounded-lg lg:border lg:border-border lg:bg-surface lg:p-8">
           <p class="text-sm leading-relaxed text-text-soft lg:text-base">
-            Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления,
-            оптимизации процессов и долгосрочной стратегии развития, превращая коммерческую
-            недвижимость в надёжный инвестиционный актив.
+            <!-- Мобильный — короткая версия (по правке дизайнера: полный текст слишком длинный), lg — полный -->
+            <span class="lg:hidden">
+              Каждый объект имеет скрытый потенциал. Мы раскрываем его грамотным управлением и долгосрочной стратегией.
+            </span>
+            <span class="max-lg:hidden">
+              Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления,
+              оптимизации процессов и долгосрочной стратегии развития, превращая коммерческую
+              недвижимость в надёжный инвестиционный актив.
+            </span>
           </p>
         </div>
       </div>
