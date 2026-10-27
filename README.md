@@ -197,7 +197,7 @@ fidenta-landing/
 │   │   │   ├── ManagementBanner.astro # Баннер «Ваш объект — наша ответственность»
 │   │   │   ├── WhyUs.astro         # «Почему выбирают Фидента» — НЕ подключён (остаток старого макета, убран по правке дизайнера)
 │   │   │   ├── FullSpectrum.astro  # «Полный спектр управления» (таблица 3×2)
-│   │   │   ├── Testimonials.astro  # Отзывы (заготовка)
+│   │   │   ├── Testimonials.astro  # Отзывы — НЕ подключён (заготовка «на будущее»: выдуманные отзывы, нужны реальные)
 │   │   │   ├── Faq.astro           # FAQ-аккордеон
 │   │   │   ├── CtaForm.astro       # Заявка (переключатель инвестор/собственник)
 │   │   │   ├── ContactsMap.astro   # Контакты + карта объектов
@@ -408,10 +408,9 @@ const { title, variant = 'primary' } = Astro.props;
 | 8 | Объекты под управлением | `Portfolio.astro` | `#portfolio` | по Figma |
 | 9 | Ваш объект — наша ответственность | `ManagementBanner.astro` | — | по Figma |
 | 10 | Полный спектр управления | `FullSpectrum.astro` | `#services` | по Figma |
-| 11 | Отзывы | `Testimonials.astro` | — | **заготовка** (ждёт Figma) |
-| 12 | Остались вопросы? | `Faq.astro` | `#faq` | по Figma, данные — мок |
-| 13 | Заявка | `CtaForm.astro` | `#cta` | по Figma, отправка не подключена |
-| 14 | Контакты и карта | `ContactsMap.astro` | `#contacts` | по Figma |
+| 11 | Остались вопросы? | `Faq.astro` | `#faq` | по Figma, данные — мок |
+| 12 | Заявка | `CtaForm.astro` | `#cta` | по Figma, отправка не подключена |
+| 13 | Контакты и карта | `ContactsMap.astro` | `#contacts` | по Figma |
 | — | Подвал | `Footer.astro` | — | по Figma |
 
 ### Что нужно знать про интерактивные блоки
