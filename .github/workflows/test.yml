@@ -2,13 +2,10 @@
 #
 # Триггер: push и PR в основные ветки
 # Запускает:
-#   1. Проверку TypeScript-типов через `astro check` (требует @astrojs/check)
+#   1. Проверку TypeScript-типов через `astro check` (пакет @astrojs/check стоит в devDependencies)
 #   2. Линтинг кода (ESLint) — раскомментировать когда будет добавлен eslint
 #   3. Место для будущих тестов (Vitest, Playwright и т.д.)
 #
-# ВАЖНО: перед первым запуском добавить зависимость:
-#   pnpm add -D @astrojs/check typescript
-# До этого шаг typecheck выдаст предупреждение и пропустит проверку (не падает).
 
 name: Tests
 
@@ -57,17 +54,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Проверяем, установлен ли @astrojs/check. Если нет — предупреждаем и пропускаем.
-      # Это предотвращает падение воркфлоу до инициализации Astro-проекта.
-      # После `pnpm add -D @astrojs/check typescript` проверка заработает автоматически.
+      # Проверка типов Astro/TypeScript. Падает при любой ошибке типов.
       - name: Astro type check
-        run: |
-          if pnpm list @astrojs/check --depth=0 2>/dev/null | grep -q "@astrojs/check"; then
-            pnpm astro check
-          else
-            echo "::warning::Пакет @astrojs/check не установлен — проверка типов пропущена."
-            echo "::warning::Добавь зависимость: pnpm add -D @astrojs/check typescript"
-          fi
+        run: pnpm astro check
 
   # Раскомментировать после добавления ESLint в проект:
   # lint:

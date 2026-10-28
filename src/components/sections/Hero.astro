@@ -79,7 +79,7 @@ const cards = [
     <div class="flex max-w-2xl flex-col gap-5 md:max-w-4xl">
       <h1 class="hero-title font-accent font-normal">
         <span class="block text-fg">Коммерческая недвижимость,</span>
-        <span class="hero-title-gold block">открытая для частного инвестора</span>
+        <span class="text-gold-plate block">открытая для частного инвестора</span>
       </h1>
 
       <p class="max-w-[38rem] font-accent text-lg leading-[1.4] tracking-[0.01em] text-text-soft md:text-xl">
@@ -103,7 +103,7 @@ const cards = [
         <div class="hero-card">
           <img src={`${base}icons/${card.icon}`} width="56" height="56" alt="" class="h-14 w-14 shrink-0 md:h-10 md:w-10" />
           <p class="font-accent text-[17px] leading-[1.4] tracking-[0.01em]">
-            <span class="hero-card-gold">{card.lead}</span><span class="text-fg">{card.rest}</span>
+            <span class="text-gold-plate">{card.lead}</span><span class="text-fg">{card.rest}</span>
           </p>
         </div>
       ))}
@@ -146,13 +146,6 @@ const cards = [
   }
 
 
-  .hero-title-gold,
-  .hero-card-gold {
-    background-image: var(--gradient-gold);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
 
   .hero-btn {
     display: inline-flex;
