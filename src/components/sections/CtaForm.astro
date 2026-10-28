@@ -61,11 +61,11 @@ const copy = {
 ---
 
 <section id="cta" class="py-14 md:py-28" data-cta data-copy={JSON.stringify(copy)}>
-  <!-- МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
+  {/* МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
          потом короткий призыв, потом форма. Для этого правая колонка на <lg «растворяется»
-         (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. -->
+         (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. */}
     <div class="container-page grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-12">
-    <!-- Левая колонка: призыв (тексты подменяются скриптом по data-copy) -->
+    {/* Левая колонка: призыв (тексты подменяются скриптом по data-copy) */}
     <div class="flex flex-col gap-3 font-accent max-lg:order-2 lg:gap-[15px]">
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
@@ -86,21 +86,21 @@ const copy = {
       </ul>
     </div>
 
-    <!-- Правая колонка: переключатель + форма -->
+    {/* Правая колонка: переключатель + форма */}
     <div class="flex flex-col gap-4 font-accent max-lg:contents">
       <div class="flex gap-3 max-lg:order-1 md:gap-5" role="group" aria-label="Тип заявки">
         <button type="button" data-audience="investor" aria-pressed="true" class="aud-btn aud-btn--sm-mobile">Я инвестор</button>
         <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile">Я собственник</button>
       </div>
 
-      <!-- Заголовок формы и «Ответим…» на мобильном скрыты: повторяют надпись и первый пункт сверху -->
+      {/* Заголовок формы и «Ответим…» на мобильном скрыты: повторяют надпись и первый пункт сверху */}
       <h3 data-t="formTitle" class="mt-3 hidden font-accent text-4xl font-normal leading-[1.1] text-fg lg:block">
         {copy.investor.formTitle}
       </h3>
       <p class="hidden text-xl leading-[1.12] text-fg lg:block">Ответим в течение одного рабочего дня.</p>
 
       <form id="cta-form" class="flex flex-col gap-3 max-lg:order-3 md:gap-4" novalidate>
-        <!-- Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) -->
+        {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
         <input type="hidden" name="audience" value="investor" />
 
         <div class="grid grid-cols-2 gap-3 md:gap-4">
@@ -127,7 +127,7 @@ const copy = {
           <input name="message" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input" />
         </label>
 
-        <!-- Согласие: ссылка #privacy — страница политики появится позже -->
+        {/* Согласие: ссылка #privacy — страница политики появится позже */}
         <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-fg md:text-xl md:leading-[1.04]">
           <input type="checkbox" name="consent" required checked class="mt-0.5 size-[18px] shrink-0 accent-[#c29e4b]" />
           <span>
@@ -145,7 +145,7 @@ const copy = {
           {copy.investor.submit}
         </button>
 
-        <!-- Статус отправки -->
+        {/* Статус отправки */}
         <p id="cta-status" class="hidden font-accent text-base" role="status"></p>
       </form>
 
@@ -214,7 +214,6 @@ const copy = {
       //   3) целевая почта зависит от audience (investor / owner): завести словарь
       //      «аудитория → адрес» на стороне отправки (secrets), а не в браузере;
       //   4) показать успех/ошибку по ответу, очистить форму при успехе.
-      console.info('[CTA] заявка (отправка не подключена):', Object.fromEntries(data));
       show('Форма собрана. Отправка письма будет подключена позже.', true);
     });
   }

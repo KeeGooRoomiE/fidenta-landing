@@ -25,18 +25,9 @@
   Соц-ссылки — заглушки (#): реальные адреса дадим, когда пришлёт клиент.
 */
 import { locations } from '../../data/locations';
+import { nav, office as officeInfo, phones } from '../../data/site';
 
 const base = import.meta.env.BASE_URL;
-
-// Навигация подвала (левая колонка) — на якоря секций
-const navLinks = [
-  { label: 'О компании', href: '#about' },
-  { label: 'Инвестиции', href: '#terms' },
-  { label: 'Услуги', href: '#services' },
-  { label: 'Объекты', href: '#portfolio' },
-  { label: 'Вопросы', href: '#faq' },
-  { label: 'Контакты', href: '#contacts' },
-];
 
 // Правовые ссылки (нижний бар). TODO: заменить href на реальные страницы документов.
 const legalLinks = [
@@ -66,7 +57,7 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="relative bg-footer font-accent text-[#bdaf92]">
-  <!-- Плавный переход от фона страницы к фону футера -->
+  {/* Плавный переход от фона страницы к фону футера */}
   <div
     class="pointer-events-none absolute inset-x-0 top-0 h-[81px]"
     style="background-image: linear-gradient(180deg, #0a2019 0%, #0d1b16 47%, #101612 100%);"
@@ -75,37 +66,37 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="container-page relative pb-6 pt-[107px]">
-    <!-- 1. ВЕРХНИЙ РЯД -->
+    {/* 1. ВЕРХНИЙ РЯД */}
     <div class="grid gap-12 lg:grid-cols-[1fr_340px_1fr] lg:items-start">
-      <!-- Навигация -->
+      {/* Навигация */}
       <nav class="flex flex-col gap-3.5 text-xl">
-        {navLinks.map((link) => (
+        {nav.map((link) => (
           <a href={link.href} class="w-fit transition-colors hover:text-gold-hi">{link.label}</a>
         ))}
       </nav>
 
-      <!-- Логотип + телефон -->
+      {/* Логотип + телефон */}
       <div class="mx-auto flex w-[340px] max-w-full flex-col items-center gap-3.5">
         <div class="flex w-full flex-col gap-[33px]">
-          <img src={`${base}images/footer-bridge.svg`} alt="" width="340" height="158" class="w-full" />
-          <img src={`${base}images/footer-wordmark.svg`} alt="Фидента" width="340" height="56" class="w-full" />
+          <img src={`${base}images/footer-bridge.svg`} loading="lazy" decoding="async" alt="" width="340" height="158" class="w-full" />
+          <img src={`${base}images/footer-wordmark.svg`} loading="lazy" decoding="async" alt="Фидента" width="340" height="56" class="w-full" />
         </div>
         <div class="flex items-start gap-[11px]">
-          <img src={`${base}images/footer-tagline-1.svg`} alt="" width="147" height="21" class="h-[20.5px] w-[147px]" />
-          <img src={`${base}images/footer-tagline-2.svg`} alt="" width="105" height="14" class="h-[13.8px] w-[105px]" />
+          <img src={`${base}images/footer-tagline-1.svg`} loading="lazy" decoding="async" alt="" width="147" height="21" class="h-[20.5px] w-[147px]" />
+          <img src={`${base}images/footer-tagline-2.svg`} loading="lazy" decoding="async" alt="" width="105" height="14" class="h-[13.8px] w-[105px]" />
         </div>
-        <a href="tel:+79002242400" class="mt-6 whitespace-nowrap text-[40px] leading-none transition-colors hover:text-gold-hi">
-          +7-900-224-24-00
+        <a href={phones.footer.href} class="mt-6 whitespace-nowrap text-[40px] leading-none transition-colors hover:text-gold-hi">
+          {phones.footer.text}
         </a>
       </div>
 
-      <!-- «Наверх» + офис -->
+      {/* «Наверх» + офис */}
       <div class="flex flex-col gap-[71px] text-xl lg:items-end lg:text-right">
         <a href="#top" class="w-fit uppercase transition-colors hover:text-gold-hi">Наверх</a>
         <div class="flex flex-col gap-3.5 lg:items-end">
           <div>
             <p>офис продаж</p>
-            <p class="mt-5 lg:whitespace-nowrap">Санкт-Петербург, Богатырский 18 к 4 ст2</p>
+            <p class="mt-5 lg:whitespace-nowrap">{officeInfo.full}</p>
           </div>
           <a
             href={routeHref}
@@ -120,7 +111,7 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <!-- 2. ДИСКЛЕЙМЕР-ОФЕРТА + ПРОЕКТНАЯ ДОКУМЕНТАЦИЯ -->
+    {/* 2. ДИСКЛЕЙМЕР-ОФЕРТА + ПРОЕКТНАЯ ДОКУМЕНТАЦИЯ */}
     <p class="mx-auto mt-16 max-w-[963px] text-center text-xl leading-normal lg:mt-24">
       Любая информация, представленная на данном сайте, носит исключительно информационный характер и ни при каких
       условиях не является публичной офертой, определяемой положениями статьи 437 ГК РФ
@@ -134,25 +125,25 @@ const year = new Date().getFullYear();
       </a>
     </div>
 
-    <!-- 3. СОЦ-ИКОНКИ: два кластера -->
+    {/* 3. СОЦ-ИКОНКИ: два кластера */}
     <div class="mt-9 flex items-center justify-between">
       <div class="flex gap-3">
         {socialLeft.map((s) => (
           <a href={s.href} aria-label={s.label} class="transition-opacity hover:opacity-80">
-            <img src={`${base}icons/${s.icon}`} width="50" height="50" alt={s.label} class="size-[50px]" />
+            <img src={`${base}icons/${s.icon}`} loading="lazy" decoding="async" width="50" height="50" alt={s.label} class="size-[50px]" />
           </a>
         ))}
       </div>
       <div class="flex gap-3">
         {socialRight.map((s) => (
           <a href={s.href} aria-label={s.label} class="transition-opacity hover:opacity-80">
-            <img src={`${base}icons/${s.icon}`} width="50" height="50" alt={s.label} class="size-[50px]" />
+            <img src={`${base}icons/${s.icon}`} loading="lazy" decoding="async" width="50" height="50" alt={s.label} class="size-[50px]" />
           </a>
         ))}
       </div>
     </div>
 
-    <!-- 4. КОПИРАЙТ + ПРАВОВЫЕ ССЫЛКИ -->
+    {/* 4. КОПИРАЙТ + ПРАВОВЫЕ ССЫЛКИ */}
     <div class="mt-5 flex flex-col gap-3 border-t border-canvas pt-3 lg:flex-row lg:items-center lg:justify-between">
       <p class="text-xs leading-[19px]">© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
       <div class="flex flex-wrap gap-x-10 gap-y-2 text-sm leading-[19px] lg:gap-x-[60px]">
@@ -162,7 +153,7 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <!-- 5. ПОЛНЫЙ ДИСКЛЕЙМЕР: свой скролл (в макете справа — полоса прокрутки) -->
+    {/* 5. ПОЛНЫЙ ДИСКЛЕЙМЕР: свой скролл (в макете справа — полоса прокрутки) */}
     <div class="footer-disclaimer mt-4 max-h-[97px] overflow-y-auto pb-7 pr-[9px] pt-3 text-[15px] leading-[1.1] tracking-[-0.02em] text-fg" tabindex="0">
       <p>Дисклеймер</p>
       <p>

@@ -87,9 +87,9 @@ const steps = [
 
 <section class="py-20 md:py-28">
   <div class="container-page">
-    <!-- 1–2. Заголовок + мост: одна ячейка грида, слои наложены -->
+    {/* 1–2. Заголовок + мост: одна ячейка грида, слои наложены */}
     <div class="grid isolate">
-      <!-- Текстовый слой: заголовок сверху, «цель» прижата к низу (mt-auto) -->
+      {/* Текстовый слой: заголовок сверху, «цель» прижата к низу (mt-auto) */}
       <div class="z-10 col-start-1 row-start-1 flex flex-col">
         <div class="flex flex-col gap-3.5">
           <div class="flex items-center gap-3">
@@ -107,18 +107,18 @@ const steps = [
           </p>
         </div>
 
-        <!-- lg:translate-y — фраза заходит на 15px ниже ячейки грида, чтобы
-             встать в 8px над линией таймлайна (как в Figma; см. -mb у фото) -->
+        {/* lg:translate-y — фраза заходит на 15px ниже ячейки грида, чтобы
+             встать в 8px над линией таймлайна (как в Figma; см. -mb у фото) */}
         <p class="mt-10 max-w-[440px] font-accent text-xl leading-[1.25] text-fg lg:mt-auto lg:max-w-[300px] lg:translate-y-[15px]">
           Наша цель - не просто управлять недвижимостью, а увеличить её стоимость и ваш доход
         </p>
       </div>
 
-      <!-- Фото моста: на lg — тот же слой грида, справа снизу; на мобиле —
+      {/* Фото моста: на lg — тот же слой грида, справа снизу; на мобиле —
            отдельной строкой под текстом во всю ширину.
            lg:-mb-[23px]: линия таймлайна идёт на 23px ниже его верхнего края,
            отрицательный отступ опускает фото так, что полотно моста
-           ложится ровно на линию (таймлайн рисуется поверх). -->
+           ложится ровно на линию (таймлайн рисуется поверх). */}
       <img
         src={`${base}images/process-bridge.webp`}
         alt=""
@@ -130,11 +130,11 @@ const steps = [
       />
     </div>
 
-    <!-- 3. Таймлайн «пролёт · опоры» (только десктоп, где шаги в один ряд).
+    {/* 3. Таймлайн «пролёт · опоры» (только десктоп, где шаги в один ряд).
          Узлы стоят в той же 6-колоночной сетке, что и шаги, → всегда
-         точно над центром своей колонки при любой ширине контейнера. -->
+         точно над центром своей колонки при любой ширине контейнера. */}
     <div class="relative hidden h-[46px] lg:block" aria-hidden="true">
-      <!-- Пролёт: линия по центру высоты, затухает к краям -->
+      {/* Пролёт: линия по центру высоты, затухает к краям */}
       <span
         class="absolute inset-x-0 top-[23px] h-px"
         style="background-image: linear-gradient(90deg, rgba(255,241,217,0.15) 0%, rgba(255,241,217,0.9) 15%, rgba(255,241,217,0.9) 85%, rgba(168,133,72,0.15) 100%);"
@@ -142,9 +142,9 @@ const steps = [
       <div class="absolute inset-0 grid grid-cols-6 gap-4">
         {steps.map(() => (
           <div class="relative">
-            <!-- Опора: от линии вниз до края таймлайна -->
+            {/* Опора: от линии вниз до края таймлайна */}
             <span class="absolute left-1/2 top-[23px] h-[23px] w-px -translate-x-1/2 bg-[rgba(244,241,234,0.22)]"></span>
-            <!-- Узел: кружок с градиентной обводкой (см. шапку файла) -->
+            {/* Узел: кружок с градиентной обводкой (см. шапку файла) */}
             <span
               class="absolute left-1/2 top-[18px] size-[11px] -translate-x-1/2 rounded-full border border-transparent"
               style="background: linear-gradient(var(--color-canvas), var(--color-canvas)) padding-box, linear-gradient(140deg, rgba(255,241,217,0.95), rgba(168,133,72,0.95)) border-box;"
@@ -154,7 +154,7 @@ const steps = [
       </div>
     </div>
 
-    <!-- 4. Шаги.
+    {/* 4. Шаги.
          На lg колонка шага ~165px (в Figma 200px при холсте 1280), и часть
          названий переносится на 2 строки. Чтобы hairline'ы и подписи
          «На руках»/«Срок» всё равно стояли на одной высоте во всех колонках,
@@ -162,13 +162,13 @@ const steps = [
          grid-rows-subgrid): высота строки = максимум по всем шагам.
          lg:gap-y-2.5 — subgrid раскладывается по трекам РОДИТЕЛЯ, вместе с
          его межстрочным gap, поэтому родительский gap на lg = внутреннему
-         (10px), иначе между пунктами шага были бы дыры по 40px. -->
+         (10px), иначе между пунктами шага были бы дыры по 40px. */}
     <ol class="mt-12 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:mt-[39px] lg:grid-cols-6 lg:gap-y-2.5">
       {steps.map((step) => (
         <li class="flex flex-col gap-2.5 font-accent lg:row-span-6 lg:grid lg:grid-rows-subgrid">
           <span class="text-base leading-[18px] tracking-[0.14em] text-gold-plate">{step.number}</span>
-          <!-- font-accent/font-normal явно: базовый стиль h3 в global.css
-               ставит Playfair 600, наследование от <li> его не перебивает -->
+          {/* font-accent/font-normal явно: базовый стиль h3 в global.css
+               ставит Playfair 600, наследование от <li> его не перебивает */}
           <h3 class="font-accent text-[28px] font-normal leading-[28px] text-fg">{step.title}</h3>
           <p class="text-lg leading-[1.25] text-muted">{step.text}</p>
 

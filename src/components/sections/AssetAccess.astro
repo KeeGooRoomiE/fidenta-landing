@@ -46,7 +46,7 @@ const demo = { totalMln: 120 };
   style="height: calc(var(--stage-h, 100svh) * 2.6);"
 >
   <div data-stage class="sticky top-0 overflow-hidden bg-canvas" style="height: var(--stage-h, 100svh);">
-    <!-- Запасная/«постер» картинка: до загрузки сцены тусклая, в статичном режиме — яркая -->
+    {/* Запасная/«постер» картинка: до загрузки сцены тусклая, в статичном режиме — яркая */}
     <img
       src={`${base}images/puzzle-photo.webp`}
       alt="Коммерческий объект"
@@ -54,9 +54,9 @@ const demo = { totalMln: 120 };
       height="1067"
       class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
     />
-    <!-- ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях -->
+    {/* ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях */}
     <div data-canvas data-mode="bleed" class="absolute inset-0 hidden lg:block"></div>
-    <!-- Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно -->
+    {/* Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно */}
     <div
       class="pointer-events-none absolute inset-0 hidden lg:block"
       style="background: linear-gradient(90deg, rgba(10,32,25,0.94) 0%, rgba(10,32,25,0.72) 34%, rgba(10,32,25,0) 62%);"
@@ -64,7 +64,7 @@ const demo = { totalMln: 120 };
     </div>
 
     <div class="container-page relative z-10 flex h-full flex-col justify-between pb-5 pt-[92px] md:pt-[118px] lg:pb-10">
-      <!-- Текст -->
+      {/* Текст */}
       <div class="flex max-w-[570px] flex-col items-start gap-4 md:gap-6">
         <div class="flex items-center gap-2.5">
           <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
@@ -97,11 +97,11 @@ const demo = { totalMln: 120 };
         </a>
       </div>
 
-      <!-- МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
-           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. -->
+      {/* МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
+           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. */}
       <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 lg:hidden"></div>
 
-      <!-- Счётчик сборки (демо) -->
+      {/* Счётчик сборки (демо) */}
       <aside class="max-w-[360px] font-accent" aria-live="off">
         <span data-phase class="text-xs uppercase tracking-[0.14em] text-gold-plate md:text-sm">01 / Отдельные доли</span>
         <div class="mt-1 flex items-baseline gap-2">

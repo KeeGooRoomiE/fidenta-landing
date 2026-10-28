@@ -52,7 +52,7 @@ const extraCount = objects.filter((o) => o.hidden).length;
 
 <section id="portfolio" class="py-20 md:py-28">
   <div class="container-page">
-    <!-- Заголовок блока -->
+    {/* Заголовок блока */}
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
@@ -67,18 +67,18 @@ const extraCount = objects.filter((o) => o.hidden).length;
       </p>
     </div>
 
-    <!-- Сетка карточек: 1 колонка на мобильных, 3 в ряд на десктопе -->
+    {/* Сетка карточек: 1 колонка на мобильных, 3 в ряд на десктопе */}
     <div class="mt-12 grid grid-cols-1 gap-[34px] lg:grid-cols-3 md:mt-[70px]">
       {objects.map((obj) => <ObjectCard {...obj} />)}
     </div>
 
-    <!-- Сноска + линия -->
+    {/* Сноска + линия */}
     <div class="mt-6">
       <p class="font-accent text-xs leading-5 text-[#63645c]">Все объекты находятся под управлением УК ФИДЕНТА</p>
       <div class="h-px w-full bg-[rgba(20,58,48,0.35)]"></div>
     </div>
 
-    <!-- Кнопка «Показать ещё»: после нажатия удаляется из DOM -->
+    {/* Кнопка «Показать ещё»: после нажатия удаляется из DOM */}
     <div class="flex justify-center pt-6" data-more-wrap>
       <button
         type="button"

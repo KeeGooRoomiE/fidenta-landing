@@ -39,7 +39,7 @@ const cards = [
 
 <section id="about" class="py-14 md:py-28">
   <div class="container-page">
-    <!-- Заголовок -->
+    {/* Заголовок */}
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
@@ -54,19 +54,19 @@ const cards = [
       </p>
     </div>
 
-    <!-- Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) -->
+    {/* Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) */}
     <div class="mt-8 grid gap-6 lg:mt-[46px] lg:grid-cols-[466fr_800fr] lg:gap-[14px]">
-      <!-- Left panel -->
+      {/* Left panel */}
       <div class="flex flex-col gap-3 max-lg:order-2 lg:gap-5">
         {cards.map((card) => (
           <article class="flex items-center gap-3.5 rounded-[9px] border-[0.7px] border-[#fff1d9] bg-[#192b29] px-4 py-3 md:min-h-[120px] lg:px-10">
             {card.framed ? (
-              <!-- Знак моста в рамке-плашке (радиус 20) -->
+              /* Знак моста в рамке-плашке (радиус 20) */
               <div class="flex h-[44px] w-[48px] shrink-0 items-center justify-center rounded-[16px] border border-[#fff1d9] lg:h-[58px] lg:w-[63px] lg:rounded-[20px]">
-                <img src={`${base}icons/about/${card.icon}`} alt="" class="w-[34px] lg:w-[48px]" />
+                <img src={`${base}icons/about/${card.icon}`} alt="" width="58" height="28" loading="lazy" class="w-[34px] lg:w-[48px]" />
               </div>
             ) : (
-              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
+              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" loading="lazy" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
             )}
             <div class="font-accent leading-[1.1]">
               <h3 class="text-lg font-normal tracking-[-0.05em] text-gold-plate lg:text-xl">{card.title}</h3>
@@ -76,7 +76,7 @@ const cards = [
         ))}
       </div>
 
-      <!-- Photo and third title -->
+      {/* Photo and third title */}
       <div class="flex flex-col gap-3 max-lg:order-1 lg:gap-5">
         <div class="relative aspect-[2/1] flex-1 overflow-hidden rounded-[9px] border border-[#fff1d9] lg:aspect-auto lg:min-h-[320px]">
           <img
@@ -84,13 +84,15 @@ const cards = [
             alt="Офис управляющей компании «Фидента»"
             width="1535"
             height="1024"
+            loading="lazy"
+            decoding="async"
             class="absolute inset-0 h-full w-full object-cover object-right lg:object-center"
           />
-          <!-- Scrim снизу (в макете: от прозрачного к rgba(11,20,16,.85)) -->
+          {/* Scrim снизу (в макете: от прозрачного к rgba(11,20,16,.85)) */}
           <div class="pointer-events-none absolute inset-0" style="background-image: linear-gradient(180deg, rgba(11,20,16,0) 55%, rgba(11,20,16,0.55) 100%);"></div>
         </div>
 
-        <!-- Подпись: на мобильном — простой текст (короткая версия), на lg — плитка 120px -->
+        {/* Подпись: на мобильном — простой текст (короткая версия), на lg — плитка 120px */}
         <div class="flex items-center lg:min-h-[120px] lg:rounded-[9px] lg:border-[0.7px] lg:border-[#fff1d9] lg:bg-[#192b29] lg:px-[100px] lg:py-3">
           <p class="font-accent text-sm leading-[1.3] text-fg-dim lg:text-base lg:leading-[1.1] lg:tracking-[-0.01em]">
             <span class="lg:hidden">

@@ -33,16 +33,16 @@ const doesNotFitIf = [
 
 <section id="terms" class="py-20 md:py-28">
   <div class="container-page">
-    <!-- Заголовок секции: вправо на md+, влево на мобильном.
-         relative — для декоративных часов в пустой левой части (только md+) -->
+    {/* Заголовок секции: вправо на md+, влево на мобильном.
+         relative — для декоративных часов в пустой левой части (только md+) */}
     <div class="relative flex flex-col items-start gap-3 text-left md:items-end md:text-right">
-      <!--
+      {/*
         ЧАСЫ (по правке дизайнера: блок про «время» был «скучным»). Декоративный
         SVG-циферблат в золотой линии: показывает РЕАЛЬНОЕ время посетителя, секундная
         стрелка тикает (CSS steps(60), 1 раз в секунду), минутная/часовая выставляются
         скриптом ниже при загрузке и дальше двигаются сами. aria-hidden — для скринридеров
         это просто украшение. При prefers-reduced-motion стрелка не тикает.
-      -->
+      */}
       <svg
         id="terms-clock"
         class="pointer-events-none absolute left-0 top-0 hidden size-[190px] md:block lg:size-[220px]"
@@ -58,7 +58,7 @@ const doesNotFitIf = [
         </defs>
         <circle cx="100" cy="100" r="96" stroke="url(#clock-gold)" stroke-width="1.5"></circle>
         <circle cx="100" cy="100" r="88" stroke="url(#clock-gold)" stroke-opacity="0.35" stroke-width="0.8"></circle>
-        <!-- 12 делений: 4 длинных (12/3/6/9) и 8 коротких -->
+        {/* 12 делений: 4 длинных (12/3/6/9) и 8 коротких */}
         <g stroke="url(#clock-gold)" stroke-linecap="round">
           {Array.from({ length: 12 }, (_, i) => (
             <line
@@ -68,7 +68,7 @@ const doesNotFitIf = [
             ></line>
           ))}
         </g>
-        <!-- Стрелки: transform-origin в центре циферблата -->
+        {/* Стрелки: transform-origin в центре циферблата */}
         <line id="clock-hour" x1="100" y1="100" x2="100" y2="58" stroke="url(#clock-gold)" stroke-width="3.4" stroke-linecap="round"></line>
         <line id="clock-minute" x1="100" y1="100" x2="100" y2="34" stroke="url(#clock-gold)" stroke-width="2.4" stroke-linecap="round"></line>
         <line id="clock-second" x1="100" y1="116" x2="100" y2="28" stroke="#C7A24B" stroke-width="1.2" stroke-linecap="round"></line>
@@ -88,7 +88,7 @@ const doesNotFitIf = [
       </p>
     </div>
 
-    <!-- Блок условий -->
+    {/* Блок условий */}
     <div class="mt-10 flex flex-col gap-8 md:mt-16">
       <div class="h-px w-full" style="background-image: var(--gradient-gold);"></div>
 
@@ -98,7 +98,7 @@ const doesNotFitIf = [
           <ul class="flex flex-col gap-3 md:gap-[18px]">
             {fitsIf.map((text) => (
               <li class="flex items-start gap-3 md:gap-4">
-                <!-- Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта -->
+                {/* Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта */}
                 <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5" style="background-image: var(--gradient-gold);"></span>
                 <span class="font-accent text-base leading-[1.4] text-fg md:text-lg md:leading-[1.55]">{text}</span>
               </li>
@@ -113,7 +113,7 @@ const doesNotFitIf = [
           <ul class="flex flex-col gap-3 md:gap-[18px]">
             {doesNotFitIf.map((text) => (
               <li class="flex items-start gap-3 md:gap-4">
-                <!-- Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта -->
+                {/* Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта */}
                 <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5" style="background-image: var(--gradient-gold);"></span>
                 <span class="font-accent text-base leading-[1.4] text-fg md:text-lg md:leading-[1.55]">{text}</span>
               </li>
