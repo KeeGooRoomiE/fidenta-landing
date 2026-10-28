@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["_astro/contacts-map.DaxQKoZj.js","_astro/contacts-map.CIGW-MKW.css"])))=>i.map(i=>d[i]);
+import{_ as n}from"./preload-helper.Dt5_Fr7D.js";const e=document.querySelector("[data-contacts-map]");if(e){const o=new IntersectionObserver(r=>{r.some(t=>t.isIntersecting)&&(o.disconnect(),n(()=>import("./contacts-map.DaxQKoZj.js"),__vite__mapDeps([0,1])).then(t=>t.initContactsMap(e)))},{rootMargin:"200% 0px"});o.observe(e)}
