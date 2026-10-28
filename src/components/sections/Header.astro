@@ -43,7 +43,7 @@ const base = import.meta.env.BASE_URL;
 <header class="fixed inset-x-0 top-0 z-50 flex h-[84px] flex-col md:h-[92px]" id="site-header" data-scrolled="false">
   {/* Пилюля-подложка: отдельный слой, геометрия ПОСТОЯННА (см. комментарий
        вверху файла) — анимируется только opacity, никогда margin/width. */}
-  <div class="header-pill pointer-events-none absolute inset-x-3 top-2.5 bottom-0 md:inset-x-0 md:top-3 md:mx-auto md:max-w-[74rem]" aria-hidden="true"></div>
+  <div class="header-pill pointer-events-none absolute inset-x-3 top-2.5 bottom-0 md:inset-x-0 md:top-3 md:mx-auto md:max-w-[74rem] min-[1600px]:max-w-[84rem]" aria-hidden="true"></div>
 
   {/* Подложка-«закрыватель» меню: тап по любому свободному месту закрывает открытое меню */}
   <div id="nav-backdrop" class="fixed inset-0 -z-10 hidden bg-black/40" aria-hidden="true"></div>
@@ -111,7 +111,7 @@ const base = import.meta.env.BASE_URL;
     меню теперь вообще никак не влияет.
   */}
   <nav id="nav-panel" class="nav-panel absolute inset-x-0 top-full hidden">
-      <div class="nav-panel-card mx-3 overflow-hidden md:mx-auto md:max-w-[74rem]">
+      <div class="nav-panel-card mx-3 overflow-hidden md:mx-auto md:max-w-[74rem] min-[1600px]:max-w-[84rem]">
         <div class="grid gap-1 p-4 sm:grid-cols-2">
           {nav.map((link) => (
             <a href={link.href} class="rounded-lg px-4 py-3.5 text-lg text-canvas/90 transition-colors hover:bg-canvas/5 hover:text-gold-deep">
@@ -262,8 +262,8 @@ const base = import.meta.env.BASE_URL;
 
   /* Выпадающая панель навигации — светлая плавающая карточка, тот же язык,
      что у .header-pill (см. комментарий в разметке выше). Ширина/отступы —
-     mx-3 / md:mx-auto md:max-w-[74rem] прямо в разметке, ТА ЖЕ техника, что
-     у .header-pill (inset-x-3 / md:inset-x-0 md:mx-auto md:max-w-[74rem]) —
+     mx-3 / md:mx-auto md:max-w-[74rem] min-[1600px]:max-w-[84rem] прямо в разметке, ТА ЖЕ техника, что
+     у .header-pill (inset-x-3 / md:inset-x-0 md:mx-auto md:max-w-[74rem] min-[1600px]:max-w-[84rem]) —
      раньше тут был .container-page с собственным padding-inline, из-за
      которого карточка оказывалась уже пилюли на 48px (24px с каждой
      стороны) — видимое рассогласование краёв при открытии меню. */

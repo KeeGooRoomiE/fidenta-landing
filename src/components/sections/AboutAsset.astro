@@ -57,10 +57,10 @@ const cards = [
             {card.framed ? (
               /* Знак моста в рамке-плашке (радиус 20) */
               <div class="flex h-[44px] w-[48px] shrink-0 items-center justify-center rounded-[16px] border border-cream lg:h-[58px] lg:w-[63px] lg:rounded-[20px]">
-                <img src={`${base}icons/about/${card.icon}`} alt="" width="58" height="28" loading="lazy" class="w-[34px] lg:w-[48px]" />
+                <img src={`${base}icons/about/${card.icon}`} alt="" width="58" height="28" loading="eager" class="w-[34px] lg:w-[48px]" />
               </div>
             ) : (
-              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" loading="lazy" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
+              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" loading="eager" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
             )}
             <div class="font-accent leading-[1.1]">
               <h3 class="text-lg font-normal tracking-[-0.05em] text-gold-plate lg:text-xl">{card.title}</h3>
@@ -78,7 +78,7 @@ const cards = [
             alt="Офис управляющей компании «Фидента»"
             width="1535"
             height="1024"
-            loading="lazy"
+            loading="eager"
             decoding="async"
             class="absolute inset-0 h-full w-full object-cover object-right lg:object-center"
           />
