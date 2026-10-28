@@ -1,0 +1,259 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Крупный актив — без крупного капитала» + 3D-пазл по скроллу
+  Источник текста: Figma, узел 974:65806 («block 2 invest»). Пазл — из прототипа
+  fidenta-puzzle-studio.html (Three.js), движок вынесен в src/scripts/puzzle-scene.ts.
+
+  КАК УСТРОЕНО
+   - Секция высокая (≈2.6 экрана), внутри «залипает» (sticky) сцена на один экран.
+     Пока пользователь прокручивает секцию, пазл собирается: от разлетевшихся «долей»
+     к целому объекту (прогресс 0→1 = положение скролла внутри секции; прокрутка назад
+     разбирает пазл обратно).
+   - Пазл — фон ВСЕЙ сцены (canvas на весь экран, пазл крупно справа), текст и счётчик —
+     поверх, слева, на тёмном градиенте для читаемости.
+   - Цифры («N млн ₽» на деталях, счётчик, шкала, фазы) — ДЕМОНСТРАЦИЯ механики из
+     прототипа; под счётчиком пометка «Демонстрация механики, не текущий сбор». Реальные
+     числа подставить в demo ниже, когда пришлёт клиент.
+   - Тяжёлое (three.js ~0,6 МБ + модель ~3 МБ) грузится ЛЕНИВО — только когда секция
+     подъезжает к экрану (IntersectionObserver). Рендер идёт, только пока сцена видна.
+   - Запасной вариант: при prefers-reduced-motion или без WebGL — статичная картинка
+     собранного объекта, секция обычной высоты, счётчик на 100%.
+
+  CSS ZOOM на больших экранах (см. global.css): vh/svh в таких условиях «врут», поэтому
+  высота сцены задаётся переменной --stage-h из JS (innerHeight / zoom); без zoom остаётся
+  чистый CSS (100svh).
+
+  ФОТО пазла: public/images/puzzle-photo.webp (склад, 1536×1024 из Figma). В прототипе лежало
+  низкое разрешение (509×216) с вшитой подписью «120 млн ₽» — оно сохранено как
+  public/images/puzzle-photo-prototype.jpg; заменить фото = заменить один файл (4:3 лучше).
+  Текст блока: в Figma было 3 абзаца; по правке дизайнера первая фраза убрана, смысл
+  «без необходимости приобретать объект целиком» — в конце последнего абзаца.
+*/
+const base = import.meta.env.BASE_URL;
+
+// Демо-значения пазла (замена реальными — одной правкой здесь)
+const demo = { totalMln: 120 };
+---
+
+<section
+  id="asset"
+  class="asset relative"
+  data-asset
+  data-total={demo.totalMln}
+  data-model={`${base}models/puzzle.glb`}
+  data-photo={`${base}images/puzzle-photo.webp`}
+  style="height: calc(var(--stage-h, 100svh) * 2.6);"
+>
+  <div data-stage class="sticky top-0 overflow-hidden bg-canvas" style="height: var(--stage-h, 100svh);">
+    <!-- Запасная/«постер» картинка: до загрузки сцены тусклая, в статичном режиме — яркая -->
+    <img
+      src={`${base}images/puzzle-photo.webp`}
+      alt="Коммерческий объект"
+      width="1600"
+      height="1067"
+      class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
+    />
+    <!-- ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях -->
+    <div data-canvas data-mode="bleed" class="absolute inset-0 hidden lg:block"></div>
+    <!-- Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно -->
+    <div
+      class="pointer-events-none absolute inset-0 hidden lg:block"
+      style="background: linear-gradient(90deg, rgba(10,32,25,0.94) 0%, rgba(10,32,25,0.72) 34%, rgba(10,32,25,0) 62%);"
+    >
+    </div>
+
+    <div class="container-page relative z-10 flex h-full flex-col justify-between pb-5 pt-[92px] md:pt-[118px] lg:pb-10">
+      <!-- Текст -->
+      <div class="flex max-w-[570px] flex-col items-start gap-4 md:gap-6">
+        <div class="flex items-center gap-2.5">
+          <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+          <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Инвестиции в недвижимость</span>
+        </div>
+
+        <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] sm:text-5xl md:text-[50px]">
+          <span class="block text-fg-dim">Крупный актив —</span>
+          <span class="block text-gold-plate">без крупного капитала</span>
+        </h2>
+
+        <div class="flex flex-col gap-2 font-accent text-sm leading-[1.4] text-fg-dim md:gap-1 md:text-xl md:leading-[1.3]">
+          <p>
+            Фидента объединяет средства нескольких инвесторов в один пул, и вместе они получают доступ к объектам,
+            которые были бы недоступны каждому по отдельности.
+          </p>
+          <p>
+            Каждый инвестор владеет долей в объекте и получает доход — без необходимости приобретать объект целиком.
+          </p>
+        </div>
+
+        <a
+          href="#cta"
+          data-cta-audience="investor"
+          class="mt-2 inline-flex w-full items-center justify-center rounded-[9px] border border-plate-line px-6 py-3 text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:mt-8 md:w-auto md:py-[14px]"
+        >
+          <span class="font-accent text-lg tracking-[-0.01em] text-gold-plate md:text-2xl" style="opacity: 0.76;">
+            Узнать больше об участии
+          </span>
+        </a>
+      </div>
+
+      <!-- МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
+           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. -->
+      <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 lg:hidden"></div>
+
+      <!-- Счётчик сборки (демо) -->
+      <aside class="max-w-[360px] font-accent" aria-live="off">
+        <span data-phase class="text-xs uppercase tracking-[0.14em] text-gold-plate md:text-sm">01 / Отдельные доли</span>
+        <div class="mt-1 flex items-baseline gap-2">
+          <span data-amount class="text-3xl leading-none text-fg md:text-5xl">0</span>
+          <span class="text-base text-fg-dim md:text-xl">млн ₽</span>
+        </div>
+        <div class="mt-2 h-[3px] w-full overflow-hidden rounded-full bg-[rgba(244,241,234,0.14)]">
+          <div data-bar class="h-full w-0 rounded-full" style="background-image: var(--gradient-gold);"></div>
+        </div>
+        <p class="mt-2 text-sm text-fg-dim md:text-base">
+          из <span data-total-text>{demo.totalMln}</span> млн ₽ · <span data-percent>0</span>%
+        </p>
+        <p class="mt-1 text-[11px] uppercase tracking-[0.1em] text-muted/80 md:text-xs">
+          Демонстрация механики, не текущий сбор
+        </p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  const sec = document.querySelector<HTMLElement>('[data-asset]');
+  if (sec) init(sec);
+
+  function init(sec: HTMLElement) {
+    const stage = sec.querySelector<HTMLElement>('[data-stage]')!;
+    const boxes = [...sec.querySelectorAll<HTMLElement>('[data-canvas]')];
+    // активный контейнер: на ПК — «bleed» (весь блок), иначе — «box» (область между текстом и счётчиком)
+    const desktop = matchMedia('(min-width: 1024px)');
+    const pickBox = () => boxes.find((b) => b.dataset.mode === (desktop.matches ? 'bleed' : 'box'))!;
+    const total = Number(sec.dataset.total ?? 120);
+    const ui = {
+      phase: sec.querySelector<HTMLElement>('[data-phase]')!,
+      amount: sec.querySelector<HTMLElement>('[data-amount]')!,
+      bar: sec.querySelector<HTMLElement>('[data-bar]')!,
+      percent: sec.querySelector<HTMLElement>('[data-percent]')!,
+    };
+    const fmt = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 });
+
+    // --- Высота сцены при CSS zoom (vh/svh на больших экранах «врут»; см. шапку файла) ---
+    const zoom = () => parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+    function setStageHeight() {
+      const z = zoom();
+      if (z !== 1) sec.style.setProperty('--stage-h', innerHeight / z + 'px');
+      else sec.style.removeProperty('--stage-h');
+    }
+    setStageHeight();
+    addEventListener('resize', setStageHeight);
+
+    // --- Счётчик/шкала/фаза от прогресса ---
+    function updateUI(p: number) {
+      const pct = Math.round(p * 100);
+      ui.percent.textContent = String(pct);
+      ui.amount.textContent = fmt.format(total * p);
+      ui.bar.style.width = pct + '%';
+      ui.phase.textContent = p < 0.15 ? '01 / Отдельные доли' : p < 0.92 ? '02 / Собираем объект' : '03 / Единый актив';
+    }
+
+    // --- Прогресс = положение скролла внутри секции (0 — вход, 1 — выход из «залипания») ---
+    function scrollProgress() {
+      const r = sec.getBoundingClientRect();
+      const s = stage.getBoundingClientRect();
+      const range = r.height - s.height;
+      return range > 0 ? Math.min(1, Math.max(0, -r.top / range)) : 0;
+    }
+
+    // --- Статичный режим (reduced motion / нет WebGL): картинка + 100% ---
+    function makeStatic() {
+      sec.style.height = 'auto';
+      stage.style.position = 'relative';
+      stage.style.height = 'auto';
+      stage.style.minHeight = '100svh';
+      sec.querySelector<HTMLElement>('.asset-fallback')!.style.opacity = '0.55';
+      updateUI(1);
+    }
+
+    const hasWebGL = (() => {
+      try {
+        const c = document.createElement('canvas');
+        return !!(c.getContext('webgl2') || c.getContext('webgl'));
+      } catch {
+        return false;
+      }
+    })();
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    updateUI(0);
+    if (reduced || !hasWebGL) {
+      makeStatic();
+      return;
+    }
+
+    // --- Ленивая загрузка тяжёлой сцены: когда секция подъезжает к экрану ---
+    let started = false;
+    const loader = new IntersectionObserver(
+      (entries) => {
+        if (started || !entries.some((e) => e.isIntersecting)) return;
+        started = true;
+        loader.disconnect();
+        start();
+      },
+      { rootMargin: '150% 0px' },
+    );
+    loader.observe(sec);
+
+    async function start() {
+      try {
+        const { createPuzzleScene } = await import('../../scripts/puzzle-scene');
+        const scene = await createPuzzleScene({
+          container: pickBox(),
+          modelUrl: sec!.dataset.model!,
+          photoUrl: sec!.dataset.photo!,
+          totalMln: total,
+          reducedMotion: false,
+        });
+        sec!.querySelector<HTMLElement>('.asset-fallback')!.style.opacity = '0';
+        // поворот телефона/ресайз через breakpoint lg → переносим сцену в нужный контейнер
+        desktop.addEventListener('change', () => scene.setContainer(pickBox()));
+
+        let ticking = false;
+        const apply = () => {
+          ticking = false;
+          const p = scrollProgress();
+          scene.setProgress(p);
+          updateUI(p);
+        };
+        addEventListener(
+          'scroll',
+          () => {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(apply);
+            }
+          },
+          { passive: true },
+        );
+        apply();
+
+        // Рендерим только пока сцена в зоне видимости
+        new IntersectionObserver((es) => scene.setActive(es.some((e) => e.isIntersecting)), {
+          rootMargin: '10% 0px',
+        }).observe(stage);
+      } catch (err) {
+        console.error('[puzzle] не удалось запустить 3D, показываем картинку', err);
+        makeStatic();
+      }
+    }
+  }
+</script>
+
+<style is:global>
+  /* Подпись-«постер» плавно пропадает, когда включилась 3D-сцена */
+  .asset-fallback {
+    transition: opacity 0.6s ease;
+  }
+</style>

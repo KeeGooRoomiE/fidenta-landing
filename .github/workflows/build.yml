@@ -32,10 +32,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Версия pnpm НЕ указывается здесь явно — берётся из поля "packageManager"
+      # в package.json (pnpm/action-setup читает его автоматически). Указание
+      # версии и тут, и там одновременно — ошибка сборки (action отказывается
+      # работать при двух источниках версии).
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

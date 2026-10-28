@@ -1,70 +1,252 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК CtaForm («Готовы передать объект под управление?»)
+  УРОВЕНЬ 3 — БЛОК «Заявка» (CTA-форма с переключателем «Я инвестор / Я собственник»)
+  Источник: Figma, узел 974:64820 («block 13 Zayavka»)
 
-  Слева — призыв и описание. Справа — форма заявки.
-  Атрибуты name полей совпадают с inputs воркфлоу cta-email.yml и переменными
-  в scripts/send_cta.py:
-    name → FORM_NAME, phone → FORM_PHONE, client_email → FORM_CLIENT_EMAIL, message → FORM_MESSAGE
+  Слева — призыв и «Что будет дальше», справа — переключатель аудитории и форма.
 
-  Отправка формы (fetch к GitHub API) пока НЕ подключена — это следующий шаг.
-  Сейчас скрипт лишь перехватывает submit и показывает заглушку.
+  ПЕРЕКЛЮЧАТЕЛЬ: сейчас меняет ТОЛЬКО ТЕКСТЫ блока (словарь copy ниже, ключи
+  investor / owner). Позже тот же выбор будет определять целевую почту
+  отправки (см. TODO(CTA) в скрипте внизу): аудитория уходит в форму скрытым
+  полем audience, на стороне отправки по ней выбирается получатель.
 
-  id="cta" — якорь для кнопок «Консультация» и ссылки «Контакты».
+  ⚠️ В Figma нарисован только вариант «инвестор». Тексты варианта «собственник»
+  (copy.owner) — ЧЕРНОВИК по смыслу сайта (баннер «Передайте недвижимость под
+  управление», блок «Полный спектр»), НЕ из макета: показать клиенту / получить
+  от дизайнера второй вариант.
+
+  Поля формы: name / phone / client_email / message — совпадают с inputs
+  воркфлоу cta-email.yml и переменными scripts/send_cta.py
+  (FORM_NAME, FORM_PHONE, FORM_CLIENT_EMAIL, FORM_MESSAGE).
+
+  Состояние кнопки-переключателя: активная — золотая заливка (btn-plat),
+  неактивная — только кремовая рамка (btn-outline) с золотым текстом.
+
+  Кнопки в других блоках с атрибутом data-cta-audience="investor|owner" (Hero: «Доступ к сделкам» →
+  инвестор, «Передать объект в управление» → собственник; баннер, «Крупный актив», «Условия участия»)
+  при клике сами переключают форму на нужную аудиторию.
+
+  id="cta" — якорь для кнопок «Консультация» / «Передать объект…» и ссылки «Контакты».
 */
-import Input from '../ui/Input.astro';
-import Button from '../ui/Button.astro';
+const copy = {
+  investor: {
+    eyebrow: 'заявка инвестора',
+    title: 'Покажем объекты, открытые для входа, подберем решение',
+    lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода.',
+    steps: [
+      'Свяжемся в течение одного рабочего дня',
+      'Пришлём карточку объекта с адресом и арендатором',
+      'Съездим на объект вместе, если захотите',
+    ],
+    formTitle: 'Заявка инвестора',
+    placeholder: 'Например, интересуют склады в Ленобласти',
+    submit: 'Получить карточку объекта',
+  },
+  // ЧЕРНОВИК — см. примечание в шапке файла
+  owner: {
+    eyebrow: 'заявка собственника',
+    title: 'Передайте объект под управление — расскажем, как повысить доход',
+    lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива.',
+    steps: [
+      'Свяжемся в течение одного рабочего дня',
+      'Запросим данные по объекту и оценим его потенциал',
+      'Приедем на объект и предложим условия управления',
+    ],
+    formTitle: 'Заявка собственника',
+    placeholder: 'Например, офисное здание, 3 000 м², Санкт-Петербург',
+    submit: 'Передать объект под управление',
+  },
+};
+// Поле-подпись «Комментарий» одинаково для обоих вариантов (в Figma — «Комментарий / интересующий формат участия»)
 ---
 
-<section id="cta" class="bg-panel py-20 md:py-28">
-  <div class="container-page grid gap-12 lg:grid-cols-2 lg:gap-16">
-    <!-- Левая колонка: призыв -->
-    <div>
-      <span class="eyebrow mb-4">— Оставить заявку</span>
-      <h2 class="text-3xl leading-tight sm:text-4xl md:text-5xl">
-        Готовы передать объект под управление?
+<section id="cta" class="py-14 md:py-28" data-cta data-copy={JSON.stringify(copy)}>
+  <!-- МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
+         потом короткий призыв, потом форма. Для этого правая колонка на <lg «растворяется»
+         (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. -->
+    <div class="container-page grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-12">
+    <!-- Левая колонка: призыв (тексты подменяются скриптом по data-copy) -->
+    <div class="flex flex-col gap-3 font-accent max-lg:order-2 lg:gap-[15px]">
+      <div class="flex items-center gap-2.5">
+        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span data-t="eyebrow" class="font-body text-base font-medium md:text-xl uppercase tracking-[0.1em] text-gold-plate">
+          {copy.investor.eyebrow}
+        </span>
+      </div>
+      <h2
+        data-t="title"
+        class="max-w-[437px] font-accent text-3xl font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-5xl md:text-[50px]"
+      >
+        {copy.investor.title}
       </h2>
-      <p class="mt-5 max-w-md text-base leading-relaxed text-muted">
-        Оставьте заявку — свяжемся в течение одного рабочего дня, проконсультируем
-        и при необходимости выедем на осмотр объекта.
-      </p>
+      <p data-t="lead" class="max-w-[428px] text-base leading-snug text-fg md:text-xl md:leading-[1.43]">{copy.investor.lead}</p>
+      <p class="text-base text-white md:text-xl">Что будет дальше?</p>
+      <ul class="list-disc ps-6 text-base leading-snug text-white md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
+        {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
+      </ul>
     </div>
 
-    <!-- Правая колонка: форма -->
-    <div class="rounded-2xl border border-border bg-surface p-7 md:p-8">
-      <h3 class="text-xl">Напишите нам</h3>
-      <p class="mt-1 text-sm text-muted">Ответим в течение одного рабочего дня.</p>
+    <!-- Правая колонка: переключатель + форма -->
+    <div class="flex flex-col gap-4 font-accent max-lg:contents">
+      <div class="flex gap-3 max-lg:order-1 md:gap-5" role="group" aria-label="Тип заявки">
+        <button type="button" data-audience="investor" aria-pressed="true" class="aud-btn aud-btn--sm-mobile">Я инвестор</button>
+        <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile">Я собственник</button>
+      </div>
 
-      <form id="cta-form" class="mt-6 flex flex-col gap-5" novalidate>
-        <div class="grid gap-5 sm:grid-cols-2">
-          <Input label="Имя" name="name" placeholder="Александр" required />
-          <Input label="Телефон" name="phone" type="tel" placeholder="+7 (812) ..." required />
+      <!-- Заголовок формы и «Ответим…» на мобильном скрыты: повторяют надпись и первый пункт сверху -->
+      <h3 data-t="formTitle" class="mt-3 hidden font-accent text-4xl font-normal leading-[1.1] text-fg lg:block">
+        {copy.investor.formTitle}
+      </h3>
+      <p class="hidden text-xl leading-[1.12] text-fg lg:block">Ответим в течение одного рабочего дня.</p>
+
+      <form id="cta-form" class="flex flex-col gap-3 max-lg:order-3 md:gap-4" novalidate>
+        <!-- Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) -->
+        <input type="hidden" name="audience" value="investor" />
+
+        <div class="grid grid-cols-2 gap-3 md:gap-4">
+          <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
+            Имя
+            <input name="name" required autocomplete="name" placeholder="Александр" class="cta-input" />
+          </label>
+          <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
+            Телефон
+            <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 (812) ..." class="cta-input" />
+          </label>
         </div>
 
-        <Input label="E-mail" name="client_email" type="email" placeholder="example@mail.ru" />
+        <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
+          E-mail
+          <span class="relative block">
+            <input name="client_email" type="email" autocomplete="email" placeholder="example@mail.ru" class="cta-input w-full !pr-[140px]" />
+            <span class="pointer-events-none absolute right-[17px] top-1/2 hidden -translate-y-1/2 font-body text-base text-[rgba(244,241,234,0.5)] sm:block">не обязательно</span>
+          </span>
+        </label>
 
-        <Input label="Тема обращения" name="message" placeholder="Управление коммерческой недвижимостью" />
+        <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
+          Комментарий / интересующий формат участия
+          <input name="message" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input" />
+        </label>
 
-        <Button variant="primary" type="submit" class="mt-1 w-full">Отправить сообщение</Button>
+        <!-- Согласие: ссылка #privacy — страница политики появится позже -->
+        <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-fg md:text-xl md:leading-[1.04]">
+          <input type="checkbox" name="consent" required checked class="mt-0.5 size-[18px] shrink-0 accent-[#c29e4b]" />
+          <span>
+            Даю согласие на
+            <a href="#privacy" class="text-[#c29e4b] underline">обработку персональных данных</a>
+            в соответствии с политикой конфиденциальности
+          </span>
+        </label>
 
-        <!-- Сюда скрипт выведет статус отправки -->
-        <p id="cta-status" class="hidden text-sm" role="status"></p>
+        <button
+          type="submit"
+          data-t="submit"
+          class="btn-plat h-12 w-full rounded-[9px] border border-transparent px-[29px] font-accent text-lg md:h-[52px] md:text-xl tracking-[0.008em] transition-[filter] hover:brightness-110"
+        >
+          {copy.investor.submit}
+        </button>
+
+        <!-- Статус отправки -->
+        <p id="cta-status" class="hidden font-accent text-base" role="status"></p>
       </form>
+
+      <p class="mt-2 font-accent text-sm leading-5 text-[#bdaf92] max-lg:order-3">
+        Не является публичной офертой. Условия конкретной сделки фиксируются в договоре.
+      </p>
     </div>
   </div>
 </section>
 
 <script>
-  // Заглушка обработки формы. Реальную отправку (fetch к GitHub API →
-  // workflow_dispatch воркфлоу cta-email.yml) подключим отдельным шагом.
-  const form = document.getElementById('cta-form');
-  const status = document.getElementById('cta-status');
+  type Audience = 'investor' | 'owner';
+  const root = document.querySelector<HTMLElement>('[data-cta]');
 
-  form?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!status) return;
-    status.textContent = 'Форма собрана. Отправка на сервер будет подключена позже.';
-    status.classList.remove('hidden');
-    status.classList.add('text-accent');
-  });
+  if (root) {
+    const copy = JSON.parse(root.dataset.copy ?? '{}') as Record<Audience, Record<string, any>>;
+    const form = root.querySelector<HTMLFormElement>('#cta-form')!;
+    const hidden = form.elements.namedItem('audience') as HTMLInputElement;
+
+    // --- Переключатель «инвестор / собственник»: меняем только тексты ---
+    function setAudience(a: Audience) {
+      const c = copy[a];
+      hidden.value = a;
+      root!.querySelectorAll<HTMLElement>('[data-t]').forEach((el) => (el.textContent = c[el.dataset.t!]));
+      root!.querySelectorAll<HTMLElement>('[data-step]').forEach((el) => (el.textContent = c.steps[Number(el.dataset.step)]));
+      root!.querySelector<HTMLInputElement>('[data-t-placeholder]')!.placeholder = c.placeholder;
+      root!.querySelectorAll<HTMLElement>('[data-audience]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b.dataset.audience === a)),
+      );
+    }
+    root.querySelectorAll<HTMLElement>('[data-audience]').forEach((b) =>
+      b.addEventListener('click', () => setAudience(b.dataset.audience as Audience)),
+    );
+
+    // Кнопки-призывы в других блоках (Hero, баннер и т.д.) помечены data-cta-audience="investor|owner":
+    // по клику сразу переключаем форму на нужную аудиторию (с нужными текстами), а сам переход
+    // к форме делает обычная якорная ссылка href="#cta".
+    document.querySelectorAll<HTMLElement>('[data-cta-audience]').forEach((link) =>
+      link.addEventListener('click', () => setAudience(link.dataset.ctaAudience as Audience)),
+    );
+
+    // --- Отправка формы ---
+    const status = root.querySelector<HTMLElement>('#cta-status')!;
+    function show(text: string, ok: boolean) {
+      status.textContent = text;
+      status.classList.remove('hidden', 'text-accent', 'text-red-300');
+      status.classList.add(ok ? 'text-accent' : 'text-red-300');
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      if (!String(data.get('name')).trim() || !String(data.get('phone')).trim()) {
+        return show('Укажите имя и телефон.', false);
+      }
+      if (!(form.elements.namedItem('consent') as HTMLInputElement).checked) {
+        return show('Нужно согласие на обработку персональных данных.', false);
+      }
+
+      // TODO(CTA): отправка заявки письмом — пока доступов нет, это заглушка.
+      //   Что сделать, когда будут доступы:
+      //   1) fetch POST на GitHub API → workflow_dispatch воркфлоу cta-email.yml
+      //      (адрес и inputs описаны в шапке .github/workflows/cta-email.yml;
+      //      токен НЕ хранить в клиентском коде — нужен прокси/serverless-эндпоинт);
+      //   2) передать поля: name, phone, client_email, message (+ audience);
+      //   3) целевая почта зависит от audience (investor / owner): завести словарь
+      //      «аудитория → адрес» на стороне отправки (secrets), а не в браузере;
+      //   4) показать успех/ошибку по ответу, очистить форму при успехе.
+      console.info('[CTA] заявка (отправка не подключена):', Object.fromEntries(data));
+      show('Форма собрана. Отправка письма будет подключена позже.', true);
+    });
+  }
 </script>
+
+<style is:global>
+  /* Кнопки-переключатели .aud-btn — общие, лежат в styles/global.css
+     (используются и в CtaForm, и в FAQ). */
+  /* Поле ввода по спеке Figma: фон #143a30, рамка #1c4a3d, radius 9, высота 52 */
+  .cta-input {
+    height: 52px;
+    width: 100%;
+    border-radius: 9px;
+    border: 1px solid #1c4a3d;
+    background: #143a30;
+    padding: 0 17px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: #f4f1ea;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  @media (max-width: 767px) {
+    .cta-input {
+      height: 46px;
+      padding: 0 13px;
+    }
+  }
+  .cta-input::placeholder {
+    color: rgba(244, 241, 234, 0.5);
+  }
+  .cta-input:focus {
+    border-color: #c7a24b;
+  }
+</style>

@@ -1,0 +1,67 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК-БАННЕР «Ваш объект — наша ответственность»
+  Источник: Figma, узел 974:64958 («block 10 Banner»)
+
+  Широкая плашка в кремовой рамке: слева eyebrow + H2 + текст + кнопка,
+  справа фото склада в тонкой рамке. На мобильных фото уходит под текст.
+
+  Фото (public/images/banner-warehouse.webp) — из Figma. В макете оно в маске
+  с мягкими краями и тёмным градиентом слева — повторяем градиентом-оверлеем
+  и inset-тенью, отдельный mask-файл не нужен.
+
+  ⚠️ В тексте из Figma «комерческую» (одна «м») — опечатка, не правлю молча,
+  нужно подтвердить у клиента.
+  Кнопка ведёт на форму (#cta), как кнопки Hero.
+*/
+const base = import.meta.env.BASE_URL;
+---
+
+<section class="py-10 md:py-16">
+  <div class="container-page">
+    <div
+      class="grid items-center gap-8 rounded-[9px] border p-5 sm:p-6 lg:grid-cols-[1fr_416px] lg:gap-10 lg:py-[27px] lg:pl-[23px] lg:pr-[26px]"
+      style="border-color: rgba(255,241,217,0.99);"
+    >
+      <!-- Текст -->
+      <div class="flex flex-col gap-2.5">
+        <div class="flex items-center gap-2.5">
+          <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+          <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Как работаем</span>
+        </div>
+        <!-- Мобильный размер подобран так, чтобы «наша ответственность» помещалась в одну строку на 360–375px -->
+        <h2 class="font-accent text-[1.65rem] font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+          Ваш объект<br /><span class="text-gold-plate">наша ответственность</span>
+        </h2>
+        <p class="max-w-[713px] font-accent text-base leading-snug text-fg md:text-xl md:leading-5">
+          Передайте комерческую недвижимость под управление ФИДЕНТА - от текущей эксплуатации до редевелопмента и
+          роста стоимости актива
+        </p>
+        <div class="mt-2 md:mt-3">
+          <a href="#cta" data-cta-audience="owner" class="btn-hero btn-plat w-full text-[15px] md:w-auto">Передать объект под управление</a>
+        </div>
+      </div>
+
+      <!-- Фото в тонкой рамке -->
+      <div
+        class="relative aspect-[416/259] overflow-hidden rounded-[9px] border border-[#fff1d9]/60"
+        style="box-shadow: inset -1px -1px 2px #05140f, inset 1px 1px 1px #05140f;"
+      >
+        <img
+          src={`${base}images/banner-warehouse.webp`}
+          alt="Складской комплекс"
+          width="960"
+          height="640"
+          loading="lazy"
+          class="size-full object-cover"
+        />
+        <!-- Затемнение слева, как в Figma -->
+        <div
+          class="pointer-events-none absolute inset-y-0 left-0 w-1/3"
+          style="background-image: linear-gradient(90deg, rgba(10,32,25,0.62), rgba(25,43,41,0.25) 70%, rgba(25,43,41,0));"
+        >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

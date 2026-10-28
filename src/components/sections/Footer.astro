@@ -1,78 +1,197 @@
 ---
 /*
   УРОВЕНЬ 3 — БЛОК Footer (подвал)
+  Источник: Figma, узел 974:64669 («block 14 Futer») — сверено с макетом.
 
-  Логотип + слоган слева, три колонки ссылок (Услуги, Компания, Контакты),
-  снизу — копирайт и правовые ссылки. Ссылки собираются из массивов.
+  Структура сверху вниз:
+   1. Верхний ряд (3 колонки): навигация · логотип + телефон · «Наверх» и офис
+   2. Дисклеймер-оферта + ссылка «Проектная документация»
+   3. Ряд соц-иконок: слева видео-платформы, справа мессенджеры
+   4. Копирайт + правовые ссылки (одна строка)
+   5. Полный дисклеймер в блоке со своей прокруткой (в макете — полоса скролла справа)
+
+  Мягкий переход от тёмно-зелёного фона страницы к фону футера (#101612) сделан
+  градиентом в верхних ~80px самого футера (в Figma он заходит на предыдущий
+  блок на 138px — у нас так нельзя, перекрыл бы его контент).
+
+  Логотип — 3 SVG-экспорта из Figma (мост, надпись «ФИДЕНТА», «архитектура
+  капитала»), собираем в колонку, как в макете (ширина 340px).
+
+  Кнопка «Построить маршрут» берёт координаты первой точки из data/locations.ts
+  и открывает маршрут в Яндекс Картах от местоположения пользователя
+  (то же, что и в блоке «Контакты»).
+
+  Ссылки на юр. документы — заглушки (#), страницы появятся позже.
+  Соц-ссылки — заглушки (#): реальные адреса дадим, когда пришлёт клиент.
 */
-const year = new Date().getFullYear();
+import { locations } from '../../data/locations';
 
-const columns = [
-  {
-    title: 'Услуги',
-    links: ['Арендные отношения', 'Техническая эксплуатация', 'Юридическое сопровождение', 'Финансовое управление', 'Консалтинг'],
-  },
-  {
-    title: 'Компания',
-    links: ['О компании', 'Наши объекты', 'Как мы работаем', 'Отзывы клиентов'],
-  },
+const base = import.meta.env.BASE_URL;
+
+// Навигация подвала (левая колонка) — на якоря секций
+const navLinks = [
+  { label: 'О компании', href: '#about' },
+  { label: 'Инвестиции', href: '#terms' },
+  { label: 'Услуги', href: '#services' },
+  { label: 'Объекты', href: '#portfolio' },
+  { label: 'Вопросы', href: '#faq' },
+  { label: 'Контакты', href: '#contacts' },
 ];
 
-const contacts = ['+7 (812) 000-00-00', 'info@uk-fidenta.ru', 'ул. Кирочная, 9', 'Пн–Пт 9:00–18:00'];
+// Правовые ссылки (нижний бар). TODO: заменить href на реальные страницы документов.
+const legalLinks = [
+  'Политика конфиденциальности',
+  'Согласие на обработку персональных данных',
+  'Пользовательское соглашение',
+];
+
+// Соц-иконки (PNG уже содержат рамку и золотой глиф — выводим как есть)
+const socialLeft = [
+  { icon: 'youtube.png', label: 'YouTube', href: '#' },
+  { icon: 'rutube.png', label: 'Rutube', href: '#' },
+  { icon: 'instagram.png', label: 'Instagram', href: '#' },
+];
+const socialRight = [
+  { icon: 'max.png', label: 'MAX', href: '#' },
+  { icon: 'whatsapp.png', label: 'WhatsApp', href: '#' },
+  { icon: 'telegram.png', label: 'Telegram', href: '#' },
+];
+
+// Маршрут до офиса (первая точка из data/locations.ts); «откуда» не задаём —
+// Яндекс берёт местоположение пользователя
+const office = locations[0];
+const routeHref = `https://yandex.ru/maps/?rtext=~${office.lat},${office.lng}&rtt=auto`;
+
+const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-border bg-canvas">
-  <div class="container-page py-16">
-    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-      <!-- Логотип + слоган -->
-      <div>
-        <div class="flex items-center gap-3">
-          <svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor"
-            class="text-accent" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 46 L32 15 L52 46" />
-            <line x1="10" y1="47" x2="54" y2="47" />
-            <line x1="32" y1="15" x2="22" y2="47" />
-            <line x1="32" y1="15" x2="42" y2="47" />
-          </svg>
-          <div>
-            <span class="block font-display text-base font-semibold text-fg">ФИДЕНТА</span>
-            <span class="block text-[0.55rem] uppercase tracking-[0.2em] text-muted">Управляющая компания</span>
-          </div>
+<footer class="relative bg-footer font-accent text-[#bdaf92]">
+  <!-- Плавный переход от фона страницы к фону футера -->
+  <div
+    class="pointer-events-none absolute inset-x-0 top-0 h-[81px]"
+    style="background-image: linear-gradient(180deg, #0a2019 0%, #0d1b16 47%, #101612 100%);"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-page relative pb-6 pt-[107px]">
+    <!-- 1. ВЕРХНИЙ РЯД -->
+    <div class="grid gap-12 lg:grid-cols-[1fr_340px_1fr] lg:items-start">
+      <!-- Навигация -->
+      <nav class="flex flex-col gap-3.5 text-xl">
+        {navLinks.map((link) => (
+          <a href={link.href} class="w-fit transition-colors hover:text-gold-hi">{link.label}</a>
+        ))}
+      </nav>
+
+      <!-- Логотип + телефон -->
+      <div class="mx-auto flex w-[340px] max-w-full flex-col items-center gap-3.5">
+        <div class="flex w-full flex-col gap-[33px]">
+          <img src={`${base}images/footer-bridge.svg`} alt="" width="340" height="158" class="w-full" />
+          <img src={`${base}images/footer-wordmark.svg`} alt="Фидента" width="340" height="56" class="w-full" />
         </div>
-        <p class="mt-5 font-display text-lg italic text-fg/80">Ваши активы — наша ответственность</p>
-        <p class="mt-3 text-sm text-muted">ООО «УК Фидента» · Санкт-Петербург</p>
+        <div class="flex items-start gap-[11px]">
+          <img src={`${base}images/footer-tagline-1.svg`} alt="" width="147" height="21" class="h-[20.5px] w-[147px]" />
+          <img src={`${base}images/footer-tagline-2.svg`} alt="" width="105" height="14" class="h-[13.8px] w-[105px]" />
+        </div>
+        <a href="tel:+79002242400" class="mt-6 whitespace-nowrap text-[40px] leading-none transition-colors hover:text-gold-hi">
+          +7-900-224-24-00
+        </a>
       </div>
 
-      <!-- Колонки ссылок -->
-      {columns.map((column) => (
-        <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-muted">{column.title}</h4>
-          <ul class="mt-4 flex flex-col gap-2.5">
-            {column.links.map((link) => (
-              <li><a href="#" class="text-sm text-fg/80 transition-colors hover:text-accent">{link}</a></li>
-            ))}
-          </ul>
+      <!-- «Наверх» + офис -->
+      <div class="flex flex-col gap-[71px] text-xl lg:items-end lg:text-right">
+        <a href="#top" class="w-fit uppercase transition-colors hover:text-gold-hi">Наверх</a>
+        <div class="flex flex-col gap-3.5 lg:items-end">
+          <div>
+            <p>офис продаж</p>
+            <p class="mt-5 lg:whitespace-nowrap">Санкт-Петербург, Богатырский 18 к 4 ст2</p>
+          </div>
+          <a
+            href={routeHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-[233px] rounded-[9px] border border-[#6e7069] px-3.5 py-2.5 text-center transition-colors hover:border-[#fff1d9]"
+            style="text-shadow: 0 4px 4px rgba(0,0,0,0.11);"
+          >
+            Построить маршрут
+          </a>
         </div>
-      ))}
-
-      <!-- Контакты -->
-      <div>
-        <h4 class="text-xs font-semibold uppercase tracking-wider text-muted">Контакты</h4>
-        <ul class="mt-4 flex flex-col gap-2.5">
-          {contacts.map((item) => (
-            <li class="text-sm text-fg/80">{item}</li>
-          ))}
-        </ul>
       </div>
     </div>
 
-    <!-- Нижняя строка: копирайт + правовые ссылки -->
-    <div class="mt-14 flex flex-col gap-4 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-      <p>© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
-      <div class="flex gap-6">
-        <a href="#" class="transition-colors hover:text-accent">Политика конфиденциальности</a>
-        <a href="#" class="transition-colors hover:text-accent">Пользовательское соглашение</a>
+    <!-- 2. ДИСКЛЕЙМЕР-ОФЕРТА + ПРОЕКТНАЯ ДОКУМЕНТАЦИЯ -->
+    <p class="mx-auto mt-16 max-w-[963px] text-center text-xl leading-normal lg:mt-24">
+      Любая информация, представленная на данном сайте, носит исключительно информационный характер и ни при каких
+      условиях не является публичной офертой, определяемой положениями статьи 437 ГК РФ
+    </p>
+    <div class="mt-9 text-center">
+      <a
+        href="#"
+        class="text-xl underline decoration-double decoration-[0.5px] decoration-[#bdaf92]/50 underline-offset-[5px] transition-colors hover:text-gold-hi"
+      >
+        Проектная документация
+      </a>
+    </div>
+
+    <!-- 3. СОЦ-ИКОНКИ: два кластера -->
+    <div class="mt-9 flex items-center justify-between">
+      <div class="flex gap-3">
+        {socialLeft.map((s) => (
+          <a href={s.href} aria-label={s.label} class="transition-opacity hover:opacity-80">
+            <img src={`${base}icons/${s.icon}`} width="50" height="50" alt={s.label} class="size-[50px]" />
+          </a>
+        ))}
       </div>
+      <div class="flex gap-3">
+        {socialRight.map((s) => (
+          <a href={s.href} aria-label={s.label} class="transition-opacity hover:opacity-80">
+            <img src={`${base}icons/${s.icon}`} width="50" height="50" alt={s.label} class="size-[50px]" />
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- 4. КОПИРАЙТ + ПРАВОВЫЕ ССЫЛКИ -->
+    <div class="mt-5 flex flex-col gap-3 border-t border-canvas pt-3 lg:flex-row lg:items-center lg:justify-between">
+      <p class="text-xs leading-[19px]">© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
+      <div class="flex flex-wrap gap-x-10 gap-y-2 text-sm leading-[19px] lg:gap-x-[60px]">
+        {legalLinks.map((link) => (
+          <a href="#" class="transition-colors hover:text-gold-hi">{link}</a>
+        ))}
+      </div>
+    </div>
+
+    <!-- 5. ПОЛНЫЙ ДИСКЛЕЙМЕР: свой скролл (в макете справа — полоса прокрутки) -->
+    <div class="footer-disclaimer mt-4 max-h-[97px] overflow-y-auto pb-7 pr-[9px] pt-3 text-[15px] leading-[1.1] tracking-[-0.02em] text-fg" tabindex="0">
+      <p>Дисклеймер</p>
+      <p>
+        Вся информация, представленная на сайте, включая характеристики объектов, цены, сроки окупаемости и
+        ориентировочные показатели доходности, носит исключительно справочный характер и не является публичной офертой
+        в соответствии со ст. 437 ГК РФ. Приведённые расчёты окупаемости являются прогнозными, основаны на допущениях и
+        рыночной конъюнктуре на момент публикации, не гарантируются и могут изменяться. Инвестиции в коммерческую
+        недвижимость связаны с рисками, в том числе риском снижения стоимости актива, простоя помещений, изменения
+        арендных ставок и законодательства. Решение об инвестировании принимается самостоятельно, инвестор несёт все
+        связанные с ним риски. Точные условия сделки и параметры объектов уточняйте у наших специалистов.
+      </p>
     </div>
   </div>
 </footer>
+
+<style is:global>
+  /* Полоса прокрутки дисклеймера: «таблетка» 12px с серым градиентом, как в Figma */
+  .footer-disclaimer {
+    scrollbar-width: thin;
+    scrollbar-color: #5a5b55 transparent;
+  }
+  .footer-disclaimer::-webkit-scrollbar {
+    width: 12px;
+  }
+  .footer-disclaimer::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .footer-disclaimer::-webkit-scrollbar-thumb {
+    border-radius: 9px;
+    background-image: linear-gradient(90deg, #6e7069, #4a4b45 47%, #63645c);
+  }
+</style>

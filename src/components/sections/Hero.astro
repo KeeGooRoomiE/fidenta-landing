@@ -2,96 +2,202 @@
 /*
   УРОВЕНЬ 3 — БЛОК Hero (главный экран)
 
-  Слева — заголовок, подзаголовок и две кнопки.
-  Справа — «плавающие» карточки-виджеты (объекты по районам + аналитика).
-  Снизу — полоса из трёх бейджей (FeatureBadge).
+  Второй заход на композицию (первый — полноэкранное object-cover фото на всю
+  секцию — ломался на мобильном: секция там в 2+ раза выше вьюпорта из-за
+  карточек в столбик, а cover в таких пропорциях растягивал фото до
+  нераспознаваемого вертикального огрызка). Исправление — фото живёт в
+  СВОЁМ блоке с фиксированным через aspect-ratio соотношением сторон
+  (разным по брейкпоинтам), а не растягивается на высоту всей секции:
+  сколько бы контента ни было ниже (хоть 3 карточки в столбик, хоть 10),
+  высота самого фото от этого не зависит и никогда не "съезжает".
 
-  Фон — плейсхолдер под ночное фото Санкт-Петербурга (заменить на изображение из Figma).
+  Структура сверху вниз:
+   1. Фото-баннер (aspect-ratio) — вечерний деловой район, лёгкая синяя
+      тонировка, градиент-фейд в сплошной canvas у своего нижнего края.
+   2. Контент НИЖЕ баннера, уже на сплошном фоне — заголовок, сабтайтл,
+      кнопки, 3 карточки. Никакой текст не лежит поверх фото — поэтому не
+      нужно подбирать контраст под то, что именно на фото в этом месте
+      (источник фрагильности предыдущей версии).
+   Лёгкий отрицательный margin у контента — чтобы заголовок начинался чуть
+   внахлёст с фейдом баннера, без явного шва между блоками.
+
+  Cookie-баннер больше не здесь — переехал в index.astro как отдельный
+  independent fixed-bottom-bar компонент, не завязанный на разметку Hero.
 */
-import Button from '../ui/Button.astro';
-import FeatureBadge from '../ui/FeatureBadge.astro';
+const base = import.meta.env.BASE_URL;
 
-// Строки мини-виджета «объекты по районам»
-const widgetRows = [
-  { label: 'Приморский кластер', value: '14%' },
-  { label: 'Риск профиль', value: 'A+' },
-  { label: 'Спрос арендаторов', value: 'высокий' },
+const cards = [
+  {
+    icon: 'tile-club.png',
+    lead: 'Fidenta Invest Club',
+    rest: ' — закрытое сообщество',
+  },
+  {
+    icon: 'tile-cycle.png',
+    lead: 'Полный цикл сопровождения:',
+    rest: ' аудит объекта — расчёт доходности',
+  },
+  {
+    icon: 'tile-ownership.png',
+    lead: 'Реальное владение:',
+    rest: ' доля в объекте закреплена договором',
+  },
 ];
 ---
 
-<section class="relative overflow-hidden">
-  <!-- Фоновый плейсхолдер: градиент вместо фотографии.
-       TODO: заменить на <img>/фон из Figma (ночная Нева). -->
-  <div class="absolute inset-0 -z-10">
-    <div class="h-full w-full bg-gradient-to-b from-[#123a48] via-[#0d2b2c] to-canvas"></div>
-    <div class="absolute inset-0 bg-canvas/30"></div>
+<section class="relative overflow-hidden bg-canvas">
+  <!-- md:max-h-[500px] — на широких экранах баннер не растёт выше 500px (иначе Hero с карточками
+       не помещается в первый экран); фото при этом просто кадрируется object-cover. -->
+  <!-- Фото-баннер: высота ВСЕГДА определяется aspect-ratio, а не контентом
+       секции ниже — поэтому не может "растянуться" независимо от того,
+       сколько карточек и как они складываются на узких экранах. -->
+  <div class="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/9] md:aspect-[21/9] md:max-h-[500px]">
+    <img
+      id="hero-bg-image"
+      src={`${base}images/hero-bg-skyline.webp`}
+      alt=""
+      class="h-full w-full object-cover object-center"
+    />
+    <!-- Лёгкая синяя тонировка сверху (фирменная гамма) + фейд в сплошной
+         canvas у нижнего края баннера, чтобы переход в контент ниже был
+         бесшовным. Само фото при этом хорошо видно почти на всю высоту. -->
+    <div
+      class="absolute inset-0"
+      style="background: linear-gradient(180deg, rgba(11,24,48,.22) 0%, rgba(11,24,48,.06) 30%, rgba(10,32,25,0) 55%, #0A2019 97%);"
+    ></div>
+    <!-- Только ПК: заголовок поднят на фото (верх текста на 250px), поэтому нижняя половина
+         баннера затемняется раньше — иначе первая строка читается хуже на светлых окнах зданий. -->
+    <div
+      class="absolute inset-0 hidden md:block"
+      style="background: linear-gradient(180deg, rgba(10,32,25,0) 38%, rgba(10,32,25,.55) 62%, #0A2019 96%);"
+    ></div>
   </div>
 
-  <div class="container-page grid gap-14 py-16 md:py-24 lg:grid-cols-2 lg:items-center">
-    <!-- ЛЕВАЯ КОЛОНКА: текст + кнопки -->
-    <div>
-      <h1 class="text-4xl leading-[1.06] sm:text-5xl md:text-6xl">
-        Инвестиции<br />в коммерческую<br /><span class="text-accent">недвижимость</span>
+  <!-- Контент — уже на сплошном фоне секции, текст нигде не лежит поверх
+       фото, поэтому читаемость не зависит от того, что именно на кадре. -->
+  <div class="hero-content container-page relative -mt-10 flex flex-col gap-12 pb-16 pt-0 md:gap-8 md:pb-6">
+    <div class="flex max-w-2xl flex-col gap-5 md:max-w-4xl">
+      <h1 class="hero-title font-accent font-normal">
+        <span class="block text-fg">Коммерческая недвижимость,</span>
+        <span class="hero-title-gold block">открытая для частного инвестора</span>
       </h1>
-      <p class="mt-6 max-w-md text-lg leading-relaxed text-fg/80">
-        Создаём и управляем активами, формируем ценность на годы.
+
+      <p class="max-w-[38rem] font-accent text-lg leading-[1.4] tracking-[0.01em] text-text-soft md:text-xl">
+        Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами
+        Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
       </p>
-      <div class="mt-8 flex flex-wrap gap-4">
-        <Button variant="primary" href="#cta">Консультация</Button>
-        <Button variant="secondary" href="#portfolio">Наши объекты →</Button>
+
+      <div class="flex flex-wrap gap-4 pt-2">
+        <a href="#cta" data-cta-audience="investor" class="hero-btn hero-btn--primary">Доступ к сделкам</a>
+        <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary">Передать объект в управление</a>
       </div>
     </div>
 
-    <!-- ПРАВАЯ КОЛОНКА: виджеты -->
-    <div class="relative">
-      <!-- Виджет объектов по районам -->
-      <div class="rounded-2xl border border-border bg-surface/80 p-6 backdrop-blur-md">
-        <div class="flex items-center justify-between">
-          <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-accent">▦</div>
-          <span class="text-xs uppercase tracking-wider text-muted">live</span>
+    <div class="relative grid gap-5 md:grid-cols-3">
+      <!-- Мягкое золотое свечение за карточками — CSS, не завязано на фото. -->
+      <div
+        class="pointer-events-none absolute inset-x-0 -bottom-16 -top-10 -z-10 mix-blend-screen"
+        style="background: radial-gradient(60% 100% at 50% 60%, rgba(199,162,75,.14), transparent 70%);"
+      ></div>
+      {cards.map((card) => (
+        <div class="hero-card">
+          <img src={`${base}icons/${card.icon}`} width="56" height="56" alt="" class="h-14 w-14 shrink-0 md:h-10 md:w-10" />
+          <p class="font-accent text-[17px] leading-[1.4] tracking-[0.01em]">
+            <span class="hero-card-gold">{card.lead}</span><span class="text-fg">{card.rest}</span>
+          </p>
         </div>
-        <h3 class="mt-4 text-xl leading-snug">Виджет объектов<br />по районам города</h3>
-        <p class="mt-2 text-sm leading-relaxed text-muted">
-          Мини-виджет отслеживает локации с растущим деловым трафиком, арендной ставкой и ликвидностью объекта.
-        </p>
-        <dl class="mt-5 space-y-2">
-          {widgetRows.map((row) => (
-            <div class="flex items-center justify-between rounded-lg border border-border bg-canvas/40 px-4 py-2.5">
-              <dt class="text-sm text-fg/80">{row.label}</dt>
-              <dd class="text-sm font-semibold text-accent">{row.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-
-      <!-- Карточка аналитики (на десктопе «выплывает» из-под основного виджета) -->
-      <div class="mt-5 rounded-2xl border border-border bg-surface/90 p-5 backdrop-blur-md lg:absolute lg:-bottom-14 lg:-left-12 lg:mt-0 lg:w-72">
-        <p class="text-sm leading-snug text-fg/80">Постоянный доступ<br />к аналитике по фондам</p>
-        <!-- Мини-график (area chart) — декоративный плейсхолдер -->
-        <svg viewBox="0 0 260 70" class="mt-3 w-full" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="hero-spark" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#c6a15b" stop-opacity="0.35" />
-              <stop offset="100%" stop-color="#c6a15b" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          <path d="M0 58 L43 50 L87 53 L130 38 L173 30 L217 18 L260 8 L260 70 L0 70 Z" fill="url(#hero-spark)" />
-          <path d="M0 58 L43 50 L87 53 L130 38 L173 30 L217 18 L260 8" fill="none" stroke="#c6a15b" stroke-width="2" />
-        </svg>
-      </div>
-    </div>
-  </div>
-
-  <!-- НИЖНЯЯ ПОЛОСА: три бейджа -->
-  <div class="border-t border-border/60 bg-canvas/50 backdrop-blur-sm">
-    <div class="container-page grid gap-4 py-5 sm:grid-cols-3">
-      <FeatureBadge title="Fidenta Invest Club" subtitle="закрытое сообщество">
-        <span slot="icon">✈</span>
-      </FeatureBadge>
-      <FeatureBadge title="12 лет на рынке инвестиций" subtitle="более 100 объектов в фондах">
-        <span slot="icon">▤</span>
-      </FeatureBadge>
-      <FeatureBadge value="11,8%" title="Целевая годовая" subtitle="доходность" />
+      ))}
     </div>
   </div>
 </section>
+
+<style>
+  /* Фото-баннер — aspect-ratio, его высота = ширина секции * 9/21 на md+ (21:9).
+     Ниже вместо vw используется % (margin-top в % считается от ширины родителя =
+     секции): vw ломается при CSS zoom на больших экранах (см. global.css, «масштаб»).
+     Фиксированный margin-top: -320px (как просили) ломается при "резиновом"
+     ресайзе: при ширине < ~1493px высота баннера < 640px, и -320 утягивает
+     текст ВЫШЕ своей середины — на небо, а не на тёмные здания, как нужно.
+     max() держит верх текста не ниже 250px (было 320; верх текста на 250px от начала Hero, а не 320 — чтобы карточки влезали в первый экран) от начала Hero ВСЕГДА: на узких
+     md-экранах подъём автоматически меньше 320px, на широких — ровно -320px
+     (как и было одобрено на 1440px). */
+  @media (min-width: 768px) {
+    .hero-content {
+      margin-top: max(-250px, calc(250px - 42.857%));
+    }
+  }
+
+  .hero-title {
+    font-size: 2.75rem;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 640px) {
+    .hero-title {
+      font-size: 3.75rem;
+    }
+  }
+  /* Заголовок на ПК: 4.5rem → 3.5rem/4rem, чтобы Hero целиком (с карточками) помещался
+     в первый экран ноутбука (по правке дизайнера: нижние карточки не влезали) */
+  @media (min-width: 768px) {
+    .hero-title {
+      font-size: 3.5rem;
+    }
+  }
+
+
+  .hero-title-gold,
+  .hero-card-gold {
+    background-image: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-accent);
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    padding: 1rem 2rem;
+    border-radius: 999px;
+    transition: transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .hero-btn--primary {
+    background-image: var(--gradient-gold);
+    color: var(--color-on-gold);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 14px 32px -14px rgba(199, 162, 75, 0.65);
+  }
+  .hero-btn--primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  .hero-btn--secondary {
+    border: 1px solid rgba(199, 162, 75, 0.5);
+    color: var(--color-accent-soft);
+    background: rgba(244, 241, 234, 0.04);
+  }
+  .hero-btn--secondary:hover {
+    border-color: var(--color-accent-soft);
+    background: rgba(244, 241, 234, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .hero-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 16px;
+    /* Сплошная заливка — не размытое стекло: за карточками фото больше нет
+       (оно осталось только в баннере выше), прозрачность/блюр тут ничего не
+       показывали бы, кроме сплошного фона секции. */
+    background: var(--color-surface);
+    border: 1px solid rgba(199, 162, 75, 0.25);
+  }
+</style>

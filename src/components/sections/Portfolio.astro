@@ -1,65 +1,128 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК Portfolio («Объекты под управлением»)
+  УРОВЕНЬ 3 — БЛОК «Объекты под управлением УК ФИДЕНТА»
+  Источник: Figma, узел 974:64979 («block 9 Object»)
 
-  Заголовок + ряд фильтров (пока визуальные, без логики) + сетка карточек объектов.
-  Данные объектов — в массиве objects, карточки строятся циклом через ObjectCard.
+  Структура: заголовок → сетка карточек (3 в ряд на десктопе, 1 на мобильных)
+  → строка-сноска → кнопка «Показать ещё».
+
+  Фильтров в макете нет (старая заготовка с фильтрами удалена).
+
+  Поведение (JS внизу файла, ~40 строк, без библиотек):
+    1. Изначально видно 6 карточек, ещё 3 скрыты (hidden в ObjectCard).
+    2. «Показать ещё 3 объекта» открывает скрытые → всего 9; кнопка исчезает
+       до перезагрузки страницы (состояние нигде не хранится — так и задумано).
+    3. «Авито-превью» фото: когда курсор ведут по ширине фото карточки,
+       показывается кадр по позиции курсора (ширина делится на N зон);
+       при уходе курсора возвращается первый кадр. Работает и со свайпом
+       пальцем (pointer events покрывают мышь и тач одинаково).
+
+  Фото: 1-й кадр каждой из первых 6 карточек — из Figma; остальные кадры и
+  все фото карточек 7–9 — СТОКОВЫЕ ПЛЕЙСХОЛДЕРЫ (Wikimedia Commons), заменить
+  на реальные снимки объектов. Лежат в public/images/objects/objN-K.webp
+  (N — номер карточки, K — номер кадра).
+
+  Карточки 7–9 в макете нет (там 6) — их контент целиком [ДАННЫЕ]-плейсхолдеры,
+  по соглашению проекта: ничего не выдумываем, ждём реальные данные клиента.
 
   id="portfolio" — якорь для ссылок из шапки и кнопки Hero.
 */
-import SectionHeading from '../ui/SectionHeading.astro';
 import ObjectCard from '../ui/ObjectCard.astro';
 
-// Фильтры типов объектов. TODO: подключить интерактивную фильтрацию (JS) позже.
-const filters = ['Все', 'Офисы', 'Ритейл', 'Склады', 'Апартаменты'];
+const base = import.meta.env.BASE_URL;
+// photos('3', 3) → ['…/objects/obj3-1.webp', '…/obj3-2.webp', '…/obj3-3.webp']
+const photos = (n: number, count: number) =>
+  Array.from({ length: count }, (_, i) => `${base}images/objects/obj${n}-${i + 1}.webp`);
 
 const objects = [
-  { type: 'Офисы', title: 'БЦ «Нева Плаза»', address: 'В.О., 7-я линия, 76', gla: '4200', occupancy: '97%', since: 'с 2018' },
-  { type: 'Ритейл', title: 'ТЦ «Приморский»', address: 'Приморский пр., 54', gla: '6800', occupancy: '96%', since: 'с 2020' },
-  { type: 'Склад', title: 'СК «Кудрово»', address: 'Кудрово, Ленобласть', gla: '12500', occupancy: '100%', since: 'с 2021' },
-  { type: 'Апартаменты', title: 'Апарт «Московский»', address: 'Московский пр., 183', gla: '3100', occupancy: '94%', since: 'с 2022' },
-  { type: 'Офисы', title: 'БЦ «Адмирал»', address: 'наб. Мойки, 42', gla: '5400', occupancy: '98%', since: 'с 2019' },
-  { type: 'Ритейл', title: 'ТЦ «Лиговский»', address: 'Лиговский пр., 30', gla: '7300', occupancy: '95%', since: 'с 2021' },
+  { type: 'Автосервис', title: 'Автосервис #ПАРК5', address: 'В.О., 7-я линия, 76', lead: 'Автосервис, который существует 14 лет', gla: '450', occupancy: '100%', since: 'с 2014', photos: photos(1, 3) },
+  { type: 'Детейлинг Автомойка', title: 'Автомойка', address: 'В.О., 7-я линия, 76', lead: 'Стабилизированный арендный поток', gla: '220', occupancy: '100%', since: 'с 2018', photos: photos(2, 3) },
+  { type: 'Кузовной ремонт и покраска', title: 'Автосервис, мойка, офисы', address: 'Богатырский 18', lead: 'Стабилизированный арендный поток', gla: '4 200', occupancy: '97%', since: 'с 2018', photos: photos(3, 3) },
+  { type: 'Кузовной ремонт и покраска', title: 'Склад яндекс лавка', address: 'В.О., 7-я линия, 76', lead: 'Поиск помещений под маркетплейсы и склады', gla: '4 200', occupancy: '97%', since: 'с 2018', photos: photos(4, 3) },
+  { type: 'контейнерное хранение', title: 'Складской комплекс Контик', address: 'Богатырский 18', lead: 'Стабилизированный арендный поток', gla: '4 200', occupancy: '97%', since: 'с 2018', photos: photos(5, 3) },
+  { type: 'Швейное производство', title: 'Швейный цех', address: 'Кудрово, Ленобласть', lead: 'Долгосрочные договоры', gla: '12 500', occupancy: '100%', since: 'с 2021', photos: photos(6, 3) },
+  // Ниже — «Показать ещё» (в Figma не нарисованы, контент — плейсхолдеры)
+  { type: '[ДАННЫЕ: тип]', title: '[ДАННЫЕ: название объекта]', address: '[ДАННЫЕ: адрес]', lead: '[ДАННЫЕ: краткое описание]', gla: '[ДАННЫЕ]', occupancy: '[ДАННЫЕ]', since: '[ДАННЫЕ]', photos: photos(7, 3), hidden: true },
+  { type: '[ДАННЫЕ: тип]', title: '[ДАННЫЕ: название объекта]', address: '[ДАННЫЕ: адрес]', lead: '[ДАННЫЕ: краткое описание]', gla: '[ДАННЫЕ]', occupancy: '[ДАННЫЕ]', since: '[ДАННЫЕ]', photos: photos(8, 3), hidden: true },
+  { type: '[ДАННЫЕ: тип]', title: '[ДАННЫЕ: название объекта]', address: '[ДАННЫЕ: адрес]', lead: '[ДАННЫЕ: краткое описание]', gla: '[ДАННЫЕ]', occupancy: '[ДАННЫЕ]', since: '[ДАННЫЕ]', photos: photos(9, 3), hidden: true },
 ];
+
+const extraCount = objects.filter((o) => o.hidden).length;
 ---
 
 <section id="portfolio" class="py-20 md:py-28">
   <div class="container-page">
-    <SectionHeading
-      eyebrow="Портфель"
-      title="Объекты под"
-      accent="управлением"
-      description="Примеры объектов из нашего портфеля на территории Санкт-Петербурга."
-    />
-
-    <!-- Фильтры -->
-    <div class="mt-8 flex flex-wrap gap-2">
-      {filters.map((filter, index) => (
-        <button
-          class:list={[
-            'rounded-lg border px-4 py-2 text-sm transition-colors',
-            index === 0
-              ? 'border-accent bg-accent/10 text-accent'
-              : 'border-border text-muted hover:border-accent hover:text-accent',
-          ]}
-        >
-          {filter}
-        </button>
-      ))}
+    <!-- Заголовок блока -->
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-center gap-2.5">
+        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Объекты</span>
+      </div>
+      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+        Объекты под управлением <span class="text-gold-plate uppercase">УК Фидента</span>
+      </h2>
+      <p class="mt-1 max-w-[860px] font-accent text-xl leading-[1.47] text-fg">
+        Повышаем заполняемость, контролируем арендаторов, операционные расходы и инвестиционную доходность
+        объектов в Санкт-Петербурге.
+      </p>
     </div>
 
-    <!-- Сетка карточек: 1 → 2 → 3 колонки по мере роста экрана -->
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {objects.map((obj) => (
-        <ObjectCard
-          type={obj.type}
-          title={obj.title}
-          address={obj.address}
-          gla={obj.gla}
-          occupancy={obj.occupancy}
-          since={obj.since}
-        />
-      ))}
+    <!-- Сетка карточек: 1 колонка на мобильных, 3 в ряд на десктопе -->
+    <div class="mt-12 grid grid-cols-1 gap-[34px] lg:grid-cols-3 md:mt-[70px]">
+      {objects.map((obj) => <ObjectCard {...obj} />)}
+    </div>
+
+    <!-- Сноска + линия -->
+    <div class="mt-6">
+      <p class="font-accent text-xs leading-5 text-[#63645c]">Все объекты находятся под управлением УК ФИДЕНТА</p>
+      <div class="h-px w-full bg-[rgba(20,58,48,0.35)]"></div>
+    </div>
+
+    <!-- Кнопка «Показать ещё»: после нажатия удаляется из DOM -->
+    <div class="flex justify-center pt-6" data-more-wrap>
+      <button
+        type="button"
+        data-more
+        class="rounded-[4px] border border-[#fff1d9] px-10 py-4 font-accent text-xl leading-6 text-fg transition-colors hover:bg-[rgba(255,241,217,0.08)]"
+      >
+        Показать ещё {extraCount} объекта
+      </button>
     </div>
   </div>
 </section>
+
+<script>
+  // 1. «Показать ещё»: открываем скрытые карточки, кнопку убираем
+  const moreBtn = document.querySelector<HTMLButtonElement>('[data-more]');
+  moreBtn?.addEventListener('click', () => {
+    document.querySelectorAll('[data-extra]').forEach((card) => card.classList.remove('hidden'));
+    document.querySelector('[data-more-wrap]')?.remove();
+  });
+
+  // 2. «Авито-превью» фото. Один набор обработчиков на всю страницу
+  //    (делегирование): карточки 7–9 тоже работают, хотя были скрыты при загрузке.
+  function showSlide(gallery: HTMLElement, index: number) {
+    const slides = gallery.querySelectorAll<HTMLElement>('[data-slide]');
+    const bars = gallery.querySelectorAll<HTMLElement>('[data-bar]');
+    // индекс ограничиваем: курсор на самом правом пикселе даёт x/width = 1
+    const i = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach((el, k) => el.toggleAttribute('data-active', k === i));
+    bars.forEach((el, k) => el.toggleAttribute('data-active', k === i));
+  }
+
+  function onMove(e: PointerEvent) {
+    const gallery = (e.target as HTMLElement).closest<HTMLElement>('[data-gallery]');
+    if (!gallery) return;
+    const rect = gallery.getBoundingClientRect();
+    const count = gallery.querySelectorAll('[data-slide]').length;
+    // ширина делится на count равных зон: зона = номер кадра
+    showSlide(gallery, Math.floor(((e.clientX - rect.left) / rect.width) * count));
+  }
+
+  document.addEventListener('pointermove', onMove);
+  // pointerout всплывает; сбрасываем кадр, только когда курсор покинул саму галерею
+  document.addEventListener('pointerout', (e) => {
+    const gallery = (e.target as HTMLElement).closest<HTMLElement>('[data-gallery]');
+    if (gallery && !gallery.contains(e.relatedTarget as Node | null)) showSlide(gallery, 0);
+  });
+</script>

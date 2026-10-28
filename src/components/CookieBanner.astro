@@ -1,0 +1,81 @@
+---
+/*
+  КОМПОНЕНТ — CookieBanner (баннер согласия на cookie)
+
+  Переделан с нуля: раньше это была плавающая карточка (fixed, якорем за
+  правый/нижний край) — на некоторых экранах выглядела так, будто "уехала"
+  не туда (плавающий блок в углу читается как случайно забытый элемент,
+  особенно когда под ним большие секции с собственной композицией).
+
+  Теперь — простой прижатый к низу бар на всю ширину экрана: текст слева,
+  кнопка справа (на мобильном — друг под другом). У такой формы нет
+  вариативной позиции, которая могла бы "поехать" — она всегда ровно внизу,
+  во всю ширину, не зависит от разметки той секции, что сейчас на экране.
+  Рендерится отдельно в index.astro, вне разметки Hero.
+*/
+const base = import.meta.env.BASE_URL;
+---
+
+<div id="cookie-banner" class="cookie-bar fixed inset-x-0 bottom-0 z-40">
+  <div class="container-page flex flex-col items-center gap-4 py-4 sm:flex-row sm:justify-between sm:gap-8 sm:py-5">
+    <p class="font-accent text-sm leading-normal text-fg/90 sm:text-base">
+      Мы используем cookie для корректной работы сайта и аналитики. Продолжая пользоваться сайтом,
+      вы соглашаетесь с <a href={`${base}cookie`} class="cookie-link">политикой использования cookie</a>.
+    </p>
+    <button id="cookie-accept" type="button" class="cookie-accept shrink-0">Принять</button>
+  </div>
+</div>
+
+<style>
+  .cookie-bar {
+    background: rgba(8, 17, 14, 0.92);
+    border-top: 1px solid rgba(199, 162, 75, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .cookie-link {
+    color: var(--color-accent-soft);
+    text-underline-offset: 2px;
+  }
+
+  .cookie-accept {
+    font-family: var(--font-accent);
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    padding: 0.625rem 1.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(199, 162, 75, 0.5);
+    color: var(--color-on-gold);
+    background-image: var(--gradient-gold);
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
+  .cookie-accept:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+</style>
+
+<script>
+  // Показываем баннер только если согласие ещё не дано.
+  const banner = document.getElementById('cookie-banner');
+  const accept = document.getElementById('cookie-accept');
+  const KEY = 'fidenta-cookie-accepted';
+
+  try {
+    if (localStorage.getItem(KEY) === '1') {
+      banner?.remove();
+    }
+  } catch (_) {
+    /* localStorage недоступен — просто показываем баннер */
+  }
+
+  accept?.addEventListener('click', () => {
+    try {
+      localStorage.setItem(KEY, '1');
+    } catch (_) {
+      /* молча игнорируем, если хранилище недоступно */
+    }
+    banner?.remove();
+  });
+</script>

@@ -53,11 +53,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Устанавливаем pnpm (должен идти ДО setup-node для корректного кэша)
+      # 2. Устанавливаем pnpm (должен идти ДО setup-node для корректного кэша).
+      # Версия НЕ указывается здесь явно — берётся из "packageManager" в
+      # package.json (двойное указание версии = ошибка сборки).
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       # 3. Устанавливаем Node.js с кэшированием pnpm-зависимостей
       - name: Setup Node.js

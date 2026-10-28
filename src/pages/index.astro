@@ -9,25 +9,62 @@
 */
 import Layout from '../layouts/Layout.astro';
 
+import CookieBanner from '../components/CookieBanner.astro';
 import Header from '../components/sections/Header.astro';
 import Hero from '../components/sections/Hero.astro';
+import AboutAsset from '../components/sections/AboutAsset.astro';
+import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
+import AssetAccess from '../components/sections/AssetAccess.astro';
+import TeamIntro from '../components/sections/TeamIntro.astro';
+import ComparisonTable from '../components/sections/ComparisonTable.astro';
 import HowWeWork from '../components/sections/HowWeWork.astro';
 import Portfolio from '../components/sections/Portfolio.astro';
+import ManagementBanner from '../components/sections/ManagementBanner.astro';
+import FullSpectrum from '../components/sections/FullSpectrum.astro';
+import Faq from '../components/sections/Faq.astro';
+import CtaForm from '../components/sections/CtaForm.astro';
+import ContactsMap from '../components/sections/ContactsMap.astro';
+import DealStructure from '../components/sections/DealStructure.astro';
 import WhyUs from '../components/sections/WhyUs.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
-import CtaForm from '../components/sections/CtaForm.astro';
 import Footer from '../components/sections/Footer.astro';
+
+/*
+  СКРЫТЫЕ БЛОКИ. Эти блоки готовы и лежат в src/components/sections/, но на сайте пока
+  не показываются (по решению дизайнера: недоработаны / не из макета). Чтобы показать
+  блок — поставить true. Больше ничего менять не нужно.
+    dealStructure — «Что именно вы покупаете» (шаги сделки + документы)
+    whyUs         — «Почему выбирают Фидента» (показатели; старый каркас)
+    testimonials  — «Отзывы» (ТОЛЬКО с реальными отзывами клиентов!)
+*/
+const show = {
+  dealStructure: false,
+  whyUs: false,
+  testimonials: false,
+};
 ---
 
 <Layout title="Фидента — инвестиции в коммерческую недвижимость">
   <Header />
   <main>
     <Hero />
+    <AboutAsset />
+    <InvestmentTerms />
+    <AssetAccess />
+    {show.dealStructure && <DealStructure />}
+    <TeamIntro />
+    <ComparisonTable />
     <HowWeWork />
     <Portfolio />
-    <WhyUs />
-    <Testimonials />
+    <ManagementBanner />
+    {show.whyUs && <WhyUs />}
+    <FullSpectrum />
+    {show.testimonials && <Testimonials />}
+    <Faq />
     <CtaForm />
+    <ContactsMap />
   </main>
   <Footer />
+  <!-- Fixed-бар внизу экрана, независим от разметки любой секции -->
+  <CookieBanner />
 </Layout>

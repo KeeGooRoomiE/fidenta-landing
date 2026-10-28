@@ -1,0 +1,109 @@
+---
+/*
+  УРОВЕНЬ 3 — БЛОК «Превращаем недвижимость в актив» (О компании)
+  Источник: Figma, узел 974:65230 («block 1 company») — ПЕРЕСОБРАН по макету
+  (раньше был рабочей заготовкой «по пропорциям»: Playfair/Inter, не те цвета,
+  огромные плитки; по правке дизайнера для ПК собран заново).
+
+  Раскладка ПК (холст 1280, у нас — контейнер 1120, колонки пропорциональны 466 : 800):
+   - Заголовок: eyebrow (Forum 20, tracking, plat) → H2 в одну строку («в актив» —
+     золотой градиент) → подзаголовок Forum 20.
+   - Слева «Left panel» — 4 плитки по 120px, зазор 20px: фон #192b29, рамка 0.7px
+     кремовая (#fff1d9), радиус 9. Внутри: иконка 63×58 (экспорт из Figma) + текст:
+     заголовок Forum 20 (золотой градиент, tracking -1px), описание Forum 16 #d4d4d4
+     (tracking -0.8px, плотный leading 1.1). Иконка и текст по центру плитки по
+     вертикали (items-center), левый отступ 40px.
+   - Справа — фото 800×400 с кремовой рамкой 1px (radius 9, затемнение снизу — scrim),
+     под ним такая же плитка 120px с текстом по центру. Высота правой колонки =
+     высоте левой (4×120 + 3×20 = 540): фото растягивается (flex-1).
+   - Четвёртая иконка («Архитектура капитала») в макете — знак моста в рамке-плашке
+     (радиус 20, кремовая рамка): рисуем рамку, внутри SVG моста.
+
+  МОБИЛЬНАЯ ВЕРСИЯ (правки дизайнера, сохранены): порядок — подзаголовок, фото (2:1),
+  подпись под фото простым текстом (короткая версия), затем компактные плитки.
+
+  Тексты — из макета дословно. ⚠️ В макете «Это наша философия» написано с латинской «a»
+  («нашa») — в тексте исправлено на кириллицу (визуально не отличается).
+  Описание под заголовком в Figma: «берет», «за счет», «надежный» (через «е»); у нас — «берёт»,
+  «за счёт», «надёжный» (орфография с «ё» принята в проекте); смысл не менялся.
+*/
+const base = import.meta.env.BASE_URL;
+
+const cards = [
+  { icon: 'investor.svg', title: 'Для инвестора', text: 'Обеспечиваем прозрачные процессы, аналитику' },
+  { icon: 'owner.svg', title: 'Для собственника', text: 'Снимаем операционную нагрузку, повышаем доходность и сохраняем ценность актива' },
+  { icon: 'object.svg', title: 'Для объекта', text: 'Повышаем заполняемость и рыночную стоимость недвижимости.' },
+  { icon: 'bridge.svg', title: 'Архитектура капитала', text: 'Это наша философия. Мост соединяющий возможности.', framed: true },
+];
+---
+
+<section id="about" class="py-14 md:py-28">
+  <div class="container-page">
+    <!-- Заголовок -->
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-center gap-2.5">
+        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
+        <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">О компании</span>
+      </div>
+      <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
+        Превращаем недвижимость <span class="text-gold-plate">в актив</span>
+      </h2>
+      <p class="mt-1 max-w-[860px] font-accent text-base leading-snug text-fg md:text-xl md:leading-[1.2]">
+        Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а
+        объект становился дороже.
+      </p>
+    </div>
+
+    <!-- Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) -->
+    <div class="mt-8 grid gap-6 lg:mt-[46px] lg:grid-cols-[466fr_800fr] lg:gap-[14px]">
+      <!-- Left panel -->
+      <div class="flex flex-col gap-3 max-lg:order-2 lg:gap-5">
+        {cards.map((card) => (
+          <article class="flex items-center gap-3.5 rounded-[9px] border-[0.7px] border-[#fff1d9] bg-[#192b29] px-4 py-3 md:min-h-[120px] lg:px-10">
+            {card.framed ? (
+              <!-- Знак моста в рамке-плашке (радиус 20) -->
+              <div class="flex h-[44px] w-[48px] shrink-0 items-center justify-center rounded-[16px] border border-[#fff1d9] lg:h-[58px] lg:w-[63px] lg:rounded-[20px]">
+                <img src={`${base}icons/about/${card.icon}`} alt="" class="w-[34px] lg:w-[48px]" />
+              </div>
+            ) : (
+              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
+            )}
+            <div class="font-accent leading-[1.1]">
+              <h3 class="text-lg font-normal tracking-[-0.05em] text-gold-plate lg:text-xl">{card.title}</h3>
+              <p class="mt-1 text-sm tracking-[-0.05em] text-fg-dim lg:mt-0.5 lg:text-base">{card.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Photo and third title -->
+      <div class="flex flex-col gap-3 max-lg:order-1 lg:gap-5">
+        <div class="relative aspect-[2/1] flex-1 overflow-hidden rounded-[9px] border border-[#fff1d9] lg:aspect-auto lg:min-h-[320px]">
+          <img
+            src={`${base}images/office.webp`}
+            alt="Офис управляющей компании «Фидента»"
+            width="1535"
+            height="1024"
+            class="absolute inset-0 h-full w-full object-cover object-right lg:object-center"
+          />
+          <!-- Scrim снизу (в макете: от прозрачного к rgba(11,20,16,.85)) -->
+          <div class="pointer-events-none absolute inset-0" style="background-image: linear-gradient(180deg, rgba(11,20,16,0) 55%, rgba(11,20,16,0.55) 100%);"></div>
+        </div>
+
+        <!-- Подпись: на мобильном — простой текст (короткая версия), на lg — плитка 120px -->
+        <div class="flex items-center lg:min-h-[120px] lg:rounded-[9px] lg:border-[0.7px] lg:border-[#fff1d9] lg:bg-[#192b29] lg:px-[100px] lg:py-3">
+          <p class="font-accent text-sm leading-[1.3] text-fg-dim lg:text-base lg:leading-[1.1] lg:tracking-[-0.01em]">
+            <span class="lg:hidden">
+              Каждый объект имеет скрытый потенциал. Мы раскрываем его грамотным управлением и долгосрочной стратегией.
+            </span>
+            <span class="max-lg:hidden">
+              Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления, оптимизации
+              процессов и долгосрочной стратегии развития, превращая коммерческую недвижимость в надёжный
+              инвестиционный актив.
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
