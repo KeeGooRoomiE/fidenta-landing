@@ -33,8 +33,48 @@ const doesNotFitIf = [
 
 <section id="terms" class="py-20 md:py-28">
   <div class="container-page">
-    <!-- Заголовок секции: вправо на md+, влево на мобильном -->
-    <div class="flex flex-col items-start gap-3 text-left md:items-end md:text-right">
+    <!-- Заголовок секции: вправо на md+, влево на мобильном.
+         relative — для декоративных часов в пустой левой части (только md+) -->
+    <div class="relative flex flex-col items-start gap-3 text-left md:items-end md:text-right">
+      <!--
+        ЧАСЫ (по правке дизайнера: блок про «время» был «скучным»). Декоративный
+        SVG-циферблат в золотой линии: показывает РЕАЛЬНОЕ время посетителя, секундная
+        стрелка тикает (CSS steps(60), 1 раз в секунду), минутная/часовая выставляются
+        скриптом ниже при загрузке и дальше двигаются сами. aria-hidden — для скринридеров
+        это просто украшение. При prefers-reduced-motion стрелка не тикает.
+      -->
+      <svg
+        id="terms-clock"
+        class="pointer-events-none absolute left-0 top-0 hidden size-[190px] md:block lg:size-[220px]"
+        viewBox="0 0 200 200"
+        fill="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="clock-gold" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFF1D9" stop-opacity="0.9"></stop>
+            <stop offset="1" stop-color="#A88548" stop-opacity="0.9"></stop>
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="96" stroke="url(#clock-gold)" stroke-width="1.5"></circle>
+        <circle cx="100" cy="100" r="88" stroke="url(#clock-gold)" stroke-opacity="0.35" stroke-width="0.8"></circle>
+        <!-- 12 делений: 4 длинных (12/3/6/9) и 8 коротких -->
+        <g stroke="url(#clock-gold)" stroke-linecap="round">
+          {Array.from({ length: 12 }, (_, i) => (
+            <line
+              x1="100" y1={i % 3 === 0 ? 12 : 16} x2="100" y2={i % 3 === 0 ? 26 : 22}
+              stroke-width={i % 3 === 0 ? 2.4 : 1.4}
+              transform={`rotate(${i * 30} 100 100)`}
+            ></line>
+          ))}
+        </g>
+        <!-- Стрелки: transform-origin в центре циферблата -->
+        <line id="clock-hour" x1="100" y1="100" x2="100" y2="58" stroke="url(#clock-gold)" stroke-width="3.4" stroke-linecap="round"></line>
+        <line id="clock-minute" x1="100" y1="100" x2="100" y2="34" stroke="url(#clock-gold)" stroke-width="2.4" stroke-linecap="round"></line>
+        <line id="clock-second" x1="100" y1="116" x2="100" y2="28" stroke="#C7A24B" stroke-width="1.2" stroke-linecap="round"></line>
+        <circle cx="100" cy="100" r="4.5" fill="#0A2019" stroke="#C7A24B" stroke-width="1.5"></circle>
+      </svg>
+
       <div class="flex items-center gap-2.5">
         <span class="terms-gold font-accent text-sm uppercase tracking-[0.12em]">условия участия</span>
         <span class="hidden h-px w-5 md:block" style="background-image: var(--gradient-gold);"></span>
@@ -104,3 +144,37 @@ const doesNotFitIf = [
     color: transparent;
   }
 </style>
+
+<script>
+  // Часы: выставляем реальное время и запускаем тик секундной стрелки.
+  const hour = document.getElementById('clock-hour');
+  const minute = document.getElementById('clock-minute');
+  const second = document.getElementById('clock-second');
+
+  if (hour && minute && second) {
+    const now = new Date();
+    const sec = now.getSeconds() + now.getMilliseconds() / 1000;
+    const min = now.getMinutes() + sec / 60;
+    const hrs = (now.getHours() % 12) + min / 60;
+
+    // Каждая стрелка крутится вокруг центра циферблата (100,100 в viewBox)
+    [hour, minute, second].forEach((el) => (el.style.transformOrigin = '100px 100px'));
+    hour.style.transform = `rotate(${hrs * 30}deg)`;
+    minute.style.transform = `rotate(${min * 6}deg)`;
+    second.style.transform = `rotate(${Math.floor(sec) * 6}deg)`;
+
+    // Дальше стрелки идут сами: секундная — тик раз в секунду (steps), остальные — плавно
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) {
+      const spin = (el: Element, from: number, duration: number, steps?: number) =>
+        el.animate([{ transform: `rotate(${from}deg)` }, { transform: `rotate(${from + 360}deg)` }], {
+          duration: duration * 1000,
+          iterations: Infinity,
+          easing: steps ? `steps(${steps}, end)` : 'linear',
+        });
+      spin(second, Math.floor(sec) * 6, 60, 60);
+      spin(minute, min * 6, 3600);
+      spin(hour, hrs * 30, 43200);
+    }
+  }
+</script>
