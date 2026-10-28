@@ -46,10 +46,12 @@ const cards = [
 ---
 
 <section class="relative overflow-hidden bg-canvas">
+  <!-- md:max-h-[500px] — на широких экранах баннер не растёт выше 500px (иначе Hero с карточками
+       не помещается в первый экран); фото при этом просто кадрируется object-cover. -->
   <!-- Фото-баннер: высота ВСЕГДА определяется aspect-ratio, а не контентом
        секции ниже — поэтому не может "растянуться" независимо от того,
        сколько карточек и как они складываются на узких экранах. -->
-  <div class="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/9] md:aspect-[21/9]">
+  <div class="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/9] md:aspect-[21/9] md:max-h-[500px]">
     <img
       id="hero-bg-image"
       src={`${base}images/hero-bg-skyline.webp`}
@@ -63,18 +65,24 @@ const cards = [
       class="absolute inset-0"
       style="background: linear-gradient(180deg, rgba(11,24,48,.22) 0%, rgba(11,24,48,.06) 30%, rgba(10,32,25,0) 55%, #0A2019 97%);"
     ></div>
+    <!-- Только ПК: заголовок поднят на фото (верх текста на 250px), поэтому нижняя половина
+         баннера затемняется раньше — иначе первая строка читается хуже на светлых окнах зданий. -->
+    <div
+      class="absolute inset-0 hidden md:block"
+      style="background: linear-gradient(180deg, rgba(10,32,25,0) 38%, rgba(10,32,25,.55) 62%, #0A2019 96%);"
+    ></div>
   </div>
 
   <!-- Контент — уже на сплошном фоне секции, текст нигде не лежит поверх
        фото, поэтому читаемость не зависит от того, что именно на кадре. -->
-  <div class="hero-content container-page relative -mt-10 flex flex-col gap-16 pb-20 pt-0 md:gap-20 md:pb-10">
-    <div class="flex max-w-2xl flex-col gap-7">
+  <div class="hero-content container-page relative -mt-10 flex flex-col gap-12 pb-16 pt-0 md:gap-8 md:pb-6">
+    <div class="flex max-w-2xl flex-col gap-5 md:max-w-4xl">
       <h1 class="hero-title font-accent font-normal">
         <span class="block text-fg">Коммерческая недвижимость,</span>
         <span class="hero-title-gold block">открытая для частного инвестора</span>
       </h1>
 
-      <p class="max-w-[30rem] font-accent text-lg leading-[1.4] tracking-[0.01em] text-text-soft md:text-xl">
+      <p class="max-w-[38rem] font-accent text-lg leading-[1.4] tracking-[0.01em] text-text-soft md:text-xl">
         Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами
         Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
       </p>
@@ -104,16 +112,18 @@ const cards = [
 </section>
 
 <style>
-  /* Фото-баннер — aspect-ratio, его высота = 100vw * 9/21 на md+ (21:9).
+  /* Фото-баннер — aspect-ratio, его высота = ширина секции * 9/21 на md+ (21:9).
+     Ниже вместо vw используется % (margin-top в % считается от ширины родителя =
+     секции): vw ломается при CSS zoom на больших экранах (см. global.css, «масштаб»).
      Фиксированный margin-top: -320px (как просили) ломается при "резиновом"
      ресайзе: при ширине < ~1493px высота баннера < 640px, и -320 утягивает
      текст ВЫШЕ своей середины — на небо, а не на тёмные здания, как нужно.
-     max() держит верх текста не выше 320px от начала Hero ВСЕГДА: на узких
+     max() держит верх текста не ниже 250px (было 320; верх текста на 250px от начала Hero, а не 320 — чтобы карточки влезали в первый экран) от начала Hero ВСЕГДА: на узких
      md-экранах подъём автоматически меньше 320px, на широких — ровно -320px
      (как и было одобрено на 1440px). */
   @media (min-width: 768px) {
     .hero-content {
-      margin-top: max(-320px, calc(320px - 42.857vw));
+      margin-top: max(-250px, calc(250px - 42.857%));
     }
   }
 
@@ -127,11 +137,14 @@ const cards = [
       font-size: 3.75rem;
     }
   }
+  /* Заголовок на ПК: 4.5rem → 3.5rem/4rem, чтобы Hero целиком (с карточками) помещался
+     в первый экран ноутбука (по правке дизайнера: нижние карточки не влезали) */
   @media (min-width: 768px) {
     .hero-title {
-      font-size: 4.5rem;
+      font-size: 3.5rem;
     }
   }
+
 
   .hero-title-gold,
   .hero-card-gold {

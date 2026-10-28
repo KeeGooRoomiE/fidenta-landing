@@ -56,17 +56,17 @@ const navLinks = [
       <div class="flex items-center gap-3">
         <button
           id="menu-toggle"
-          class="header-burger flex h-10 w-10 shrink-0 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
+          class="header-burger flex h-10 w-10 shrink-0 lg:h-12 lg:w-12 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
           aria-label="Открыть меню"
           aria-expanded="false"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="size-5 lg:size-6">
             <line x1="4" y1="7" x2="20" y2="7" />
             <line x1="4" y1="12" x2="20" y2="12" />
             <line x1="4" y1="17" x2="20" y2="17" />
           </svg>
         </button>
-        <div class="header-contact hidden font-accent text-sm leading-tight text-fg md:block">
+        <div class="header-contact hidden font-accent text-sm leading-tight text-fg md:block lg:text-lg">
           <p class="m-0">Спб, Богатырский 18 к 4 ст2</p>
           <p class="m-0">+7 (812) 000-00-00</p>
         </div>
@@ -76,10 +76,10 @@ const navLinks = [
            На мобильном сильно компактнее (меньше знак, мельче и плотнее wordmark) —
            иначе при true-center перекрывает бургер/кнопку на узких экранах. -->
       <a href="#" class="absolute left-1/2 flex -translate-x-1/2 items-center gap-1.5 md:gap-3">
-        <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-4 w-auto md:h-7" />
+        <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-4 w-auto md:h-7 lg:h-10" />
         <span class="leading-none">
-          <span class="header-logo-word block font-display text-xs tracking-[0.04em] text-gold-plate md:text-lg md:tracking-[0.18em]">ФИДЕНТА</span>
-          <span class="header-logo-sub mt-1 hidden text-right text-[0.5rem] uppercase tracking-[0.2em] text-accent/80 md:block">архитектура капитала</span>
+          <span class="header-logo-word block font-display text-xs tracking-[0.04em] text-gold-plate md:text-lg md:tracking-[0.18em] lg:text-3xl">ФИДЕНТА</span>
+          <span class="header-logo-sub mt-1 hidden text-right text-[0.5rem] uppercase tracking-[0.2em] text-accent/80 md:block lg:text-[0.7rem]">архитектура капитала</span>
         </span>
       </a>
 
@@ -218,6 +218,13 @@ const navLinks = [
     .header-cta {
       padding: 0.625rem 1.5rem;
       font-size: 1rem;
+    }
+  }
+  /* ПК (от lg): шапка крупнее — по правке дизайнера навигация/лого были слишком мелкими */
+  @media (min-width: 1024px) {
+    .header-cta {
+      padding: 0.75rem 1.9rem;
+      font-size: 1.2rem;
     }
   }
 
