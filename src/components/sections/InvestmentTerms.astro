@@ -136,35 +136,27 @@ const doesNotFitIf = [
 
 
 <script>
-  // Часы: выставляем реальное время и запускаем тик секундной стрелки.
+  // Часы: реальное время посетителя. Поворот стрелок — атрибутом transform="rotate(угол 100 100)"
+  // (SVG-координаты, центр 100,100): так стрелки всегда вращаются вокруг центра циферблата, в том числе
+  // в Safari и при CSS zoom на больших экранах (CSS transform-origin/Web Animations там «уезжали»).
+  // Секундная стрелка тикает раз в секунду, минутная и часовая идут плавно; при prefers-reduced-motion
+  // стоят на показанном времени.
   const hour = document.getElementById('clock-hour');
   const minute = document.getElementById('clock-minute');
   const second = document.getElementById('clock-second');
 
   if (hour && minute && second) {
-    const now = new Date();
-    const sec = now.getSeconds() + now.getMilliseconds() / 1000;
-    const min = now.getMinutes() + sec / 60;
-    const hrs = (now.getHours() % 12) + min / 60;
-
-    // Каждая стрелка крутится вокруг центра циферблата (100,100 в viewBox)
-    [hour, minute, second].forEach((el) => (el.style.transformOrigin = '100px 100px'));
-    hour.style.transform = `rotate(${hrs * 30}deg)`;
-    minute.style.transform = `rotate(${min * 6}deg)`;
-    second.style.transform = `rotate(${Math.floor(sec) * 6}deg)`;
-
-    // Дальше стрелки идут сами: секундная — тик раз в секунду (steps), остальные — плавно
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reduce) {
-      const spin = (el: Element, from: number, duration: number, steps?: number) =>
-        el.animate([{ transform: `rotate(${from}deg)` }, { transform: `rotate(${from + 360}deg)` }], {
-          duration: duration * 1000,
-          iterations: Infinity,
-          easing: steps ? `steps(${steps}, end)` : 'linear',
-        });
-      spin(second, Math.floor(sec) * 6, 60, 60);
-      spin(minute, min * 6, 3600);
-      spin(hour, hrs * 30, 43200);
-    }
+    const set = (el: Element, deg: number) => el.setAttribute('transform', `rotate(${deg} 100 100)`);
+    const render = () => {
+      const now = new Date();
+      const sec = now.getSeconds();
+      const min = now.getMinutes() + sec / 60;
+      const hrs = (now.getHours() % 12) + min / 60;
+      set(hour, hrs * 30);
+      set(minute, min * 6);
+      set(second, sec * 6);
+    };
+    render();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(render, 1000);
   }
 </script>
