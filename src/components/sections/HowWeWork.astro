@@ -21,8 +21,9 @@
 
   Фото: в Figma картинка 1024×342 растянута в рамку 826×383 (пропорции
   чуть вытянуты по вертикали — так задумано дизайнером, башни выше).
-  Повторяем ту же рамку (aspect 826/383 + object-fill), ширина — та же
-  доля от ширины макета: 826/1280 ≈ 64.5%. PNG с прозрачностью → webp
+  Повторяем ту же рамку (aspect 826/383 + object-fill). Ширина ПК увеличена с
+  64.5% до 82% (по правке дизайнера: мост был «зажат»); заголовок при этом сужен до
+  2 строк, чтобы не перекрывать башни. PNG с прозрачностью → webp
   с альфа-каналом (public/images/process-bridge.webp).
 
   Узлы таймлайна в Figma — SVG-кружок (заливка фоном страницы + золотая
@@ -100,10 +101,10 @@ const steps = [
               Как это идёт
             </span>
           </div>
-          <h2 class="font-accent text-4xl leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
+          <h2 class="max-w-[660px] font-accent text-3xl font-normal leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
             <span class="text-gold-plate">Прозрачно</span> — от заявки до выхода из сделки
           </h2>
-          <p class="max-w-[735px] font-accent text-xl leading-[28px] text-fg">
+          <p class="max-w-[600px] font-accent text-base leading-snug text-fg md:text-xl md:leading-[28px]">
             Прозрачный процесс передачи объекта под управление. Шесть шагов определяющих что будет
             происходит с объектом, что остаётся у вас на руках и в какой срок.
           </p>
@@ -111,7 +112,7 @@ const steps = [
 
         <!-- lg:translate-y — фраза заходит на 15px ниже ячейки грида, чтобы
              встать в 8px над линией таймлайна (как в Figma; см. -mb у фото) -->
-        <p class="mt-10 max-w-[412px] font-accent text-xl leading-[1.2] text-fg lg:mt-auto lg:translate-y-[15px]">
+        <p class="mt-10 max-w-[440px] font-accent text-xl leading-[1.25] text-fg lg:mt-auto lg:max-w-[300px] lg:translate-y-[15px]">
           Наша цель - не просто управлять недвижимость, а увеличить её стоимость и ваш доход
         </p>
       </div>
@@ -128,7 +129,7 @@ const steps = [
         width="1024"
         height="342"
         loading="lazy"
-        class="row-start-2 mt-8 aspect-[826/383] w-full object-fill opacity-[0.92] lg:col-start-1 lg:row-start-1 lg:-mb-[23px] lg:mt-0 lg:w-[64.5%] lg:self-end lg:justify-self-end"
+        class="row-start-2 mt-8 aspect-[826/383] w-full object-fill opacity-[0.92] lg:col-start-1 lg:row-start-1 lg:-mb-[23px] lg:mt-0 lg:w-[82%] lg:self-end lg:justify-self-end"
       />
     </div>
 
@@ -168,21 +169,21 @@ const steps = [
     <ol class="mt-12 grid grid-cols-1 gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:mt-[39px] lg:grid-cols-6 lg:gap-y-2.5">
       {steps.map((step) => (
         <li class="flex flex-col gap-2.5 font-accent lg:row-span-6 lg:grid lg:grid-rows-subgrid">
-          <span class="text-sm leading-[18px] tracking-[0.14em] text-gold-plate">{step.number}</span>
+          <span class="text-base leading-[18px] tracking-[0.14em] text-gold-plate">{step.number}</span>
           <!-- font-accent/font-normal явно: базовый стиль h3 в global.css
                ставит Playfair 600, наследование от <li> его не перебивает -->
-          <h3 class="font-accent text-[26px] font-normal leading-[26px] text-fg">{step.title}</h3>
-          <p class="text-base leading-[19px] text-muted">{step.text}</p>
+          <h3 class="font-accent text-[28px] font-normal leading-[28px] text-fg">{step.title}</h3>
+          <p class="text-lg leading-[1.25] text-muted">{step.text}</p>
 
           <span class="h-px w-full bg-[rgba(244,241,234,0.13)]"></span>
 
           <div class="flex flex-col gap-[3px]">
-            <span class="text-xs uppercase leading-[13px] tracking-[0.1em] text-gold-plate">На руках</span>
-            <p class="text-base leading-[18px] text-fg/85">{step.inHand}</p>
+            <span class="text-sm uppercase leading-[14px] tracking-[0.1em] text-gold-plate">На руках</span>
+            <p class="text-lg leading-[1.25] text-fg/90">{step.inHand}</p>
           </div>
           <div class="flex flex-col gap-[3px]">
-            <span class="text-xs uppercase leading-[13px] tracking-[0.1em] text-gold-plate">Срок</span>
-            <p class="text-base leading-[18px] text-muted">{step.term}</p>
+            <span class="text-sm uppercase leading-[14px] tracking-[0.1em] text-gold-plate">Срок</span>
+            <p class="text-lg leading-[1.25] text-muted">{step.term}</p>
           </div>
         </li>
       ))}
