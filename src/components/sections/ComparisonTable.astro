@@ -16,6 +16,10 @@
   Плейсхолдер [ДАННЫЕ: порядок и срок] — как и в остальных блоках, взят
   из Figma дословно, не выдуман.
 
+  ПК: колонка Фиденты выделена не плоской серой заливкой, а мягкой золотой подсветкой
+  (по правке дизайнера: серый блок выглядел «как презентация 2003»). Подсветка плавно
+  переезжает за курсором между колонками (см. скрипт внизу файла).
+
   МОБИЛЬНАЯ ВЕРСИЯ (по правке дизайнера, до md): таблица 7×4 на телефоне не
   помещается, поэтому вместо неё — «Фидента против одного»: переключатель из
   трёх альтернатив («Банковский вклад» / «Квартира» / «ЗПИФ») и две колонки —
@@ -121,38 +125,41 @@ const rows = [
       ))}
     </div>
 
-    <!-- Полная таблица: md и шире (на узких экранах скрыта — см. мобильный вид выше) -->
+    <!-- Полная таблица: md и шире (на узких экранах скрыта — см. мобильный вид выше).
+         Подсветка колонки — ОДИН подвижный слой (data-hl), он плавно «переезжает» под ту
+         колонку, над которой курсор; когда курсор ушёл — возвращается под колонку Фиденты.
+         Текст в активной колонке ярче, в остальных приглушён (см. стили ниже). -->
     <div class="mt-10 hidden overflow-x-auto md:block">
-      <table class="w-full min-w-[960px] border-collapse font-accent">
-        <thead>
-          <tr>
-            <th class="w-[220px] pb-[18px] pr-6 text-left"></th>
-            {columns.map((col, i) => (
-              <th
-                class={`px-6 pb-[18px] text-left text-xl font-normal ${i === 0 ? 'text-fg' : 'text-gold-plate'}`}
-                style={i === 0 ? 'background: #6E8078;' : undefined}
-              >
-                {col}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, ri) => (
-            <tr style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`}>
-              <td class="py-5 pr-6 align-top text-[15px] text-gold-plate">{row.label}</td>
-              {row.values.map((val, ci) => (
-                <td
-                  class="px-6 py-5 align-top text-[15px] text-fg"
-                  style={ci === 0 ? 'background: #6E8078;' : undefined}
+      <div class="cmp-wrap relative min-w-[960px]" data-cmp>
+        <div class="cmp-hl pointer-events-none absolute bottom-0 top-0" data-hl aria-hidden="true"></div>
+        <table class="relative w-full border-collapse font-accent">
+          <thead>
+            <tr>
+              <th class="w-[220px] pb-[18px] pr-6 text-left"></th>
+              {columns.map((col, i) => (
+                <th
+                  class={`px-6 pb-[18px] pt-3 text-left text-xl font-normal ${i === 0 ? 'text-fg' : 'text-gold-plate'}`}
+                  data-col={i}
                 >
-                  {val}
-                </td>
+                  {col}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row, ri) => (
+              <tr style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`}>
+                <td class="py-5 pr-6 align-top text-[15px] text-gold-plate">{row.label}</td>
+                {row.values.map((val, ci) => (
+                  <td class="cmp-cell px-6 py-5 align-top text-base leading-snug" data-col={ci}>
+                    {val}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>
@@ -167,3 +174,69 @@ const rows = [
     }),
   );
 </script>
+
+<script>
+  // ПК: подвижная подсветка колонки. По умолчанию — колонка Фиденты (0); при наведении
+  // на ячейку подсветка плавно «переезжает» под её колонку, при уходе курсора — назад.
+  const wrap = document.querySelector<HTMLElement>('[data-cmp]');
+  const hl = wrap?.querySelector<HTMLElement>('[data-hl]');
+  if (wrap && hl) {
+    const heads = [...wrap.querySelectorAll<HTMLElement>('thead th[data-col]')];
+    let active = 0;
+
+    function place(col: number, animate = true) {
+      const th = heads[col];
+      if (!th) return;
+      active = col;
+      // offsetLeft/offsetWidth — в layout-пикселях (не зависят от CSS zoom страницы)
+      if (!animate) hl!.style.transition = 'none';
+      hl!.style.left = `${th.offsetLeft}px`;
+      hl!.style.width = `${th.offsetWidth}px`;
+      if (!animate) {
+        void hl!.offsetWidth; // применить без анимации
+        hl!.style.transition = '';
+      }
+      wrap!.querySelectorAll<HTMLElement>('[data-col]').forEach((el) =>
+        el.classList.toggle('is-active', Number(el.dataset.col) === col),
+      );
+    }
+
+    place(0, false);
+    wrap.addEventListener('pointerover', (e) => {
+      const cell = (e.target as Element).closest<HTMLElement>('[data-col]');
+      if (cell) place(Number(cell.dataset.col));
+    });
+    wrap.addEventListener('pointerleave', () => place(0));
+    addEventListener('resize', () => place(active, false));
+    // шрифты/раскладка могут догрузиться после первого расчёта
+    addEventListener('load', () => place(active, false));
+  }
+</script>
+
+<style is:global>
+  /* Подсветка колонки: мягкое золото вместо плоской серой заливки */
+  .cmp-hl {
+    left: 0;
+    width: 0;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(180deg, rgba(199, 162, 75, 0.2) 0%, rgba(199, 162, 75, 0.07) 55%, rgba(199, 162, 75, 0.03) 100%);
+    border: 1px solid rgba(255, 241, 217, 0.28);
+    border-bottom: 0;
+    box-shadow: inset 0 2px 0 rgba(255, 241, 217, 0.55), 0 0 40px rgba(199, 162, 75, 0.08);
+    transition: left 0.45s cubic-bezier(0.4, 0, 0.2, 1), width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  /* Текст в ячейках: приглушённый, активная колонка — яркая */
+  .cmp-cell {
+    color: rgba(244, 241, 234, 0.62);
+    transition: color 0.3s ease;
+  }
+  .cmp-cell.is-active {
+    color: #f4f1ea;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cmp-hl,
+    .cmp-cell {
+      transition: none;
+    }
+  }
+</style>
