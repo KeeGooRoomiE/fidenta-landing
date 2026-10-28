@@ -91,7 +91,7 @@ const audiences = [
       <div data-list={a.key} hidden={listIdx !== 0} class="mt-4">
         {faq[a.key].map((item, i) => (
           <div
-            class:list={['faq-item border border-[#1c4a3d]', i > 0 && '-mt-px']}
+            class:list={['faq-item border border-border', i > 0 && '-mt-px']}
             data-item
             data-extra={i >= VISIBLE ? '' : undefined}
             hidden={i >= VISIBLE}
@@ -124,7 +124,7 @@ const audiences = [
       <button
         type="button"
         data-more
-        class="rounded-[4px] border border-[#fff1d9] px-10 py-4 font-accent text-xl leading-6 transition-colors hover:bg-[rgba(255,241,217,0.08)]"
+        class="rounded-[4px] border border-cream px-10 py-4 font-accent text-xl leading-6 transition-colors hover:bg-[rgba(255,241,217,0.08)]"
       >
         <span class="text-gold-plate">Ещё вопросы</span>
       </button>

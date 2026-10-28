@@ -47,11 +47,11 @@ const info = [
 <section id="contacts" class="py-14 md:py-28">
   <div class="container-page">
    {/* Нижняя линия блока из Figma (кремовая 1px) — на внутренней обёртке, чтобы не залезала под боковые поля */}
-   <div class="border-b pb-8 md:pb-12" style="border-color: #fff1d9;">
+   <div class="border-b pb-8 md:pb-12" style="border-color: var(--color-cream);">
     {/* Заголовок блока */}
     <div class="flex flex-col gap-4">
       <div class="flex items-center gap-3">
-        <span class="h-px w-5 shrink-0 bg-[#6e8078]"></span>
+        <span class="h-px w-5 shrink-0 bg-sage"></span>
         <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Контакты</span>
       </div>
       <h2 class="font-accent text-3xl font-normal leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
@@ -97,7 +97,7 @@ const info = [
               data-route-btn
               aria-haspopup="true"
               aria-expanded="false"
-              class="w-full rounded-[9px] border border-[#fff1d9] px-[14px] py-2.5 font-accent text-xl text-[#bdaf92] transition-colors hover:bg-[rgba(255,241,217,0.08)] sm:w-[233px]"
+              class="w-full rounded-[9px] border border-cream px-[14px] py-2.5 font-accent text-xl text-sand transition-colors hover:bg-[rgba(255,241,217,0.08)] sm:w-[233px]"
               style="text-shadow: 0 4px 4px rgba(0,0,0,0.11);"
             >
               Построить маршрут
@@ -105,7 +105,7 @@ const info = [
             <div
               data-route-menu
               hidden
-              class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-[#fff1d9] bg-[#0d231d] p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
+              class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-cream bg-plaque p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
             >
               <p data-route-target class="px-3 pb-1 pt-1.5 font-accent text-sm leading-5 text-muted"></p>
               <a data-route="yandex" target="_blank" rel="noopener noreferrer" class="route-link">Яндекс Карты</a>
@@ -144,8 +144,8 @@ const info = [
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0d231d;
-    border: 1px solid #fff1d9;
+    background: var(--color-plaque);
+    border: 1px solid var(--color-cream);
     border-radius: 14px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
@@ -154,14 +154,14 @@ const info = [
   }
   /* Подсказка (popup) в цветах сайта */
   .leaflet-popup-content-wrapper {
-    background: #0d231d;
-    color: #f4f1ea;
-    border: 1px solid #fff1d9;
+    background: var(--color-plaque);
+    color: var(--color-fg);
+    border: 1px solid var(--color-cream);
     border-radius: 9px;
     font-family: var(--font-accent);
   }
   .leaflet-popup-tip {
-    background: #0d231d;
+    background: var(--color-plaque);
   }
   .leaflet-popup-content {
     margin: 12px 16px;
@@ -169,7 +169,7 @@ const info = [
     line-height: 1.35;
   }
   .leaflet-container a.leaflet-popup-close-button {
-    color: #bdaf92;
+    color: var(--color-sand);
   }
   /* Пункты меню «Построить маршрут» */
   .route-link {
@@ -178,7 +178,7 @@ const info = [
     border-radius: 6px;
     font-family: var(--font-accent);
     font-size: 18px;
-    color: #f4f1ea;
+    color: var(--color-fg);
     transition: background-color 0.15s;
   }
   .route-link:hover {

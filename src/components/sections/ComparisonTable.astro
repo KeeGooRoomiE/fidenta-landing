@@ -86,7 +86,7 @@ const rows = [
     {/* Заголовок блока */}
     <div class="flex flex-col gap-3">
       <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background: #CAD7D1;"></span>
+        <span class="h-px w-5 shrink-0" style="background: var(--color-mist);"></span>
         <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Сравнение</span>
       </div>
       <h2 class="font-accent text-4xl leading-[1.16] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
@@ -109,14 +109,14 @@ const rows = [
         <div data-panel={i} hidden={i !== 0} class="mt-6">
           {/* Шапка двух колонок */}
           <div class="grid grid-cols-2 gap-px font-accent text-base">
-            <div class="px-3 py-2 text-fg" style="background: #6E8078;">{columns[0]}</div>
+            <div class="px-3 py-2 text-fg" style="background: var(--color-sage);">{columns[0]}</div>
             <div class="px-3 py-2 text-gold-plate">{col}</div>
           </div>
           {rows.map((row, ri) => (
-            <div style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`} class="mt-0">
+            <div style={`border-top: 1px solid ${ri === 0 ? 'var(--color-mist)' : 'rgba(202, 215, 209, 0.4)'};`} class="mt-0">
               <p class="px-0 pb-1 pt-3 font-accent text-sm text-gold-plate">{row.label}</p>
               <div class="grid grid-cols-2 gap-px font-accent text-[15px] leading-snug text-fg">
-                <p class="px-3 py-2" style="background: #6E8078;">{row.values[0]}</p>
+                <p class="px-3 py-2" style="background: var(--color-sage);">{row.values[0]}</p>
                 <p class="px-3 py-2">{row.values[i + 1]}</p>
               </div>
             </div>
@@ -148,7 +148,7 @@ const rows = [
           </thead>
           <tbody>
             {rows.map((row, ri) => (
-              <tr style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`}>
+              <tr style={`border-top: 1px solid ${ri === 0 ? 'var(--color-mist)' : 'rgba(202, 215, 209, 0.4)'};`}>
                 <td class="py-5 pr-6 align-top text-[15px] text-gold-plate">{row.label}</td>
                 {row.values.map((val, ci) => (
                   <td class="cmp-cell px-6 py-5 align-top text-base leading-snug" data-col={ci}>
@@ -231,7 +231,7 @@ const rows = [
     transition: color 0.3s ease;
   }
   .cmp-cell.is-active {
-    color: #f4f1ea;
+    color: var(--color-fg);
   }
   @media (prefers-reduced-motion: reduce) {
     .cmp-hl,

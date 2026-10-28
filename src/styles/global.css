@@ -21,9 +21,7 @@
 @theme {
   /* --- Зелёная шкала (фоны и рамки) -------------------------------- */
   --color-canvas: #0A2019;       /* bg-deep: самый тёмный фон страницы       → bg-canvas    */
-  --color-panel: #0C2A22;        /* bg: фон отдельных секций                 → bg-panel     */
   --color-surface: #143A30;      /* surface: фон карточек                    → bg-surface   */
-  --color-surface-2: #1C4A3D;    /* приподнятая/hover-поверхность            → bg-surface-2 */
   --color-border: #1C4A3D;       /* линии и рамки                           → border-border */
   --color-footer: #101612;       /* фон футера (Figma: «Futer»)             → bg-footer     */
 
@@ -43,7 +41,16 @@
   --color-on-gold: #0A2019;      /* text-on-gold: текст на золотой заливке   → text-on-gold  */
 
   /* --- Служебные --------------------------------------------------- */
-  --color-success: #5FCF80;      /* «живой» индикатор / позитивный статус    → text-success  */
+  /* --- Дополнительные цвета интерфейса (раньше были хардкодом #hex в разметке; чистка 28.10) --- */
+  --color-cream: #FFF1D9;        /* кремовая рамка/линии                    → border-cream, bg-cream */
+  --color-sand: #BDAF92;         /* приглушённый песочный текст (подвал)    → text-sand      */
+  --color-sage: #6E8078;         /* шалфей: подсветка колонки сравнения     → bg-sage        */
+  --color-plaque: #0D231D;       /* тёмная плашка/всплывашка                → bg-plaque      */
+  --color-mist: #CAD7D1;         /* светлые линии таблицы                   → border-mist    */
+  --color-tile: #192B29;         /* тёмная плитка (О компании)              → bg-tile        */
+  --color-slate: #6E7069;        /* серая рамка (подвал)                    → border-slate   */
+  --color-link: #C29E4B;         /* золото ссылок в тексте                  → text-link      */
+
   --color-plate-line: rgba(255, 241, 217, 0.95); /* сплошная кремовая рамка (кнопки/плитки/cookie) → border-plate-line */
 
   /* --- Металлик-градиент («plate») — для логотипа, золотого текста и кнопок ---
@@ -51,10 +58,7 @@
   --gradient-gold: linear-gradient(140.35deg, rgba(255, 241, 217, 0.87) -25.71%, rgba(168, 133, 72, 0.87) 120.56%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
-  --radius-sm: 4px;              /* мелочи                                   → rounded-sm    */
-  --radius: 8px;                 /* кнопки/карточки (база)                   → rounded       */
   --radius-lg: 12px;             /* блоки                                    → rounded-lg    */
-  --radius-xl: 16px;             /* крупные                                  → rounded-xl    */
   --radius-full: 999px;          /* пилюли                                   → rounded-full  */
 
   /* --- Шрифты ------------------------------------------------------ */
@@ -174,7 +178,7 @@
    активная (aria-pressed=true) — золотая заливка + тёмный текст,
    неактивная — кремовая рамка и золотой текст (через background-clip:text). */
 .aud-btn {
-  border: 1px solid #fff1d9;
+  border: 1px solid var(--color-cream);
   border-radius: 9px;
   padding: 9px 17px;
   font-family: var(--font-accent);
@@ -190,7 +194,7 @@
 .aud-btn[aria-pressed='true'] {
   background-clip: border-box;
   -webkit-background-clip: border-box;
-  color: #0a2019;
+  color: var(--color-canvas);
 }
 .aud-btn:hover {
   filter: brightness(1.1);

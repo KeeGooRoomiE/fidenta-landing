@@ -129,10 +129,10 @@ const copy = {
 
         {/* Согласие: ссылка #privacy — страница политики появится позже */}
         <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-fg md:text-xl md:leading-[1.04]">
-          <input type="checkbox" name="consent" required checked class="mt-0.5 size-[18px] shrink-0 accent-[#c29e4b]" />
+          <input type="checkbox" name="consent" required checked class="mt-0.5 size-[18px] shrink-0 accent-link" />
           <span>
             Даю согласие на
-            <a href="#privacy" class="text-[#c29e4b] underline">обработку персональных данных</a>
+            <a href="#privacy" class="text-link underline">обработку персональных данных</a>
             в соответствии с политикой конфиденциальности
           </span>
         </label>
@@ -149,7 +149,7 @@ const copy = {
         <p id="cta-status" class="hidden font-accent text-base" role="status"></p>
       </form>
 
-      <p class="mt-2 font-accent text-sm leading-5 text-[#bdaf92] max-lg:order-3">
+      <p class="mt-2 font-accent text-sm leading-5 text-sand max-lg:order-3">
         Не является публичной офертой. Условия конкретной сделки фиксируются в договоре.
       </p>
     </div>
@@ -227,12 +227,12 @@ const copy = {
     height: 52px;
     width: 100%;
     border-radius: 9px;
-    border: 1px solid #1c4a3d;
-    background: #143a30;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
     padding: 0 17px;
     font-family: var(--font-body);
     font-size: 16px;
-    color: #f4f1ea;
+    color: var(--color-fg);
     outline: none;
     transition: border-color 0.15s;
   }
@@ -246,6 +246,6 @@ const copy = {
     color: rgba(244, 241, 234, 0.5);
   }
   .cta-input:focus {
-    border-color: #c7a24b;
+    border-color: var(--color-accent);
   }
 </style>
