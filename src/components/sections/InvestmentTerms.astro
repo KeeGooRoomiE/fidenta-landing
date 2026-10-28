@@ -16,6 +16,7 @@
   Плейсхолдеры "00 лет"/"раз в 00 месяцев" — так в Figma (значения ещё не
   согласованы с клиентом), оставлены как есть, а не выдуманы.
 */
+import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 const fitsIf = [
   'свободные 200 000 ₽ и больше, которые не понадобятся 00 лет',
@@ -128,9 +129,7 @@ const doesNotFitIf = [
         <p class="max-w-3xl font-accent text-sm leading-relaxed text-gold-plate md:text-base">
           Горизонт участия — 2–10 лет · Выплаты арендного дохода — раз в 00 месяцев · Что оформляется на инвестора — доля собственности
         </p>
-        <a href="#cta" data-cta-audience="investor" class="btn-hero btn-outline w-full justify-center text-center md:w-auto">
-          <span class="text-gold-plate">Разобрать условия по объекту →</span>
-        </a>
+        <Button variant="outline" block href="#cta" data-cta-audience="investor">Разобрать условия по объекту →</Button>
       </div>
     </div>
 </Section>

@@ -30,6 +30,8 @@
   Текст блока: в Figma было 3 абзаца; по правке дизайнера первая фраза убрана, смысл
   «без необходимости приобретать объект целиком» — в конце последнего абзаца.
 */
+import Button from '../ui/Button.astro';
+
 const base = import.meta.env.BASE_URL;
 
 // Демо-значения пазла (замена реальными — одной правкой здесь)
@@ -86,15 +88,7 @@ const demo = { totalMln: 120 };
           </p>
         </div>
 
-        <a
-          href="#cta"
-          data-cta-audience="investor"
-          class="mt-2 inline-flex w-full items-center justify-center rounded-[9px] border border-plate-line px-6 py-3 text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:mt-8 md:w-auto md:py-[14px]"
-        >
-          <span class="font-accent text-lg tracking-[-0.01em] text-gold-plate md:text-2xl" style="opacity: 0.76;">
-            Узнать больше об участии
-          </span>
-        </a>
+        <Button variant="outline-lg" block href="#cta" data-cta-audience="investor" class="mt-2 md:mt-8">Узнать больше об участии</Button>
       </div>
 
       {/* МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком

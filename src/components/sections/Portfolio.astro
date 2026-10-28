@@ -27,6 +27,7 @@
 
   id="portfolio" — якорь для ссылок из шапки и кнопки Hero.
 */
+import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
 import ObjectCard from '../ui/ObjectCard.astro';
@@ -74,13 +75,7 @@ const extraCount = objects.filter((o) => o.hidden).length;
 
     {/* Кнопка «Показать ещё»: после нажатия удаляется из DOM */}
     <div class="flex justify-center pt-6" data-more-wrap>
-      <button
-        type="button"
-        data-more
-        class="rounded-[4px] border border-cream px-10 py-4 font-accent text-xl leading-6 text-fg transition-colors hover:bg-[rgba(255,241,217,0.08)]"
-      >
-        Показать ещё {extraCount} объекта
-      </button>
+      <Button variant="more" tone="fg" data-more>Показать ещё {extraCount} объекта</Button>
     </div>
 </Section>
 

@@ -27,6 +27,7 @@
   она почти неотличима от фона (#143a30 на #0a2019) — сделали видимой
   (цвет muted); если нужно строго как в макете, поменять цвет в .faq-icon.
 */
+import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
 const lorem =
@@ -116,13 +117,7 @@ const audiences = [
 
     {/* «Ещё вопросы»: показывает ещё 3, затем исчезает */}
     <div class="flex justify-center pt-[22px]" data-more-wrap>
-      <button
-        type="button"
-        data-more
-        class="rounded-[4px] border border-cream px-10 py-4 font-accent text-xl leading-6 transition-colors hover:bg-[rgba(255,241,217,0.08)]"
-      >
-        <span class="text-gold-plate">Ещё вопросы</span>
-      </button>
+      <Button variant="more" data-more>Ещё вопросы</Button>
     </div>
 </Section>
 

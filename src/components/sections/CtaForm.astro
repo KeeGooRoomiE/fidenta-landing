@@ -28,6 +28,7 @@
 
   id="cta" — якорь для кнопок «Консультация» / «Передать объект…» и ссылки «Контакты».
 */
+import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 const copy = {
   investor: {
@@ -138,13 +139,7 @@ const copy = {
           </span>
         </label>
 
-        <button
-          type="submit"
-          data-t="submit"
-          class="btn-plat h-12 w-full rounded-[9px] border border-transparent px-[29px] font-accent text-lg md:h-[52px] md:text-xl tracking-[0.008em] transition-[filter] hover:brightness-110"
-        >
-          {copy.investor.submit}
-        </button>
+        <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
 
         {/* Статус отправки */}
         <p id="cta-status" class="hidden font-accent text-base" role="status"></p>

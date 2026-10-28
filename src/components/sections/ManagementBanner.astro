@@ -13,6 +13,7 @@
   Опечатка макета «комерческую» исправлена по решению дизайнера (28.10) → «коммерческую».
   Кнопка ведёт на форму (#cta), как кнопки Hero.
 */
+import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 const base = import.meta.env.BASE_URL;
 ---
@@ -37,7 +38,7 @@ const base = import.meta.env.BASE_URL;
           роста стоимости актива
         </p>
         <div class="mt-2 md:mt-3">
-          <a href="#cta" data-cta-audience="owner" class="btn-hero btn-plat w-full text-[15px] md:w-auto">Передать объект под управление</a>
+          <Button variant="plat" block href="#cta" data-cta-audience="owner" class="text-[15px]">Передать объект под управление</Button>
         </div>
       </div>
 

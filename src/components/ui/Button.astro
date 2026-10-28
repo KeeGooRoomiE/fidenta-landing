@@ -1,0 +1,56 @@
+---
+/*
+  УРОВЕНЬ 4 — UI-ЭЛЕМЕНТ «Кнопка»: все кнопки-призывы сайта в одном месте.
+
+  Раньше у каждой кнопки были свои классы (6+ разных наборов). Теперь — пять вариантов:
+    plat        — золотая заливка («Передать объект под управление»);
+    plat-form   — золотая кнопка отправки формы (выше и шире, во всю ширину);
+    outline     — кремовая рамка + золотой текст («Разобрать условия по объекту →»);
+    outline-lg  — крупная кнопка с рамкой и приглушённым золотым текстом («Узнать больше…»);
+    more        — «Показать ещё / Ещё вопросы»: рамка с радиусом 4px, по центру под списком.
+  Если передан href — рисуется <a>, иначе <button> (type по умолчанию "button").
+
+  Props:
+    variant — один из вариантов выше (по умолчанию 'plat');
+    block   — на мобильном во всю ширину, с md — по содержимому (w-full md:w-auto);
+    tone    — цвет текста у 'more': 'gold' (по умолчанию) | 'fg';
+    class   — добавка к классам; любые другие атрибуты (id, data-*, href, type…) пробрасываются.
+  Слот — подпись кнопки.
+*/
+interface Props {
+  variant?: 'plat' | 'plat-form' | 'outline' | 'outline-lg' | 'more';
+  block?: boolean;
+  tone?: 'gold' | 'fg';
+  class?: string;
+  href?: string;
+  [key: string]: unknown;
+}
+const { variant = 'plat', block = false, tone = 'gold', class: className = '', href, ...rest } = Astro.props;
+
+const base: Record<string, string> = {
+  plat: 'btn-hero btn-plat',
+  'plat-form':
+    'btn-plat h-12 w-full rounded-[9px] border border-transparent px-[29px] font-accent text-lg md:h-[52px] md:text-xl tracking-[0.008em] transition-[filter] hover:brightness-110',
+  outline: 'btn-hero btn-outline justify-center text-center',
+  'outline-lg':
+    'inline-flex items-center justify-center rounded-[9px] border border-plate-line px-6 py-3 text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:py-[14px]',
+  more: 'rounded-[4px] border border-cream px-10 py-4 font-accent text-xl leading-6 transition-colors hover:bg-[rgba(255,241,217,0.08)]',
+};
+const classes = [base[variant], block && 'w-full md:w-auto', variant === 'more' && tone === 'fg' && 'text-fg', className];
+const Tag = href ? 'a' : 'button';
+const attrs: any = href ? { href, ...rest } : { type: 'button', ...rest };
+---
+
+<Tag class:list={classes} {...attrs}>
+  {
+    variant === 'outline' || (variant === 'more' && tone === 'gold') ? (
+      <span class="text-gold-plate"><slot /></span>
+    ) : variant === 'outline-lg' ? (
+      <span class="font-accent text-lg tracking-[-0.01em] text-gold-plate md:text-2xl" style="opacity: 0.76;">
+        <slot />
+      </span>
+    ) : (
+      <slot />
+    )
+  }
+</Tag>
