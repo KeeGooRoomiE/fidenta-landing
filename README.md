@@ -400,7 +400,7 @@ const { title, variant = 'primary' } = Astro.props;
 | № | Блок | Файл | Якорь | Состояние |
 |---|------|------|-------|-----------|
 | 1 | Hero | `Hero.astro` | — | по Figma |
-| 2 | О нашем активе | `AboutAsset.astro` | `#about` | по Figma |
+| 2 | О компании | `AboutAsset.astro` | `#about` | по Figma (пересобран 28.10) |
 | 3 | Условия инвестирования | `InvestmentTerms.astro` | `#terms` | по Figma |
 | 4 | Крупный актив — без крупного капитала | `AssetAccess.astro` | — | по Figma |
 | 5 | Фидента — команда | `TeamIntro.astro` | — | по Figma (фото-плейсхолдер) |
