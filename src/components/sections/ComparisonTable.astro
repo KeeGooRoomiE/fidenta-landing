@@ -27,6 +27,8 @@
   (массивы columns/rows), поэтому правятся в одном месте. Полная таблица
   показывается с md и шире (hidden md:block), мобильный вид — md:hidden.
 */
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const columns = ['Доля в объекте с Фидентой', 'Банковский вклад', 'Квартира под аренду', 'ЗПИФ недвижимости'];
 
 const rows = [
@@ -81,19 +83,14 @@ const rows = [
 ];
 ---
 
-<section class="py-20 md:py-28">
-  <div class="container-page">
+<Section>
     {/* Заголовок блока */}
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background: var(--color-mist);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Сравнение</span>
-      </div>
-      <h2 class="font-accent text-4xl leading-[1.16] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
-        Инвестиции и то, что вокруг
-      </h2>
-      <p class="font-accent text-xl text-fg">Семь основных различий</p>
-    </div>
+    <SectionHeading eyebrow="Сравнение" line="mist" leadMax="max-w-none">
+      Инвестиции и то, что вокруг
+      <Fragment slot="lead">
+        Семь основных различий
+      </Fragment>
+    </SectionHeading>
 
     {/* МОБИЛЬНЫЙ ВИД: «Фидента против …» с переключателем (md:hidden) */}
     <div class="mt-8 md:hidden" data-compare>
@@ -161,8 +158,7 @@ const rows = [
         </table>
       </div>
     </div>
-  </div>
-</section>
+</Section>
 
 <script>
   // Мобильный переключатель: показываем панель выбранной альтернативы

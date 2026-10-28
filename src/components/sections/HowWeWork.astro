@@ -37,6 +37,7 @@
   «происходить», «управлять недвижимость» → «недвижимостью», «иди доступ» → «или доступ».
   Плейсхолдеры [ДАННЫЕ: ...] — тоже из Figma, не выдуманы.
 */
+import Section from '../ui/Section.astro';
 const base = import.meta.env.BASE_URL;
 
 const steps = [
@@ -85,23 +86,22 @@ const steps = [
 ];
 ---
 
-<section class="py-20 md:py-28">
-  <div class="container-page">
+<Section>
     {/* 1–2. Заголовок + мост: одна ячейка грида, слои наложены */}
     <div class="grid isolate">
       {/* Текстовый слой: заголовок сверху, «цель» прижата к низу (mt-auto) */}
       <div class="z-10 col-start-1 row-start-1 flex flex-col">
         <div class="flex flex-col gap-3.5">
           <div class="flex items-center gap-3">
-            <span class="h-px w-7 shrink-0" style="background-image: var(--gradient-gold);"></span>
-            <span class="font-accent text-xl uppercase leading-[26px] tracking-[0.15em] text-gold-plate">
+            <span class="h-px w-5 shrink-0 bg-gold-line"></span>
+            <span class="text-eyebrow text-gold-plate [--eyebrow-ls:0.15em]">
               Как это идёт
             </span>
           </div>
-          <h2 class="max-w-[660px] font-accent text-3xl font-normal leading-[1.16] text-fg sm:text-5xl md:text-[50px]">
+          <h2 class="max-w-[660px] text-h2 text-fg">
             <span class="text-gold-plate">Прозрачно</span> — от заявки до выхода из сделки
           </h2>
-          <p class="max-w-[600px] font-accent text-base leading-snug text-fg md:text-xl md:leading-[28px]">
+          <p class="max-w-[600px] text-lead text-fg">
             Прозрачный процесс передачи объекта под управление. Шесть шагов определяющих что будет
             происходить с объектом, что остаётся у вас на руках и в какой срок.
           </p>
@@ -185,5 +185,4 @@ const steps = [
         </li>
       ))}
     </ol>
-  </div>
-</section>
+</Section>

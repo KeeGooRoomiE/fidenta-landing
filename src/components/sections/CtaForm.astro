@@ -28,6 +28,7 @@
 
   id="cta" — якорь для кнопок «Консультация» / «Передать объект…» и ссылки «Контакты».
 */
+import Section from '../ui/Section.astro';
 const copy = {
   investor: {
     eyebrow: 'заявка инвестора',
@@ -60,26 +61,26 @@ const copy = {
 // Поле-подпись «Комментарий» одинаково для обоих вариантов (в Figma — «Комментарий / интересующий формат участия»)
 ---
 
-<section id="cta" class="py-14 md:py-28" data-cta data-copy={JSON.stringify(copy)}>
+<Section id="cta" data-cta data-copy={JSON.stringify(copy)}>
   {/* МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
          потом короткий призыв, потом форма. Для этого правая колонка на <lg «растворяется»
          (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. */}
-    <div class="container-page grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-12">
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-12">
     {/* Левая колонка: призыв (тексты подменяются скриптом по data-copy) */}
     <div class="flex flex-col gap-3 font-accent max-lg:order-2 lg:gap-[15px]">
       <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span data-t="eyebrow" class="font-body text-base font-medium md:text-xl uppercase tracking-[0.1em] text-gold-plate">
+        <span class="h-px w-5 shrink-0 bg-gold-line"></span>
+        <span data-t="eyebrow" class="text-eyebrow text-gold-plate">
           {copy.investor.eyebrow}
         </span>
       </div>
       <h2
         data-t="title"
-        class="max-w-[437px] font-accent text-3xl font-normal leading-[1.1] tracking-[-0.03em] text-white sm:text-5xl md:text-[50px]"
+        class="max-w-[437px] text-h2 text-fg"
       >
         {copy.investor.title}
       </h2>
-      <p data-t="lead" class="max-w-[428px] text-base leading-snug text-fg md:text-xl md:leading-[1.43]">{copy.investor.lead}</p>
+      <p data-t="lead" class="max-w-[428px] text-lead text-fg">{copy.investor.lead}</p>
       <p class="text-base text-white md:text-xl">Что будет дальше?</p>
       <ul class="list-disc ps-6 text-base leading-snug text-white md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
         {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
@@ -154,7 +155,7 @@ const copy = {
       </p>
     </div>
   </div>
-</section>
+</Section>
 
 <script>
   type Audience = 'investor' | 'owner';

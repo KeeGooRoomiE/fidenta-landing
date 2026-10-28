@@ -1,0 +1,24 @@
+---
+/*
+  УРОВЕНЬ 4 — UI-ЭЛЕМЕНТ «Обёртка секции»: <section> с типовыми отступами + container-page внутри.
+
+  Раньше у каждого блока были свои вертикальные отступы (py-20 / py-14 / py-10 …). Теперь два
+  пресета: 'default' (py-14 → md:py-28) и 'tight' (py-10 → md:py-16, для баннеров).
+  Любые атрибуты (id, data-*) пробрасываются на <section>.
+
+  Props: pad — 'default' | 'tight'; class — добавка к <section> (например bg-panel).
+*/
+interface Props {
+  pad?: 'default' | 'tight';
+  class?: string;
+  [key: string]: unknown;
+}
+const { pad = 'default', class: className = '', ...rest } = Astro.props;
+const padClass = pad === 'tight' ? 'py-10 md:py-16' : 'py-14 md:py-28';
+---
+
+<section class:list={[padClass, className]} {...rest}>
+  <div class="container-page">
+    <slot />
+  </div>
+</section>

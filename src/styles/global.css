@@ -161,17 +161,53 @@
   background: transparent;
 }
 
-/* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д.
-   По киту: Inter 13px / 500 / letter-spacing 2.08px (0.16em) / caps / золото */
-@utility eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8125rem; /* 13px */
-  font-weight: 500;
-  letter-spacing: 0.16em;
+/* ================= ТИПОВАЯ ТИПОГРАФИКА БЛОКОВ (чистка 28.10) =================
+   Единая шкала для заголовков секций. Все блоки берут её отсюда (через компонент
+   SectionHeading или напрямую), поэтому размеры не «плывут» от блока к блоку.
+   Мобильный → sm (640) → md (768+); значения из макета Figma (H2 50px, подзаголовок 20px). */
+
+/* Надзаголовок «— КОНТАКТЫ»: Forum, капс, трекинг 0.1em. Золотой цвет — отдельно (text-gold-plate). */
+@utility text-eyebrow {
+  font-family: var(--font-accent);
   text-transform: uppercase;
-  color: var(--color-accent);
+  letter-spacing: var(--eyebrow-ls, 0.1em); /* переопределяется: [--eyebrow-ls:0.15em] */
+  font-size: 1rem;
+  line-height: 1.5rem;
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* Заголовок секции (H2): Forum обычного начертания, 30 → 48 → 50px. */
+@utility text-h2 {
+  font-family: var(--font-accent);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-size: var(--h2-fs, 1.875rem); /* переопределяется: [--h2-fs:1.65rem] (баннер) */
+  @media (min-width: 640px) {
+    font-size: 3rem;
+  }
+  @media (min-width: 768px) {
+    font-size: 50px;
+  }
+}
+
+/* Подзаголовок (lead) под H2: Forum 16 → 20px. */
+@utility text-lead {
+  font-family: var(--font-accent);
+  font-size: 1rem;
+  line-height: 1.375;
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+    line-height: 1.35;
+  }
+}
+
+/* Тонкая золотая линия (hairline, рамка-разделитель, маркер списка): градиент «Plat» как фон. */
+@utility bg-gold-line {
+  background-image: var(--gradient-gold);
 }
 
 /* Кнопки-переключатели аудитории «Инвестор / Собственник» (CtaForm, FAQ):

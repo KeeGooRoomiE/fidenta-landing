@@ -27,6 +27,8 @@
   она почти неотличима от фона (#143a30 на #0a2019) — сделали видимой
   (цвет muted); если нужно строго как в макете, поменять цвет в .faq-icon.
 */
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const lorem =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
@@ -63,21 +65,14 @@ const audiences = [
 ] as const;
 ---
 
-<section id="faq" class="py-20 md:py-28" data-faq data-visible={VISIBLE}>
-  <div class="container-page">
+<Section id="faq" data-faq data-visible={VISIBLE}>
     {/* Заголовок блока */}
-    <div class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Вопросы</span>
-      </div>
-      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-gold-plate sm:text-5xl md:text-[50px]">
-        Остались вопросы?
-      </h2>
-      <p class="mt-1 max-w-[860px] font-accent text-xl leading-[1.47] text-fg">
+    <SectionHeading eyebrow="Вопросы" titleClass="text-gold-plate">
+      Остались вопросы?
+      <Fragment slot="lead">
         Вопросы, которые задают до перевода денег. Отдельно — то, что спрашивают собственники объектов.
-      </p>
-    </div>
+      </Fragment>
+    </SectionHeading>
 
     {/* Переключатель аудитории */}
     <div class="mt-12 flex gap-5" role="group" aria-label="Для кого вопросы">
@@ -129,8 +124,7 @@ const audiences = [
         <span class="text-gold-plate">Ещё вопросы</span>
       </button>
     </div>
-  </div>
-</section>
+</Section>
 
 <script>
   const root = document.querySelector<HTMLElement>('[data-faq]');

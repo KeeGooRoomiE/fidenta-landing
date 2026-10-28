@@ -67,11 +67,11 @@ const demo = { totalMln: 120 };
       {/* Текст */}
       <div class="flex max-w-[570px] flex-col items-start gap-4 md:gap-6">
         <div class="flex items-center gap-2.5">
-          <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-          <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Инвестиции в недвижимость</span>
+          <span class="h-px w-5 shrink-0 bg-gold-line"></span>
+          <span class="text-eyebrow text-gold-plate">Инвестиции в недвижимость</span>
         </div>
 
-        <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] sm:text-5xl md:text-[50px]">
+        <h2 class="text-h2">
           <span class="block text-fg-dim">Крупный актив —</span>
           <span class="block text-gold-plate">по силам частному инвестору</span>
         </h2>
@@ -109,7 +109,7 @@ const demo = { totalMln: 120 };
           <span class="text-base text-fg-dim md:text-xl">млн ₽</span>
         </div>
         <div class="mt-2 h-[3px] w-full overflow-hidden rounded-full bg-[rgba(244,241,234,0.14)]">
-          <div data-bar class="h-full w-0 rounded-full" style="background-image: var(--gradient-gold);"></div>
+          <div data-bar class="h-full w-0 rounded-full bg-gold-line"></div>
         </div>
         <p class="mt-2 text-sm text-fg-dim md:text-base">
           из <span data-total-text>{demo.totalMln}</span> млн ₽ · <span data-percent>0</span>%

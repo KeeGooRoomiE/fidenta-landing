@@ -16,6 +16,7 @@
   Плейсхолдеры "00 лет"/"раз в 00 месяцев" — так в Figma (значения ещё не
   согласованы с клиентом), оставлены как есть, а не выдуманы.
 */
+import Section from '../ui/Section.astro';
 const fitsIf = [
   'свободные 200 000 ₽ и больше, которые не понадобятся 00 лет',
   'нужен конкретный адрес и конкретный арендатор, а не пай в фонде',
@@ -31,8 +32,7 @@ const doesNotFitIf = [
 ];
 ---
 
-<section id="terms" class="py-20 md:py-28">
-  <div class="container-page">
+<Section id="terms">
     {/* Заголовок секции: вправо на md+, влево на мобильном.
          relative — для декоративных часов в пустой левой части (только md+) */}
     <div class="relative flex flex-col items-start gap-3 text-left md:items-end md:text-right">
@@ -76,21 +76,21 @@ const doesNotFitIf = [
       </svg>
 
       <div class="flex items-center gap-2.5">
-        <span class="terms-gold font-accent text-sm uppercase tracking-[0.12em]">условия участия</span>
-        <span class="hidden h-px w-5 md:block" style="background-image: var(--gradient-gold);"></span>
+        <span class="text-eyebrow text-gold-plate">условия участия</span>
+        <span class="hidden h-px w-5 md:block bg-gold-line"></span>
       </div>
-      <h2 class="font-accent text-4xl leading-[1.1] tracking-[-0.01em] sm:text-5xl md:text-[50px]">
+      <h2 class="text-h2">
         <span class="block text-fg">Инвестиции для тех,</span>
-        <span class="terms-gold block">кто ценит время</span>
+        <span class="block text-gold-plate">кто ценит время</span>
       </h2>
-      <p class="max-w-2xl text-base text-fg md:ml-auto md:text-lg">
+      <p class="max-w-2xl text-lead text-fg md:ml-auto">
         Берём на себя все задачи по управлению объектом, чтобы вы могли сосредоточиться на развитии капитала.
       </p>
     </div>
 
     {/* Блок условий */}
     <div class="mt-10 flex flex-col gap-8 md:mt-16">
-      <div class="h-px w-full" style="background-image: var(--gradient-gold);"></div>
+      <div class="h-px w-full bg-gold-line"></div>
 
       <div class="grid gap-8 md:grid-cols-[1fr_auto_1fr] md:gap-0">
         <div class="flex flex-col gap-4 md:gap-6 md:pr-10">
@@ -99,14 +99,14 @@ const doesNotFitIf = [
             {fitsIf.map((text) => (
               <li class="flex items-start gap-3 md:gap-4">
                 {/* Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта */}
-                <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5" style="background-image: var(--gradient-gold);"></span>
+                <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5 bg-gold-line"></span>
                 <span class="font-accent text-base leading-[1.4] text-fg md:text-lg md:leading-[1.55]">{text}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div class="hidden md:block md:w-px md:self-stretch md:justify-self-center" style="background-image: var(--gradient-gold);"></div>
+        <div class="hidden md:block md:w-px md:self-stretch md:justify-self-center bg-gold-line"></div>
 
         <div class="flex flex-col gap-4 md:gap-6 md:pl-10">
           <p class="font-accent text-xl text-fg md:text-2xl">Не подходит, если</p>
@@ -114,7 +114,7 @@ const doesNotFitIf = [
             {doesNotFitIf.map((text) => (
               <li class="flex items-start gap-3 md:gap-4">
                 {/* Тире по центру ПЕРВОЙ строки (items-start + mt), а не по центру всего пункта */}
-                <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5" style="background-image: var(--gradient-gold);"></span>
+                <span class="mt-[11px] h-px w-4 shrink-0 md:mt-3.5 md:w-5 bg-gold-line"></span>
                 <span class="font-accent text-base leading-[1.4] text-fg md:text-lg md:leading-[1.55]">{text}</span>
               </li>
             ))}
@@ -122,10 +122,10 @@ const doesNotFitIf = [
         </div>
       </div>
 
-      <div class="h-px w-full" style="background-image: var(--gradient-gold);"></div>
+      <div class="h-px w-full bg-gold-line"></div>
 
       <div class="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-        <p class="terms-gold max-w-3xl font-accent text-sm leading-relaxed md:text-base">
+        <p class="max-w-3xl font-accent text-sm leading-relaxed text-gold-plate md:text-base">
           Горизонт участия — 2–10 лет · Выплаты арендного дохода — раз в 00 месяцев · Что оформляется на инвестора — доля собственности
         </p>
         <a href="#cta" data-cta-audience="investor" class="btn-hero btn-outline w-full justify-center text-center md:w-auto">
@@ -133,17 +133,8 @@ const doesNotFitIf = [
         </a>
       </div>
     </div>
-  </div>
-</section>
+</Section>
 
-<style>
-  .terms-gold {
-    background-image: var(--gradient-gold);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-</style>
 
 <script>
   // Часы: выставляем реальное время и запускаем тик секундной стрелки.

@@ -27,6 +27,8 @@
   Описание под заголовком в Figma: «берет», «за счет», «надежный» (через «е»); у нас — «берёт»,
   «за счёт», «надёжный» (орфография с «ё» принята в проекте); смысл не менялся.
 */
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const base = import.meta.env.BASE_URL;
 
 const cards = [
@@ -37,22 +39,14 @@ const cards = [
 ];
 ---
 
-<section id="about" class="py-14 md:py-28">
-  <div class="container-page">
+<Section id="about">
     {/* Заголовок */}
-    <div class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">О компании</span>
-      </div>
-      <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
-        Превращаем недвижимость <span class="text-gold-plate">в актив</span>
-      </h2>
-      <p class="mt-1 max-w-[860px] font-accent text-base leading-snug text-fg md:text-xl md:leading-[1.2]">
-        Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а
-        объект становился дороже.
-      </p>
-    </div>
+    <SectionHeading eyebrow="О компании">
+      Превращаем недвижимость <span class="text-gold-plate">в актив</span>
+      <Fragment slot="lead">
+        Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а объект становился дороже.
+      </Fragment>
+    </SectionHeading>
 
     {/* Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) */}
     <div class="mt-8 grid gap-6 lg:mt-[46px] lg:grid-cols-[466fr_800fr] lg:gap-[14px]">
@@ -107,5 +101,4 @@ const cards = [
         </div>
       </div>
     </div>
-  </div>
-</section>
+</Section>

@@ -20,6 +20,8 @@
   настоящая команда Фиденты. Скачано скриншотом узла и обрезано от золотой
   рамки Figma (рамку рисуем сами через CSS border, чтобы не задваивать).
 */
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const base = import.meta.env.BASE_URL;
 
 // Тезисы под фото. ЧЕРНОВИК текстов — см. шапку файла.
@@ -30,21 +32,14 @@ const values = [
 ];
 ---
 
-<section class="py-20 md:py-28">
-  <div class="container-page">
+<Section>
     {/* Заголовок блока */}
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Команда</span>
-      </div>
-      <h2 class="font-accent text-4xl leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
-        Фидента — команда, стань частью сильной команды
-      </h2>
-      <p class="max-w-[860px] font-accent text-xl leading-[1.2] text-fg">
+    <SectionHeading eyebrow="Команда">
+      Фидента — команда, стань частью сильной команды
+      <Fragment slot="lead">
         Фидента объединяет людей, которые думают о своем будущем
-      </p>
-    </div>
+      </Fragment>
+    </SectionHeading>
 
     {/* Фото в золотой рамке */}
     <div class="mt-12 overflow-hidden rounded-[9px] border-[16px] border-cream md:mt-16">
@@ -68,11 +63,10 @@ const values = [
     <div class="mt-10 grid gap-8 md:mt-14 md:grid-cols-3 md:gap-10">
       {values.map((v) => (
         <div class="flex flex-col gap-2">
-          <span class="h-px w-full" style="background-image: var(--gradient-gold);"></span>
+          <span class="h-px w-full bg-gold-line"></span>
           <h3 class="font-accent text-xl font-normal text-gold-plate md:text-2xl">{v.title}</h3>
           <p class="font-accent text-base leading-snug text-fg md:text-lg">{v.text}</p>
         </div>
       ))}
     </div>
-  </div>
-</section>
+</Section>
