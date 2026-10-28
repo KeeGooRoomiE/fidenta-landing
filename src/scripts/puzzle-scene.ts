@@ -32,6 +32,8 @@ export interface PuzzleOptions {
 }
 
 export interface PuzzleScene {
+  /** Перенести сцену в другой контейнер (при смене раскладки моб./ПК) */
+  setContainer(c: HTMLElement): void;
   setProgress(p: number): void;
   setActive(active: boolean): void;
   dispose(): void;
@@ -52,7 +54,8 @@ function getAccessor(doc: any, buffer: ArrayBuffer, binStart: number, id: number
 }
 
 export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScene> {
-  const { container, modelUrl, photoUrl, totalMln, reducedMotion = false } = opts;
+  const { modelUrl, photoUrl, totalMln, reducedMotion = false } = opts;
+  let container = opts.container;
 
   // ---- Фото → canvas-текстура (4:3, cover) ----
   const img = new Image();
@@ -219,25 +222,26 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
   whole.renderOrder = 2;
   root.add(whole);
 
-  // ---- Размер и раскладка (десктоп: пазл справа; мобильный: пазл в нижней части) ----
-  let aspect = 1;
+  // ---- Размер и раскладка ----
+  // Контейнер с data-mode="bleed" (ПК): сцена на весь блок, пазл крупно СПРАВА (слева текст).
+  // Контейнер с data-mode="box" (мобильный/планшет): отдельная область между текстом и счётчиком —
+  // пазл по центру, камера подбирается так, чтобы разлетевшиеся детали влезали по ширине.
   function resize() {
     const w = container.clientWidth || 1;
     const h = container.clientHeight || 1;
-    aspect = w / h;
+    const aspect = w / h;
     renderer.setSize(w, h, false);
     camera.aspect = aspect;
-    if (aspect < 0.9) {
-      // вертикальный экран: влезает по ширине, сдвинут вниз (сверху — текст)
-      camera.position.z = 14.2;
-      root.position.set(0, -1.95, 0);
-    } else if (aspect < 1.4) {
-      camera.position.z = 11.5;
-      root.position.set(0.9, -0.4, 0);
-    } else {
-      // широкий экран: пазл крупно, в правой части (слева — текст)
+    const tanHalf = Math.tan(T.MathUtils.degToRad(camera.fov / 2));
+    if (container.dataset.mode === 'bleed') {
       camera.position.z = 9.6;
       root.position.set(1.95, 0, 0);
+    } else {
+      // видимая ширина на расстоянии z = 2·tan(fov/2)·z·aspect; нужна ≈ 5.6 ед. (с запасом на разлёт)
+      const zWidth = 5.6 / (2 * tanHalf * aspect);
+      const zHeight = 4.4 / (2 * tanHalf);
+      camera.position.z = Math.max(zWidth, zHeight, 7);
+      root.position.set(0, 0, 0);
     }
     camera.updateProjectionMatrix();
     draw(performance.now());
@@ -303,6 +307,15 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
   return {
     setProgress(p: number) {
       target = clamp(p, 0, 1);
+    },
+    setContainer(c: HTMLElement) {
+      if (c === container) return;
+      ro.unobserve(container);
+      container = c;
+      container.prepend(renderer.domElement);
+      container.append(labelsLayer);
+      ro.observe(container);
+      resize();
     },
     setActive(a: boolean) {
       if (a === active) return;

@@ -53,17 +53,12 @@ const demo = { totalMln: 120 };
       height="1067"
       class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
     />
-    <!-- Здесь Three.js добавит canvas и подписи на деталях -->
-    <div data-canvas class="absolute inset-0"></div>
-    <!-- Затемнение под текст: слева на ПК, сверху на мобильном -->
+    <!-- ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях -->
+    <div data-canvas data-mode="bleed" class="absolute inset-0 hidden lg:block"></div>
+    <!-- Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно -->
     <div
       class="pointer-events-none absolute inset-0 hidden lg:block"
       style="background: linear-gradient(90deg, rgba(10,32,25,0.94) 0%, rgba(10,32,25,0.72) 34%, rgba(10,32,25,0) 62%);"
-    >
-    </div>
-    <div
-      class="pointer-events-none absolute inset-0 lg:hidden"
-      style="background: linear-gradient(180deg, rgba(10,32,25,0.95) 0%, rgba(10,32,25,0.75) 38%, rgba(10,32,25,0) 62%, rgba(10,32,25,0.7) 100%);"
     >
     </div>
 
@@ -101,6 +96,10 @@ const demo = { totalMln: 120 };
         </a>
       </div>
 
+      <!-- МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
+           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. -->
+      <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 lg:hidden"></div>
+
       <!-- Счётчик сборки (демо) -->
       <aside class="max-w-[360px] font-accent" aria-live="off">
         <span data-phase class="text-xs uppercase tracking-[0.14em] text-gold-plate md:text-sm">01 / Отдельные доли</span>
@@ -128,7 +127,10 @@ const demo = { totalMln: 120 };
 
   function init(sec: HTMLElement) {
     const stage = sec.querySelector<HTMLElement>('[data-stage]')!;
-    const canvasBox = sec.querySelector<HTMLElement>('[data-canvas]')!;
+    const boxes = [...sec.querySelectorAll<HTMLElement>('[data-canvas]')];
+    // активный контейнер: на ПК — «bleed» (весь блок), иначе — «box» (область между текстом и счётчиком)
+    const desktop = matchMedia('(min-width: 1024px)');
+    const pickBox = () => boxes.find((b) => b.dataset.mode === (desktop.matches ? 'bleed' : 'box'))!;
     const total = Number(sec.dataset.total ?? 120);
     const ui = {
       phase: sec.querySelector<HTMLElement>('[data-phase]')!,
@@ -208,13 +210,15 @@ const demo = { totalMln: 120 };
       try {
         const { createPuzzleScene } = await import('../../scripts/puzzle-scene');
         const scene = await createPuzzleScene({
-          container: canvasBox,
+          container: pickBox(),
           modelUrl: sec!.dataset.model!,
           photoUrl: sec!.dataset.photo!,
           totalMln: total,
           reducedMotion: false,
         });
         sec!.querySelector<HTMLElement>('.asset-fallback')!.style.opacity = '0';
+        // поворот телефона/ресайз через breakpoint lg → переносим сцену в нужный контейнер
+        desktop.addEventListener('change', () => scene.setContainer(pickBox()));
 
         let ticking = false;
         const apply = () => {
