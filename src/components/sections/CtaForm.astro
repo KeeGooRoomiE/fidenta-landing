@@ -22,6 +22,10 @@
   Состояние кнопки-переключателя: активная — золотая заливка (btn-plat),
   неактивная — только кремовая рамка (btn-outline) с золотым текстом.
 
+  Кнопки в других блоках с атрибутом data-cta-audience="investor|owner" (Hero: «Доступ к сделкам» →
+  инвестор, «Передать объект в управление» → собственник; баннер, «Крупный актив», «Условия участия»)
+  при клике сами переключают форму на нужную аудиторию.
+
   id="cta" — якорь для кнопок «Консультация» / «Передать объект…» и ссылки «Контакты».
 */
 const copy = {
@@ -174,6 +178,13 @@ const copy = {
     }
     root.querySelectorAll<HTMLElement>('[data-audience]').forEach((b) =>
       b.addEventListener('click', () => setAudience(b.dataset.audience as Audience)),
+    );
+
+    // Кнопки-призывы в других блоках (Hero, баннер и т.д.) помечены data-cta-audience="investor|owner":
+    // по клику сразу переключаем форму на нужную аудиторию (с нужными текстами), а сам переход
+    // к форме делает обычная якорная ссылка href="#cta".
+    document.querySelectorAll<HTMLElement>('[data-cta-audience]').forEach((link) =>
+      link.addEventListener('click', () => setAudience(link.dataset.ctaAudience as Audience)),
     );
 
     // --- Отправка формы ---
