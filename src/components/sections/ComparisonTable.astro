@@ -27,6 +27,8 @@
   (массивы columns/rows), поэтому правятся в одном месте. Полная таблица
   показывается с md и шире (hidden md:block), мобильный вид — md:hidden.
 */
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const columns = ['Доля в объекте с Фидентой', 'Банковский вклад', 'Квартира под аренду', 'ЗПИФ недвижимости'];
 
 const rows = [
@@ -81,21 +83,16 @@ const rows = [
 ];
 ---
 
-<section class="py-20 md:py-28">
-  <div class="container-page">
-    <!-- Заголовок блока -->
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background: #CAD7D1;"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Сравнение</span>
-      </div>
-      <h2 class="font-accent text-4xl leading-[1.16] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
-        Инвестиции и то, что вокруг
-      </h2>
-      <p class="font-accent text-xl text-fg">Семь основных различий</p>
-    </div>
+<Section>
+    {/* Заголовок блока */}
+    <SectionHeading eyebrow="Сравнение" line="mist" leadMax="max-w-none">
+      Инвестиции и то, что вокруг
+      <Fragment slot="lead">
+        Семь основных различий
+      </Fragment>
+    </SectionHeading>
 
-    <!-- МОБИЛЬНЫЙ ВИД: «Фидента против …» с переключателем (md:hidden) -->
+    {/* МОБИЛЬНЫЙ ВИД: «Фидента против …» с переключателем (md:hidden) */}
     <div class="mt-8 md:hidden" data-compare>
       <div class="flex flex-wrap gap-2" role="group" aria-label="С чем сравнить">
         {columns.slice(1).map((col, i) => (
@@ -107,16 +104,16 @@ const rows = [
 
       {columns.slice(1).map((col, i) => (
         <div data-panel={i} hidden={i !== 0} class="mt-6">
-          <!-- Шапка двух колонок -->
+          {/* Шапка двух колонок */}
           <div class="grid grid-cols-2 gap-px font-accent text-base">
-            <div class="px-3 py-2 text-fg" style="background: #6E8078;">{columns[0]}</div>
+            <div class="px-3 py-2 text-fg" style="background: var(--color-sage);">{columns[0]}</div>
             <div class="px-3 py-2 text-gold-plate">{col}</div>
           </div>
           {rows.map((row, ri) => (
-            <div style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`} class="mt-0">
+            <div style={`border-top: 1px solid ${ri === 0 ? 'var(--color-mist)' : 'rgba(202, 215, 209, 0.4)'};`} class="mt-0">
               <p class="px-0 pb-1 pt-3 font-accent text-sm text-gold-plate">{row.label}</p>
               <div class="grid grid-cols-2 gap-px font-accent text-[15px] leading-snug text-fg">
-                <p class="px-3 py-2" style="background: #6E8078;">{row.values[0]}</p>
+                <p class="px-3 py-2" style="background: var(--color-sage);">{row.values[0]}</p>
                 <p class="px-3 py-2">{row.values[i + 1]}</p>
               </div>
             </div>
@@ -125,10 +122,10 @@ const rows = [
       ))}
     </div>
 
-    <!-- Полная таблица: md и шире (на узких экранах скрыта — см. мобильный вид выше).
+    {/* Полная таблица: md и шире (на узких экранах скрыта — см. мобильный вид выше).
          Подсветка колонки — ОДИН подвижный слой (data-hl), он плавно «переезжает» под ту
          колонку, над которой курсор; когда курсор ушёл — возвращается под колонку Фиденты.
-         Текст в активной колонке ярче, в остальных приглушён (см. стили ниже). -->
+         Текст в активной колонке ярче, в остальных приглушён (см. стили ниже). */}
     <div class="mt-10 hidden overflow-x-auto md:block">
       <div class="cmp-wrap relative min-w-[960px]" data-cmp>
         <div class="cmp-hl pointer-events-none absolute bottom-0 top-0" data-hl aria-hidden="true"></div>
@@ -148,7 +145,7 @@ const rows = [
           </thead>
           <tbody>
             {rows.map((row, ri) => (
-              <tr style={`border-top: 1px solid ${ri === 0 ? '#CAD7D1' : 'rgba(202, 215, 209, 0.4)'};`}>
+              <tr style={`border-top: 1px solid ${ri === 0 ? 'var(--color-mist)' : 'rgba(202, 215, 209, 0.4)'};`}>
                 <td class="py-5 pr-6 align-top text-[15px] text-gold-plate">{row.label}</td>
                 {row.values.map((val, ci) => (
                   <td class="cmp-cell px-6 py-5 align-top text-base leading-snug" data-col={ci}>
@@ -161,8 +158,7 @@ const rows = [
         </table>
       </div>
     </div>
-  </div>
-</section>
+</Section>
 
 <script>
   // Мобильный переключатель: показываем панель выбранной альтернативы
@@ -231,7 +227,7 @@ const rows = [
     transition: color 0.3s ease;
   }
   .cmp-cell.is-active {
-    color: #f4f1ea;
+    color: var(--color-fg);
   }
   @media (prefers-reduced-motion: reduce) {
     .cmp-hl,

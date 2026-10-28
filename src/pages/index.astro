@@ -25,22 +25,16 @@ import Faq from '../components/sections/Faq.astro';
 import CtaForm from '../components/sections/CtaForm.astro';
 import ContactsMap from '../components/sections/ContactsMap.astro';
 import DealStructure from '../components/sections/DealStructure.astro';
-import WhyUs from '../components/sections/WhyUs.astro';
-import Testimonials from '../components/sections/Testimonials.astro';
 import Footer from '../components/sections/Footer.astro';
 
 /*
-  СКРЫТЫЕ БЛОКИ. Эти блоки готовы и лежат в src/components/sections/, но на сайте пока
-  не показываются (по решению дизайнера: недоработаны / не из макета). Чтобы показать
+  СКРЫТЫЕ БЛОКИ. Блок готов и лежит в src/components/sections/, но на сайте пока
+  не показывается (по решению дизайнера: недоработан). Чтобы показать
   блок — поставить true. Больше ничего менять не нужно.
     dealStructure — «Что именно вы покупаете» (шаги сделки + документы)
-    whyUs         — «Почему выбирают Фидента» (показатели; старый каркас)
-    testimonials  — «Отзывы» (ТОЛЬКО с реальными отзывами клиентов!)
 */
 const show = {
   dealStructure: false,
-  whyUs: false,
-  testimonials: false,
 };
 ---
 
@@ -57,14 +51,12 @@ const show = {
     <HowWeWork />
     <Portfolio />
     <ManagementBanner />
-    {show.whyUs && <WhyUs />}
     <FullSpectrum />
-    {show.testimonials && <Testimonials />}
     <Faq />
     <CtaForm />
     <ContactsMap />
   </main>
   <Footer />
-  <!-- Fixed-бар внизу экрана, независим от разметки любой секции -->
+  {/* Fixed-бар внизу экрана, независим от разметки любой секции */}
   <CookieBanner />
 </Layout>

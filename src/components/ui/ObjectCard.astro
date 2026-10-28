@@ -45,7 +45,7 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
   ]}
   data-extra={hidden ? '' : undefined}
 >
-  <!-- Галерея. aria-label — для скринридеров; сами кадры декоративны -->
+  {/* Галерея. aria-label — для скринридеров; сами кадры декоративны */}
   <div
     class="group relative aspect-[402/214] touch-pan-y select-none overflow-hidden"
     data-gallery
@@ -66,7 +66,7 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
       />
     ))}
 
-    <!-- Единая цветокоррекция (см. шапку файла) -->
+    {/* Единая цветокоррекция (см. шапку файла) */}
     <div class="pointer-events-none absolute inset-0 bg-[rgba(20,58,48,0.1)] mix-blend-color"></div>
     <div class="pointer-events-none absolute inset-0 bg-[rgba(10,32,25,0.1)] mix-blend-multiply"></div>
     <div class="pointer-events-none absolute inset-0 bg-[rgba(200,163,102,0.3)] mix-blend-soft-light"></div>
@@ -76,30 +76,30 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
     >
     </div>
 
-    <!-- Бейдж типа объекта -->
-    <!-- Плашка и текст — РАЗНЫЕ элементы: text-gold-plate = background-clip:text,
-         и фон плашки на том же элементе «вырезался» бы по буквам -->
+    {/* Бейдж типа объекта */}
+    {/* Плашка и текст — РАЗНЫЕ элементы: text-gold-plate = background-clip:text,
+         и фон плашки на том же элементе «вырезался» бы по буквам */}
     <span
       class="absolute left-[11px] top-[11px] rounded-full bg-[rgba(10,32,25,0.7)] px-3 py-[3px] backdrop-blur-[3px]"
     >
       <span class="text-xs uppercase leading-[19px] tracking-[0.08em] text-gold-plate">{type}</span>
     </span>
 
-    <!-- Индикаторы кадров (полоски, как в галерее Авито) -->
+    {/* Индикаторы кадров (полоски, как в галерее Авито) */}
     <div class="pointer-events-none absolute inset-x-3 bottom-2.5 flex gap-1" aria-hidden="true">
       {photos.map((_, i) => (
         <span
           data-bar
           data-active={i === 0 ? '' : undefined}
-          class="h-[3px] flex-1 rounded-full bg-[rgba(244,241,234,0.35)] transition-colors duration-150 data-[active]:bg-[#fff1d9]"
+          class="h-[3px] flex-1 rounded-full bg-[rgba(244,241,234,0.35)] transition-colors duration-150 data-[active]:bg-cream"
         ></span>
       ))}
     </div>
   </div>
 
-  <!-- Текстовая часть -->
-  <!-- flex-1: текстовая часть тянется, футер прижат к низу; min-h у заголовка и описания —
-       под 2 строки, чтобы метрики и линия футера стояли на одной высоте во всех карточках ряда -->
+  {/* Текстовая часть */}
+  {/* flex-1: текстовая часть тянется, футер прижат к низу; min-h у заголовка и описания —
+       под 2 строки, чтобы метрики и линия футера стояли на одной высоте во всех карточках ряда */}
   <div class="flex-1 px-6 pt-4">
     <h3 class="font-accent text-[28px] font-normal leading-[34px] text-fg lg:min-h-[68px]">{title}</h3>
 
@@ -115,7 +115,7 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
 
     <p class="mt-5 text-base leading-[1.2] text-fg lg:min-h-[2.4em]">{lead}</p>
 
-    <!-- Метрики: значение 20px + подпись 12px caps -->
+    {/* Метрики: значение 20px + подпись 12px caps */}
     <dl class="mt-2 flex gap-5 whitespace-nowrap">
       <div class="flex flex-col gap-[3px]">
         <dd class="order-1 text-xl leading-8 text-fg">{gla}</dd>
@@ -132,7 +132,7 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
     </dl>
   </div>
 
-  <!-- Подвал карточки -->
+  {/* Подвал карточки */}
   <div class="mt-5 px-6 pb-[22px]">
     <div class="h-px w-full bg-border"></div>
     <p class="mt-3 text-[13px] leading-[18px] text-[#eee9d9]">данные на [ДАННЫЕ]</p>

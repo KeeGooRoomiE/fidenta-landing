@@ -1,6 +1,7 @@
 ---
 /*
-  УРОВЕНЬ 3 — БЛОК «Крупный актив — без крупного капитала» + 3D-пазл по скроллу
+  УРОВЕНЬ 3 — БЛОК «Крупный актив — по силам частному инвестору» + 3D-пазл по скроллу
+  (заголовок утверждён дизайнером 28.10; в Figma было «…без крупного капитала»)
   Источник текста: Figma, узел 974:65806 («block 2 invest»). Пазл — из прототипа
   fidenta-puzzle-studio.html (Three.js), движок вынесен в src/scripts/puzzle-scene.ts.
 
@@ -29,6 +30,8 @@
   Текст блока: в Figma было 3 абзаца; по правке дизайнера первая фраза убрана, смысл
   «без необходимости приобретать объект целиком» — в конце последнего абзаца.
 */
+import Button from '../ui/Button.astro';
+
 const base = import.meta.env.BASE_URL;
 
 // Демо-значения пазла (замена реальными — одной правкой здесь)
@@ -45,7 +48,7 @@ const demo = { totalMln: 120 };
   style="height: calc(var(--stage-h, 100svh) * 2.6);"
 >
   <div data-stage class="sticky top-0 overflow-hidden bg-canvas" style="height: var(--stage-h, 100svh);">
-    <!-- Запасная/«постер» картинка: до загрузки сцены тусклая, в статичном режиме — яркая -->
+    {/* Запасная/«постер» картинка: до загрузки сцены тусклая, в статичном режиме — яркая */}
     <img
       src={`${base}images/puzzle-photo.webp`}
       alt="Коммерческий объект"
@@ -53,9 +56,9 @@ const demo = { totalMln: 120 };
       height="1067"
       class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
     />
-    <!-- ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях -->
+    {/* ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях */}
     <div data-canvas data-mode="bleed" class="absolute inset-0 hidden lg:block"></div>
-    <!-- Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно -->
+    {/* Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно */}
     <div
       class="pointer-events-none absolute inset-0 hidden lg:block"
       style="background: linear-gradient(90deg, rgba(10,32,25,0.94) 0%, rgba(10,32,25,0.72) 34%, rgba(10,32,25,0) 62%);"
@@ -63,16 +66,16 @@ const demo = { totalMln: 120 };
     </div>
 
     <div class="container-page relative z-10 flex h-full flex-col justify-between pb-5 pt-[92px] md:pt-[118px] lg:pb-10">
-      <!-- Текст -->
+      {/* Текст */}
       <div class="flex max-w-[570px] flex-col items-start gap-4 md:gap-6">
         <div class="flex items-center gap-2.5">
-          <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-          <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">Инвестиции в недвижимость</span>
+          <span class="h-px w-5 shrink-0 bg-gold-line"></span>
+          <span class="text-eyebrow text-gold-plate">Инвестиции в недвижимость</span>
         </div>
 
-        <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] sm:text-5xl md:text-[50px]">
+        <h2 class="text-h2">
           <span class="block text-fg-dim">Крупный актив —</span>
-          <span class="block text-gold-plate">без крупного капитала</span>
+          <span class="block text-gold-plate">по силам частному инвестору</span>
         </h2>
 
         <div class="flex flex-col gap-2 font-accent text-sm leading-[1.4] text-fg-dim md:gap-1 md:text-xl md:leading-[1.3]">
@@ -85,22 +88,14 @@ const demo = { totalMln: 120 };
           </p>
         </div>
 
-        <a
-          href="#cta"
-          data-cta-audience="investor"
-          class="mt-2 inline-flex w-full items-center justify-center rounded-[9px] border border-plate-line px-6 py-3 text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:mt-8 md:w-auto md:py-[14px]"
-        >
-          <span class="font-accent text-lg tracking-[-0.01em] text-gold-plate md:text-2xl" style="opacity: 0.76;">
-            Узнать больше об участии
-          </span>
-        </a>
+        <Button variant="outline-lg" block href="#cta" data-cta-audience="investor" class="mt-2 md:mt-8">Узнать больше об участии</Button>
       </div>
 
-      <!-- МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
-           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. -->
+      {/* МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
+           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. */}
       <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 lg:hidden"></div>
 
-      <!-- Счётчик сборки (демо) -->
+      {/* Счётчик сборки (демо) */}
       <aside class="max-w-[360px] font-accent" aria-live="off">
         <span data-phase class="text-xs uppercase tracking-[0.14em] text-gold-plate md:text-sm">01 / Отдельные доли</span>
         <div class="mt-1 flex items-baseline gap-2">
@@ -108,7 +103,7 @@ const demo = { totalMln: 120 };
           <span class="text-base text-fg-dim md:text-xl">млн ₽</span>
         </div>
         <div class="mt-2 h-[3px] w-full overflow-hidden rounded-full bg-[rgba(244,241,234,0.14)]">
-          <div data-bar class="h-full w-0 rounded-full" style="background-image: var(--gradient-gold);"></div>
+          <div data-bar class="h-full w-0 rounded-full bg-gold-line"></div>
         </div>
         <p class="mt-2 text-sm text-fg-dim md:text-base">
           из <span data-total-text>{demo.totalMln}</span> млн ₽ · <span data-percent>0</span>%

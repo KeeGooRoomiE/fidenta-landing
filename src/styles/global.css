@@ -21,9 +21,7 @@
 @theme {
   /* --- Зелёная шкала (фоны и рамки) -------------------------------- */
   --color-canvas: #0A2019;       /* bg-deep: самый тёмный фон страницы       → bg-canvas    */
-  --color-panel: #0C2A22;        /* bg: фон отдельных секций                 → bg-panel     */
   --color-surface: #143A30;      /* surface: фон карточек                    → bg-surface   */
-  --color-surface-2: #1C4A3D;    /* приподнятая/hover-поверхность            → bg-surface-2 */
   --color-border: #1C4A3D;       /* линии и рамки                           → border-border */
   --color-footer: #101612;       /* фон футера (Figma: «Futer»)             → bg-footer     */
 
@@ -43,7 +41,16 @@
   --color-on-gold: #0A2019;      /* text-on-gold: текст на золотой заливке   → text-on-gold  */
 
   /* --- Служебные --------------------------------------------------- */
-  --color-success: #5FCF80;      /* «живой» индикатор / позитивный статус    → text-success  */
+  /* --- Дополнительные цвета интерфейса (раньше были хардкодом #hex в разметке; чистка 28.10) --- */
+  --color-cream: #FFF1D9;        /* кремовая рамка/линии                    → border-cream, bg-cream */
+  --color-sand: #BDAF92;         /* приглушённый песочный текст (подвал)    → text-sand      */
+  --color-sage: #6E8078;         /* шалфей: подсветка колонки сравнения     → bg-sage        */
+  --color-plaque: #0D231D;       /* тёмная плашка/всплывашка                → bg-plaque      */
+  --color-mist: #CAD7D1;         /* светлые линии таблицы                   → border-mist    */
+  --color-tile: #192B29;         /* тёмная плитка (О компании)              → bg-tile        */
+  --color-slate: #6E7069;        /* серая рамка (подвал)                    → border-slate   */
+  --color-link: #C29E4B;         /* золото ссылок в тексте                  → text-link      */
+
   --color-plate-line: rgba(255, 241, 217, 0.95); /* сплошная кремовая рамка (кнопки/плитки/cookie) → border-plate-line */
 
   /* --- Металлик-градиент («plate») — для логотипа, золотого текста и кнопок ---
@@ -51,10 +58,7 @@
   --gradient-gold: linear-gradient(140.35deg, rgba(255, 241, 217, 0.87) -25.71%, rgba(168, 133, 72, 0.87) 120.56%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
-  --radius-sm: 4px;              /* мелочи                                   → rounded-sm    */
-  --radius: 8px;                 /* кнопки/карточки (база)                   → rounded       */
   --radius-lg: 12px;             /* блоки                                    → rounded-lg    */
-  --radius-xl: 16px;             /* крупные                                  → rounded-xl    */
   --radius-full: 999px;          /* пилюли                                   → rounded-full  */
 
   /* --- Шрифты ------------------------------------------------------ */
@@ -114,11 +118,6 @@
   padding-inline: 1.5rem;
 }
 
-/* Металлик-золото как фон (кнопки-plate, подложки). */
-@utility bg-gold-plate {
-  background-image: var(--gradient-gold);
-}
-
 /* Металлик-золото как заливка ТЕКСТА (обрезка градиента по глифам).
    Пример: <span class="text-gold-plate font-display">ФИДЕНТА</span> */
 @utility text-gold-plate {
@@ -162,35 +161,60 @@
   background: transparent;
 }
 
-/* Полупрозрачная зелёная карточка (плитки Hero, cookie-баннер): сплошной фон,
-   сплошная кремовая рамка, radius 9 (по узлу 974:65574). БЕЗ blur — у плиток
-   в Figma размытия подложки нет (оно есть только у cookie, добавляется отдельно).
-   0.3 — подтверждённое значение из Figma (видно и на скриншоте: плитки тёмные,
-   не почти прозрачные). Если нужно светлее — меняем здесь в одном месте. */
-@utility plat-card {
-  background: rgba(50, 63, 47, 0.3);
-  border: 1px solid var(--color-plate-line);
-  border-radius: 9px;
+/* ================= ТИПОВАЯ ТИПОГРАФИКА БЛОКОВ (чистка 28.10) =================
+   Единая шкала для заголовков секций. Все блоки берут её отсюда (через компонент
+   SectionHeading или напрямую), поэтому размеры не «плывут» от блока к блоку.
+   Мобильный → sm (640) → md (768+); значения из макета Figma (H2 50px, подзаголовок 20px). */
+
+/* Надзаголовок «— КОНТАКТЫ»: Forum, капс, трекинг 0.1em. Золотой цвет — отдельно (text-gold-plate). */
+@utility text-eyebrow {
+  font-family: var(--font-accent);
+  text-transform: uppercase;
+  letter-spacing: var(--eyebrow-ls, 0.1em); /* переопределяется: [--eyebrow-ls:0.15em] */
+  font-size: 1rem;
+  line-height: 1.5rem;
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
 }
 
-/* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д.
-   По киту: Inter 13px / 500 / letter-spacing 2.08px (0.16em) / caps / золото */
-@utility eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8125rem; /* 13px */
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-accent);
+/* Заголовок секции (H2): Forum обычного начертания, 30 → 48 → 50px. */
+@utility text-h2 {
+  font-family: var(--font-accent);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-size: var(--h2-fs, 1.875rem); /* переопределяется: [--h2-fs:1.65rem] (баннер) */
+  @media (min-width: 640px) {
+    font-size: 3rem;
+  }
+  @media (min-width: 768px) {
+    font-size: 50px;
+  }
+}
+
+/* Подзаголовок (lead) под H2: Forum 16 → 20px. */
+@utility text-lead {
+  font-family: var(--font-accent);
+  font-size: 1rem;
+  line-height: 1.375;
+  @media (min-width: 768px) {
+    font-size: 1.25rem;
+    line-height: 1.35;
+  }
+}
+
+/* Тонкая золотая линия (hairline, рамка-разделитель, маркер списка): градиент «Plat» как фон. */
+@utility bg-gold-line {
+  background-image: var(--gradient-gold);
 }
 
 /* Кнопки-переключатели аудитории «Инвестор / Собственник» (CtaForm, FAQ):
    активная (aria-pressed=true) — золотая заливка + тёмный текст,
    неактивная — кремовая рамка и золотой текст (через background-clip:text). */
 .aud-btn {
-  border: 1px solid #fff1d9;
+  border: 1px solid var(--color-cream);
   border-radius: 9px;
   padding: 9px 17px;
   font-family: var(--font-accent);
@@ -206,7 +230,7 @@
 .aud-btn[aria-pressed='true'] {
   background-clip: border-box;
   -webkit-background-clip: border-box;
-  color: #0a2019;
+  color: var(--color-canvas);
 }
 .aud-btn:hover {
   filter: brightness(1.1);

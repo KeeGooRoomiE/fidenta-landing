@@ -27,6 +27,8 @@
   Описание под заголовком в Figma: «берет», «за счет», «надежный» (через «е»); у нас — «берёт»,
   «за счёт», «надёжный» (орфография с «ё» принята в проекте); смысл не менялся.
 */
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const base = import.meta.env.BASE_URL;
 
 const cards = [
@@ -37,36 +39,28 @@ const cards = [
 ];
 ---
 
-<section id="about" class="py-14 md:py-28">
-  <div class="container-page">
-    <!-- Заголовок -->
-    <div class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-base uppercase tracking-[0.1em] text-gold-plate md:text-xl">О компании</span>
-      </div>
-      <h2 class="font-accent text-3xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
-        Превращаем недвижимость <span class="text-gold-plate">в актив</span>
-      </h2>
-      <p class="mt-1 max-w-[860px] font-accent text-base leading-snug text-fg md:text-xl md:leading-[1.2]">
-        Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а
-        объект становился дороже.
-      </p>
-    </div>
+<Section id="about">
+    {/* Заголовок */}
+    <SectionHeading eyebrow="О компании">
+      Превращаем недвижимость <span class="text-gold-plate">в актив</span>
+      <Fragment slot="lead">
+        Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а объект становился дороже.
+      </Fragment>
+    </SectionHeading>
 
-    <!-- Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) -->
+    {/* Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) */}
     <div class="mt-8 grid gap-6 lg:mt-[46px] lg:grid-cols-[466fr_800fr] lg:gap-[14px]">
-      <!-- Left panel -->
+      {/* Left panel */}
       <div class="flex flex-col gap-3 max-lg:order-2 lg:gap-5">
         {cards.map((card) => (
-          <article class="flex items-center gap-3.5 rounded-[9px] border-[0.7px] border-[#fff1d9] bg-[#192b29] px-4 py-3 md:min-h-[120px] lg:px-10">
+          <article class="flex items-center gap-3.5 rounded-[9px] border-[0.7px] border-cream bg-tile px-4 py-3 md:min-h-[120px] lg:px-10">
             {card.framed ? (
-              <!-- Знак моста в рамке-плашке (радиус 20) -->
-              <div class="flex h-[44px] w-[48px] shrink-0 items-center justify-center rounded-[16px] border border-[#fff1d9] lg:h-[58px] lg:w-[63px] lg:rounded-[20px]">
-                <img src={`${base}icons/about/${card.icon}`} alt="" class="w-[34px] lg:w-[48px]" />
+              /* Знак моста в рамке-плашке (радиус 20) */
+              <div class="flex h-[44px] w-[48px] shrink-0 items-center justify-center rounded-[16px] border border-cream lg:h-[58px] lg:w-[63px] lg:rounded-[20px]">
+                <img src={`${base}icons/about/${card.icon}`} alt="" width="58" height="28" loading="lazy" class="w-[34px] lg:w-[48px]" />
               </div>
             ) : (
-              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
+              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" loading="lazy" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
             )}
             <div class="font-accent leading-[1.1]">
               <h3 class="text-lg font-normal tracking-[-0.05em] text-gold-plate lg:text-xl">{card.title}</h3>
@@ -76,22 +70,24 @@ const cards = [
         ))}
       </div>
 
-      <!-- Photo and third title -->
+      {/* Photo and third title */}
       <div class="flex flex-col gap-3 max-lg:order-1 lg:gap-5">
-        <div class="relative aspect-[2/1] flex-1 overflow-hidden rounded-[9px] border border-[#fff1d9] lg:aspect-auto lg:min-h-[320px]">
+        <div class="relative aspect-[2/1] flex-1 overflow-hidden rounded-[9px] border border-cream lg:aspect-auto lg:min-h-[320px]">
           <img
             src={`${base}images/office.webp`}
             alt="Офис управляющей компании «Фидента»"
             width="1535"
             height="1024"
+            loading="lazy"
+            decoding="async"
             class="absolute inset-0 h-full w-full object-cover object-right lg:object-center"
           />
-          <!-- Scrim снизу (в макете: от прозрачного к rgba(11,20,16,.85)) -->
+          {/* Scrim снизу (в макете: от прозрачного к rgba(11,20,16,.85)) */}
           <div class="pointer-events-none absolute inset-0" style="background-image: linear-gradient(180deg, rgba(11,20,16,0) 55%, rgba(11,20,16,0.55) 100%);"></div>
         </div>
 
-        <!-- Подпись: на мобильном — простой текст (короткая версия), на lg — плитка 120px -->
-        <div class="flex items-center lg:min-h-[120px] lg:rounded-[9px] lg:border-[0.7px] lg:border-[#fff1d9] lg:bg-[#192b29] lg:px-[100px] lg:py-3">
+        {/* Подпись: на мобильном — простой текст (короткая версия), на lg — плитка 120px */}
+        <div class="flex items-center lg:min-h-[120px] lg:rounded-[9px] lg:border-[0.7px] lg:border-cream lg:bg-tile lg:px-[100px] lg:py-3">
           <p class="font-accent text-sm leading-[1.3] text-fg-dim lg:text-base lg:leading-[1.1] lg:tracking-[-0.01em]">
             <span class="lg:hidden">
               Каждый объект имеет скрытый потенциал. Мы раскрываем его грамотным управлением и долгосрочной стратегией.
@@ -105,5 +101,4 @@ const cards = [
         </div>
       </div>
     </div>
-  </div>
-</section>
+</Section>

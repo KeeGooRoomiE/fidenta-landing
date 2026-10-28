@@ -27,6 +27,9 @@
   она почти неотличима от фона (#143a30 на #0a2019) — сделали видимой
   (цвет muted); если нужно строго как в макете, поменять цвет в .faq-icon.
 */
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 const lorem =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
@@ -63,35 +66,28 @@ const audiences = [
 ] as const;
 ---
 
-<section id="faq" class="py-20 md:py-28" data-faq data-visible={VISIBLE}>
-  <div class="container-page">
-    <!-- Заголовок блока -->
-    <div class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Вопросы</span>
-      </div>
-      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-gold-plate sm:text-5xl md:text-[50px]">
-        Остались вопросы?
-      </h2>
-      <p class="mt-1 max-w-[860px] font-accent text-xl leading-[1.47] text-fg">
+<Section id="faq" data-faq data-visible={VISIBLE}>
+    {/* Заголовок блока */}
+    <SectionHeading eyebrow="Вопросы" titleClass="text-gold-plate">
+      Остались вопросы?
+      <Fragment slot="lead">
         Вопросы, которые задают до перевода денег. Отдельно — то, что спрашивают собственники объектов.
-      </p>
-    </div>
+      </Fragment>
+    </SectionHeading>
 
-    <!-- Переключатель аудитории -->
+    {/* Переключатель аудитории */}
     <div class="mt-12 flex gap-5" role="group" aria-label="Для кого вопросы">
       {audiences.map((a, i) => (
         <button type="button" class="aud-btn" data-audience={a.key} aria-pressed={i === 0 ? 'true' : 'false'}>{a.label}</button>
       ))}
     </div>
 
-    <!-- Списки вопросов: по одному на аудиторию, неактивный скрыт -->
+    {/* Списки вопросов: по одному на аудиторию, неактивный скрыт */}
     {audiences.map((a, listIdx) => (
       <div data-list={a.key} hidden={listIdx !== 0} class="mt-4">
         {faq[a.key].map((item, i) => (
           <div
-            class:list={['faq-item border border-[#1c4a3d]', i > 0 && '-mt-px']}
+            class:list={['faq-item border border-border', i > 0 && '-mt-px']}
             data-item
             data-extra={i >= VISIBLE ? '' : undefined}
             hidden={i >= VISIBLE}
@@ -108,7 +104,7 @@ const audiences = [
                 <span class="faq-icon" aria-hidden="true">+</span>
               </button>
             </h3>
-            <!-- Анимируемая обёртка: 0fr ↔ 1fr -->
+            {/* Анимируемая обёртка: 0fr ↔ 1fr */}
             <div class="faq-a" id={`faq-${a.key}-${i}`} role="region" aria-labelledby={`faq-q-${a.key}-${i}`}>
               <div class="overflow-hidden">
                 <p class="px-5 pb-[18px] font-accent text-base leading-[22.4px] text-fg">{item.a}</p>
@@ -119,45 +115,29 @@ const audiences = [
       </div>
     ))}
 
-    <!-- «Ещё вопросы»: показывает ещё 3, затем исчезает -->
+    {/* «Ещё вопросы»: показывает ещё 3, затем исчезает */}
     <div class="flex justify-center pt-[22px]" data-more-wrap>
-      <button
-        type="button"
-        data-more
-        class="rounded-[4px] border border-[#fff1d9] px-10 py-4 font-accent text-xl leading-6 transition-colors hover:bg-[rgba(255,241,217,0.08)]"
-      >
-        <span class="text-gold-plate">Ещё вопросы</span>
-      </button>
+      <Button variant="more" data-more>Ещё вопросы</Button>
     </div>
-  </div>
-</section>
+</Section>
 
 <script>
+  import { accordion, showMore } from '../../scripts/ui';
+
   const root = document.querySelector<HTMLElement>('[data-faq]');
 
   if (root) {
     const lists = root.querySelectorAll<HTMLElement>('[data-list]');
     const moreWrap = root.querySelector<HTMLElement>('[data-more-wrap]')!;
 
-    function setOpen(item: HTMLElement, open: boolean) {
-      item.toggleAttribute('data-open', open);
-      item.querySelector('.faq-q')!.setAttribute('aria-expanded', String(open));
-    }
-
-    // Аккордеон: клик по вопросу; открытым остаётся только один во всём списке
-    root.addEventListener('click', (e) => {
-      const q = (e.target as Element).closest<HTMLElement>('.faq-q');
-      if (!q) return;
-      const item = q.closest<HTMLElement>('[data-item]')!;
-      const wasOpen = item.hasAttribute('data-open');
-      item.closest('[data-list]')!.querySelectorAll<HTMLElement>('[data-item]').forEach((it) => setOpen(it, false));
-      setOpen(item, !wasOpen);
-    });
-
-    // «Ещё вопросы»: раскрыть скрытые (в обоих списках), кнопку убрать
-    root.querySelector('[data-more]')!.addEventListener('click', () => {
-      root.querySelectorAll<HTMLElement>('[data-extra]').forEach((it) => (it.hidden = false));
-      moreWrap.hidden = true;
+    // Аккордеон: открытым остаётся только один вопрос в списке; «Ещё вопросы» — раскрыть скрытые
+    // (в обоих списках) и убрать кнопку. Общая логика — src/scripts/ui.ts.
+    const { setOpen } = accordion(root, { item: '[data-item]', trigger: '.faq-q', group: '[data-list]' });
+    showMore(root, {
+      button: '[data-more]',
+      extra: '[data-extra]',
+      reveal: (it) => (it.hidden = false),
+      done: () => (moreWrap.hidden = true),
     });
 
     // Переключатель аудитории: показать свой список и вернуть его в исходный вид

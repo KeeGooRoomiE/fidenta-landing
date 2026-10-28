@@ -34,31 +34,26 @@
   мобильном уменьшен и показывается в одну строку (без подписи «архитектура
   капитала»), чтобы с запасом помещаться между бургером и кнопкой.
 */
+import { nav, office, phones } from '../../data/site';
+
 const base = import.meta.env.BASE_URL;
 
-const navLinks = [
-  { label: 'О компании', href: '#about' },
-  { label: 'Инвестиции', href: '#terms' },
-  { label: 'Услуги', href: '#services' },
-  { label: 'Объекты', href: '#portfolio' },
-  { label: 'Вопросы', href: '#faq' },
-  { label: 'Контакты', href: '#contacts' },
-];
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 flex h-[84px] flex-col md:h-[92px]" id="site-header" data-scrolled="false">
-  <!-- Пилюля-подложка: отдельный слой, геометрия ПОСТОЯННА (см. комментарий
-       вверху файла) — анимируется только opacity, никогда margin/width. -->
+  {/* Пилюля-подложка: отдельный слой, геометрия ПОСТОЯННА (см. комментарий
+       вверху файла) — анимируется только opacity, никогда margin/width. */}
   <div class="header-pill pointer-events-none absolute inset-x-3 top-2.5 bottom-0 md:inset-x-0 md:top-3 md:mx-auto md:max-w-[74rem]" aria-hidden="true"></div>
 
-  <!-- Подложка-«закрыватель» меню: тап по любому свободному месту закрывает открытое меню -->
+  {/* Подложка-«закрыватель» меню: тап по любому свободному месту закрывает открытое меню */}
   <div id="nav-backdrop" class="fixed inset-0 -z-10 hidden bg-black/40" aria-hidden="true"></div>
 
   <div class="container-page relative mt-auto flex h-[72px] items-center justify-between md:h-20">
-      <!-- ЛЕВО: бургер + адрес/телефон (адрес скрыт до md — не помещается рядом с бургером) -->
+      {/* ЛЕВО: бургер + адрес/телефон (адрес скрыт до md — не помещается рядом с бургером) */}
       <div class="flex items-center gap-3">
         <button
           id="menu-toggle"
+          type="button"
           class="header-burger flex h-11 w-11 shrink-0 lg:h-12 lg:w-12 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
           aria-label="Открыть меню"
           aria-expanded="false"
@@ -70,14 +65,14 @@ const navLinks = [
           </svg>
         </button>
         <div class="header-contact hidden font-accent text-sm leading-tight text-fg md:block lg:text-lg">
-          <p class="m-0">Спб, Богатырский 18 к 4 ст2</p>
-          <p class="m-0">+7 (812) 000-00-00</p>
+          <p class="m-0">{office.short}</p>
+          <p class="m-0">{phones.header.text}</p>
         </div>
       </div>
 
-      <!-- ЦЕНТР: логотип — всегда строго по центру полосы, независимо от ширины соседей.
+      {/* ЦЕНТР: логотип — всегда строго по центру полосы, независимо от ширины соседей.
            На мобильном сильно компактнее (меньше знак, мельче и плотнее wordmark) —
-           иначе при true-center перекрывает бургер/кнопку на узких экранах. -->
+           иначе при true-center перекрывает бургер/кнопку на узких экранах. */}
       <a href="#" class="absolute left-1/2 flex -translate-x-1/2 items-center gap-1.5 md:gap-3">
         <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-6 w-auto md:h-7 lg:h-10" />
         <span class="leading-none">
@@ -86,8 +81,8 @@ const navLinks = [
         </span>
       </a>
 
-      <!-- ПРАВО: кнопка «Консультация» — компактная на мобильном, обычная от sm -->
-      <!-- На мобильном — иконка телефона (симметрична бургеру: тот же квадрат 44px), с sm — текст «Консультация» -->
+      {/* ПРАВО: кнопка «Консультация» — компактная на мобильном, обычная от sm */}
+      {/* На мобильном — иконка телефона (симметрична бургеру: тот же квадрат 44px), с sm — текст «Консультация» */}
       <a href="#cta" class="header-cta btn-hero btn-outline shrink-0" aria-label="Консультация">
         <svg class="size-6 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path>
@@ -96,7 +91,7 @@ const navLinks = [
       </a>
   </div>
 
-  <!--
+  {/*
     ВЫПАДАЮЩАЯ ПАНЕЛЬ НАВИГАЦИИ (скрыта по умолчанию).
     Раньше была сплошной тёмно-зелёной полосой во всю ширину с жёсткими
     углами — на верхнем (прозрачном) состоянии ещё туда-сюда, но под белой
@@ -114,19 +109,19 @@ const navLinks = [
     капсулы вместо низа ("меню сдвигает весь хэдер внутри капсулы"). absolute
     полностью убирает nav-panel из flex-потока — на контент-роу открытие
     меню теперь вообще никак не влияет.
-  -->
+  */}
   <nav id="nav-panel" class="nav-panel absolute inset-x-0 top-full hidden">
       <div class="nav-panel-card mx-3 overflow-hidden md:mx-auto md:max-w-[74rem]">
         <div class="grid gap-1 p-4 sm:grid-cols-2">
-          {navLinks.map((link) => (
+          {nav.map((link) => (
             <a href={link.href} class="rounded-lg px-4 py-3.5 text-lg text-canvas/90 transition-colors hover:bg-canvas/5 hover:text-gold-deep">
               {link.label}
             </a>
           ))}
         </div>
         <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-canvas/10 px-6 py-4 text-base text-canvas/75">
-          <a href="tel:+78120000000" class="font-semibold text-canvas hover:text-gold-deep">+7 (812) 000-00-00</a>
-          <span>СПб, Богатырский 18 к 4 ст2</span>
+          <a href={phones.header.href} class="font-semibold text-canvas hover:text-gold-deep">{phones.header.text}</a>
+          <span>{office.short}</span>
         </div>
       </div>
   </nav>
@@ -240,7 +235,7 @@ const navLinks = [
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #fff1d9;
+      color: var(--color-cream);
       background: rgba(10, 32, 25, 0.5);
       border: 1.5px solid rgba(255, 241, 217, 0.55);
       -webkit-backdrop-filter: blur(6px);

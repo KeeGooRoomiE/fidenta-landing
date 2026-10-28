@@ -1,38 +1,42 @@
 ---
 /*
-  UI-АТОМ — SectionHeading
+  УРОВЕНЬ 4 — UI-ЭЛЕМЕНТ «Заголовок секции»: надпись с линией (eyebrow) + H2 + подзаголовок.
 
-  Единый заголовок секции: надзаголовок-eyebrow + крупный заголовок,
-  в котором часть слова выделена золотым акцентом, + опциональное описание.
+  Один вид для всех блоков (раньше в каждом блоке был свой набор классов — 4 варианта eyebrow,
+  12 вариантов H2, 5 вариантов подзаголовка). Размеры берутся из типовых утилит global.css
+  (text-eyebrow, text-h2, text-lead) — менять вид заголовков нужно ТОЛЬКО там.
 
-  Пример:
-    <SectionHeading
-      eyebrow="Как работаем"
-      title="От заявки до"
-      accent="стабильного дохода"
-      description="Прозрачный процесс передачи объекта под управление — пять понятных шагов."
-    />
+  Использование:
+    <SectionHeading eyebrow="Объекты">
+      Объекты под управлением <span class="text-gold-plate uppercase">УК Фидента</span>
+      <Fragment slot="lead">Подзаголовок (можно с разметкой)</Fragment>
+    </SectionHeading>
+
+  Props:
+    eyebrow    — текст надписи над заголовком;
+    line       — цвет линии перед надписью: 'gold' (по умолчанию) | 'mist' | 'sage';
+    leadMax    — max-width подзаголовка Tailwind-классом (по умолчанию max-w-[860px]);
+    titleClass — добавка к классам H2 (например text-gold-plate вместо text-fg);
+    class      — добавка к обёртке.
+  Слоты: default — содержимое H2; lead — подзаголовок (если не передан — не выводится).
 */
 interface Props {
-  eyebrow?: string;
-  title: string;
-  accent?: string;      // выделенная золотом часть заголовка (ставится после title)
-  description?: string;
-  align?: 'left' | 'center';
+  eyebrow: string;
+  line?: 'gold' | 'mist' | 'sage';
+  leadMax?: string;
+  titleClass?: string;
+  class?: string;
 }
-
-const { eyebrow, title, accent, description, align = 'left' } = Astro.props;
-
-const alignClass = align === 'center' ? 'items-center text-center mx-auto' : 'items-start text-left';
+const { eyebrow, line = 'gold', leadMax = 'max-w-[860px]', titleClass = 'text-fg', class: className = '' } = Astro.props;
+const lineClass = { gold: 'bg-gold-line', mist: 'bg-mist', sage: 'bg-sage' }[line];
+const hasLead = Astro.slots.has('lead');
 ---
 
-<div class={`flex flex-col ${alignClass} max-w-2xl`}>
-  {eyebrow && <span class="eyebrow mb-4">— {eyebrow}</span>}
-
-  <h2 class="text-3xl sm:text-4xl md:text-5xl leading-tight">
-    {title}
-    {accent && <span class="text-accent"> {accent}</span>}
-  </h2>
-
-  {description && <p class="mt-4 text-base text-muted leading-relaxed">{description}</p>}
+<div class:list={['flex flex-col gap-1.5', className]}>
+  <div class="flex items-center gap-2.5">
+    <span class:list={['h-px w-5 shrink-0', lineClass]}></span>
+    <span class="text-eyebrow text-gold-plate">{eyebrow}</span>
+  </div>
+  <h2 class:list={['text-h2', titleClass]}><slot /></h2>
+  {hasLead && <p class:list={['mt-1 text-lead text-fg', leadMax]}><slot name="lead" /></p>}
 </div>

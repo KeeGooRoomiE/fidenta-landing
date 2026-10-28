@@ -27,6 +27,9 @@
 
   id="portfolio" — якорь для ссылок из шапки и кнопки Hero.
 */
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
 import ObjectCard from '../ui/ObjectCard.astro';
 
 const base = import.meta.env.BASE_URL;
@@ -50,54 +53,45 @@ const objects = [
 const extraCount = objects.filter((o) => o.hidden).length;
 ---
 
-<section id="portfolio" class="py-20 md:py-28">
-  <div class="container-page">
-    <!-- Заголовок блока -->
-    <div class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2.5">
-        <span class="h-px w-5 shrink-0" style="background-image: var(--gradient-gold);"></span>
-        <span class="font-accent text-xl uppercase tracking-[0.1em] text-gold-plate">Объекты</span>
-      </div>
-      <h2 class="font-accent text-4xl font-normal leading-[1.2] tracking-[-0.02em] text-fg sm:text-5xl md:text-[50px]">
-        Объекты под управлением <span class="text-gold-plate uppercase">УК Фидента</span>
-      </h2>
-      <p class="mt-1 max-w-[860px] font-accent text-xl leading-[1.47] text-fg">
-        Повышаем заполняемость, контролируем арендаторов, операционные расходы и инвестиционную доходность
-        объектов в Санкт-Петербурге.
-      </p>
-    </div>
+<Section id="portfolio">
+    {/* Заголовок блока */}
+    <SectionHeading eyebrow="Объекты">
+      Объекты под управлением <span class="text-gold-plate uppercase">УК Фидента</span>
+      <Fragment slot="lead">
+        Повышаем заполняемость, контролируем арендаторов, операционные расходы и инвестиционную доходность объектов в Санкт-Петербурге.
+      </Fragment>
+    </SectionHeading>
 
-    <!-- Сетка карточек: 1 колонка на мобильных, 3 в ряд на десктопе -->
+    {/* Сетка карточек: 1 колонка на мобильных, 3 в ряд на десктопе */}
     <div class="mt-12 grid grid-cols-1 gap-[34px] lg:grid-cols-3 md:mt-[70px]">
       {objects.map((obj) => <ObjectCard {...obj} />)}
     </div>
 
-    <!-- Сноска + линия -->
+    {/* Сноска + линия */}
     <div class="mt-6">
       <p class="font-accent text-xs leading-5 text-[#63645c]">Все объекты находятся под управлением УК ФИДЕНТА</p>
       <div class="h-px w-full bg-[rgba(20,58,48,0.35)]"></div>
     </div>
 
-    <!-- Кнопка «Показать ещё»: после нажатия удаляется из DOM -->
+    {/* Кнопка «Показать ещё»: после нажатия удаляется из DOM */}
     <div class="flex justify-center pt-6" data-more-wrap>
-      <button
-        type="button"
-        data-more
-        class="rounded-[4px] border border-[#fff1d9] px-10 py-4 font-accent text-xl leading-6 text-fg transition-colors hover:bg-[rgba(255,241,217,0.08)]"
-      >
-        Показать ещё {extraCount} объекта
-      </button>
+      <Button variant="more" tone="fg" data-more>Показать ещё {extraCount} объекта</Button>
     </div>
-  </div>
-</section>
+</Section>
 
 <script>
-  // 1. «Показать ещё»: открываем скрытые карточки, кнопку убираем
-  const moreBtn = document.querySelector<HTMLButtonElement>('[data-more]');
-  moreBtn?.addEventListener('click', () => {
-    document.querySelectorAll('[data-extra]').forEach((card) => card.classList.remove('hidden'));
-    document.querySelector('[data-more-wrap]')?.remove();
-  });
+  import { showMore } from '../../scripts/ui';
+
+  // 1. «Показать ещё»: открываем скрытые карточки, кнопку убираем (общая логика — src/scripts/ui.ts)
+  const root = document.getElementById('portfolio');
+  if (root) {
+    showMore(root, {
+      button: '[data-more]',
+      extra: '[data-extra]',
+      reveal: (card) => card.classList.remove('hidden'),
+      done: () => root.querySelector('[data-more-wrap]')?.remove(),
+    });
+  }
 
   // 2. «Авито-превью» фото. Один набор обработчиков на всю страницу
   //    (делегирование): карточки 7–9 тоже работают, хотя были скрыты при загрузке.
