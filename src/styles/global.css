@@ -114,11 +114,6 @@
   padding-inline: 1.5rem;
 }
 
-/* Металлик-золото как фон (кнопки-plate, подложки). */
-@utility bg-gold-plate {
-  background-image: var(--gradient-gold);
-}
-
 /* Металлик-золото как заливка ТЕКСТА (обрезка градиента по глифам).
    Пример: <span class="text-gold-plate font-display">ФИДЕНТА</span> */
 @utility text-gold-plate {
@@ -160,17 +155,6 @@
    Текст — обычно через <span class="text-gold-plate">, иногда сплошной (cookie). */
 @utility btn-outline {
   background: transparent;
-}
-
-/* Полупрозрачная зелёная карточка (плитки Hero, cookie-баннер): сплошной фон,
-   сплошная кремовая рамка, radius 9 (по узлу 974:65574). БЕЗ blur — у плиток
-   в Figma размытия подложки нет (оно есть только у cookie, добавляется отдельно).
-   0.3 — подтверждённое значение из Figma (видно и на скриншоте: плитки тёмные,
-   не почти прозрачные). Если нужно светлее — меняем здесь в одном месте. */
-@utility plat-card {
-  background: rgba(50, 63, 47, 0.3);
-  border: 1px solid var(--color-plate-line);
-  border-radius: 9px;
 }
 
 /* Надзаголовок-«eyebrow»: — КАК РАБОТАЕМ, — ПОРТФЕЛЬ и т.д.
