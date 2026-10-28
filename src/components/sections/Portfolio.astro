@@ -80,12 +80,18 @@ const extraCount = objects.filter((o) => o.hidden).length;
 </Section>
 
 <script>
-  // 1. «Показать ещё»: открываем скрытые карточки, кнопку убираем
-  const moreBtn = document.querySelector<HTMLButtonElement>('[data-more]');
-  moreBtn?.addEventListener('click', () => {
-    document.querySelectorAll('[data-extra]').forEach((card) => card.classList.remove('hidden'));
-    document.querySelector('[data-more-wrap]')?.remove();
-  });
+  import { showMore } from '../../scripts/ui';
+
+  // 1. «Показать ещё»: открываем скрытые карточки, кнопку убираем (общая логика — src/scripts/ui.ts)
+  const root = document.getElementById('portfolio');
+  if (root) {
+    showMore(root, {
+      button: '[data-more]',
+      extra: '[data-extra]',
+      reveal: (card) => card.classList.remove('hidden'),
+      done: () => root.querySelector('[data-more-wrap]')?.remove(),
+    });
+  }
 
   // 2. «Авито-превью» фото. Один набор обработчиков на всю страницу
   //    (делегирование): карточки 7–9 тоже работают, хотя были скрыты при загрузке.

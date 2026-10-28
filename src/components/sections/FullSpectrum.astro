@@ -98,22 +98,12 @@ const items = [
 </Section>
 
 <script>
+  import { accordion } from '../../scripts/ui';
+
   // Аккордеон (только мобильный вид: с md кнопки заголовков pointer-events-none).
   // Открытым остаётся один пункт.
-  const items = document.querySelectorAll<HTMLElement>('.svc-item');
-  items.forEach((item) =>
-    item.querySelector('.svc-q')!.addEventListener('click', () => {
-      const wasOpen = item.hasAttribute('data-open');
-      items.forEach((it) => {
-        it.removeAttribute('data-open');
-        it.querySelector('.svc-q')!.setAttribute('aria-expanded', 'false');
-      });
-      if (!wasOpen) {
-        item.setAttribute('data-open', '');
-        item.querySelector('.svc-q')!.setAttribute('aria-expanded', 'true');
-      }
-    }),
-  );
+  const root = document.getElementById('services');
+  if (root) accordion(root, { item: '.svc-item', trigger: '.svc-q' });
 </script>
 
 <style is:global>

@@ -122,31 +122,22 @@ const audiences = [
 </Section>
 
 <script>
+  import { accordion, showMore } from '../../scripts/ui';
+
   const root = document.querySelector<HTMLElement>('[data-faq]');
 
   if (root) {
     const lists = root.querySelectorAll<HTMLElement>('[data-list]');
     const moreWrap = root.querySelector<HTMLElement>('[data-more-wrap]')!;
 
-    function setOpen(item: HTMLElement, open: boolean) {
-      item.toggleAttribute('data-open', open);
-      item.querySelector('.faq-q')!.setAttribute('aria-expanded', String(open));
-    }
-
-    // Аккордеон: клик по вопросу; открытым остаётся только один во всём списке
-    root.addEventListener('click', (e) => {
-      const q = (e.target as Element).closest<HTMLElement>('.faq-q');
-      if (!q) return;
-      const item = q.closest<HTMLElement>('[data-item]')!;
-      const wasOpen = item.hasAttribute('data-open');
-      item.closest('[data-list]')!.querySelectorAll<HTMLElement>('[data-item]').forEach((it) => setOpen(it, false));
-      setOpen(item, !wasOpen);
-    });
-
-    // «Ещё вопросы»: раскрыть скрытые (в обоих списках), кнопку убрать
-    root.querySelector('[data-more]')!.addEventListener('click', () => {
-      root.querySelectorAll<HTMLElement>('[data-extra]').forEach((it) => (it.hidden = false));
-      moreWrap.hidden = true;
+    // Аккордеон: открытым остаётся только один вопрос в списке; «Ещё вопросы» — раскрыть скрытые
+    // (в обоих списках) и убрать кнопку. Общая логика — src/scripts/ui.ts.
+    const { setOpen } = accordion(root, { item: '[data-item]', trigger: '.faq-q', group: '[data-list]' });
+    showMore(root, {
+      button: '[data-more]',
+      extra: '[data-extra]',
+      reveal: (it) => (it.hidden = false),
+      done: () => (moreWrap.hidden = true),
     });
 
     // Переключатель аудитории: показать свой список и вернуть его в исходный вид
