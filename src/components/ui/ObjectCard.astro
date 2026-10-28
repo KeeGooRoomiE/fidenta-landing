@@ -20,6 +20,8 @@
   в одной тёмно-зелёной гамме с золотым теплом.
 
   Тексты вида [ДАННЫЕ: ...] — плейсхолдеры из Figma, не выдуманы.
+  Футер карточки: «данные на [ДАННЫЕ]» (часть «· договор до [ДАННЫЕ]» из макета убрана по правке
+  дизайнера — пока не нужна; вернуть: дописать « · договор до [ДАННЫЕ]»).
 */
 interface Props {
   type: string; // бейдж на фото
@@ -38,7 +40,7 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
 
 <article
   class:list={[
-    'overflow-hidden rounded-[9px] border border-border bg-canvas font-accent text-fg',
+    'flex flex-col overflow-hidden rounded-[9px] border border-border bg-canvas font-accent text-fg',
     hidden && 'hidden',
   ]}
   data-extra={hidden ? '' : undefined}
@@ -96,8 +98,10 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
   </div>
 
   <!-- Текстовая часть -->
-  <div class="px-6 pt-4">
-    <h3 class="font-accent text-[28px] font-normal leading-[34px] text-fg">{title}</h3>
+  <!-- flex-1: текстовая часть тянется, футер прижат к низу; min-h у заголовка и описания —
+       под 2 строки, чтобы метрики и линия футера стояли на одной высоте во всех карточках ряда -->
+  <div class="flex-1 px-6 pt-4">
+    <h3 class="font-accent text-[28px] font-normal leading-[34px] text-fg lg:min-h-[68px]">{title}</h3>
 
     <p class="mt-1 flex items-center gap-1.5 text-[13px] leading-[20.8px] text-fg">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="shrink-0">
@@ -109,10 +113,10 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
       {address}
     </p>
 
-    <p class="mt-5 text-base leading-[1.2] text-fg">{lead}</p>
+    <p class="mt-5 text-base leading-[1.2] text-fg lg:min-h-[2.4em]">{lead}</p>
 
     <!-- Метрики: значение 20px + подпись 12px caps -->
-    <dl class="mt-2 flex gap-6">
+    <dl class="mt-2 flex gap-5 whitespace-nowrap">
       <div class="flex flex-col gap-[3px]">
         <dd class="order-1 text-xl leading-8 text-fg">{gla}</dd>
         <dt class="order-2 text-xs uppercase leading-[19px] tracking-[0.06em]">м² GLA</dt>
@@ -131,6 +135,6 @@ const { type, title, address, lead, gla, occupancy, since, photos, hidden = fals
   <!-- Подвал карточки -->
   <div class="mt-5 px-6 pb-[22px]">
     <div class="h-px w-full bg-border"></div>
-    <p class="mt-3 text-[13px] leading-[18px] text-[#eee9d9]">данные на [ДАННЫЕ] · договор до [ДАННЫЕ]</p>
+    <p class="mt-3 text-[13px] leading-[18px] text-[#eee9d9]">данные на [ДАННЫЕ]</p>
   </div>
 </article>
