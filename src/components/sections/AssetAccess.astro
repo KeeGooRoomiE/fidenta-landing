@@ -24,7 +24,7 @@
   высота сцены задаётся переменной --stage-h из JS (innerHeight / zoom); без zoom остаётся
   чистый CSS (100svh).
 
-  ФОТО пазла: public/images/puzzle-photo.webp (склад, 1536×1024 из Figma). В прототипе лежало
+  ФОТО пазла: public/images/puzzle-photo.webp (детейлинг-автомойка, 1280×853024 из Figma). В прототипе лежало
   низкое разрешение (509×216) с вшитой подписью «120 млн ₽» — оно сохранено как
   public/images/puzzle-photo-prototype.jpg; заменить фото = заменить один файл (4:3 лучше).
   Текст блока: в Figma было 3 абзаца; по правке дизайнера первая фраза убрана, смысл
@@ -52,8 +52,8 @@ const demo = { totalMln: 120 };
     <img
       src={`${base}images/puzzle-photo.webp`}
       alt="Коммерческий объект"
-      width="1600"
-      height="1067"
+      width="1280"
+      height="853"
       class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
     />
     {/* ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях */}
