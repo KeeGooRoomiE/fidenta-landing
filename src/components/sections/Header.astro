@@ -114,13 +114,13 @@ const base = import.meta.env.BASE_URL;
       <div class="nav-panel-card header-shell mx-3 overflow-hidden md:mx-auto">
         <div class="grid gap-1 p-4 sm:grid-cols-2">
           {nav.map((link) => (
-            <a href={link.href} class="rounded-lg px-4 py-3.5 text-lg text-canvas/90 transition-colors hover:bg-canvas/5 hover:text-gold-deep">
+            <a href={link.href} class="rounded-lg px-4 py-3.5 text-lg text-fg/90 transition-colors hover:bg-white/5 hover:text-accent">
               {link.label}
             </a>
           ))}
         </div>
-        <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-canvas/10 px-6 py-4 text-base text-canvas/75">
-          <a href={phones.header.href} class="font-semibold text-canvas hover:text-gold-deep">{phones.header.text}</a>
+        <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-white/10 px-6 py-4 text-base text-fg/75">
+          <a href={phones.header.href} class="font-semibold text-fg hover:text-accent">{phones.header.text}</a>
           <span>{office.short}</span>
         </div>
       </div>
@@ -149,21 +149,16 @@ const base = import.meta.env.BASE_URL;
   }
 
   .header-pill {
-    border-radius: 999px;
-    border: 1px solid rgba(20, 22, 20, 0.1);
-    background: rgba(255, 255, 255, 0.86);
-    box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 241, 217, 0.22);
+    background: rgba(11, 24, 19, 0.82);
+    box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  header[data-scrolled='true'] .header-pill {
-    opacity: 1;
+    /* Тёмная пилюля видна всегда (и на фото, и при прокрутке): золото логотипа читается на любом фоне */
   }
 
-  /* Текст/иконки были рассчитаны на тёмный фон (кремовый/золотой) — на белой
-     пилюле их нужно перекрасить в тёмно-зелёный/глубокое золото, иначе
+  /* Шапка тёмная (стекло): перекраска текста не нужна. Переходы цвета оставлены для hover в тёмно-зелёный/глубокое золото, иначе
      пропадает контраст. Переходы на каждом элементе отдельно (transition
      родителя на детей не каскадится), чтобы цвет менялся плавно вместе с
      фоном, а не скачком. */
@@ -177,50 +172,6 @@ const base = import.meta.env.BASE_URL;
        пилюли должны проявляться синхронно, одним движением. */
     transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  header[data-scrolled='true'] .header-burger {
-    color: var(--color-gold-deep);
-    border-color: var(--color-accent);
-  }
-  header[data-scrolled='true'] .header-burger:hover {
-    color: var(--color-canvas);
-    border-color: rgba(10, 32, 25, 0.18);
-  }
-
-  header[data-scrolled='true'] .header-contact {
-    color: var(--color-canvas);
-  }
-
-  /* text-gold-plate — градиент, обрезанный по тексту (background-clip: text +
-     color: transparent). На белом фоне светлый край градиента сливается с
-     подложкой — переключаем на сплошной глубокий золотой вместо градиента. */
-  header[data-scrolled='true'] .header-logo-word {
-    background-image: none;
-    background-clip: initial;
-    -webkit-background-clip: initial;
-    color: var(--color-gold-deep);
-  }
-  header[data-scrolled='true'] .header-logo-sub {
-    color: var(--color-gold-deep);
-    opacity: 0.85;
-  }
-
-  header[data-scrolled='true'] .header-cta {
-    border-color: rgba(10, 32, 25, 0.3);
-  }
-  header[data-scrolled='true'] .header-cta-label {
-    background-image: none;
-    background-clip: initial;
-    -webkit-background-clip: initial;
-    color: var(--color-canvas);
-  }
-  header[data-scrolled='true'] .header-cta:hover {
-    border-color: var(--color-canvas);
-    background: var(--color-canvas);
-  }
-  header[data-scrolled='true'] .header-cta:hover .header-cta-label {
-    color: var(--color-fg);
   }
 
   /* Кнопка «Консультация»: своя, компактная на мобильном раскладка поверх
@@ -255,14 +206,6 @@ const base = import.meta.env.BASE_URL;
       backdrop-filter: blur(6px);
       text-shadow: none;
     }
-    header[data-scrolled='true'] .header-burger,
-    header[data-scrolled='true'] .header-cta {
-      color: var(--color-canvas);
-      background: rgba(10, 32, 25, 0.06);
-      border-color: rgba(10, 32, 25, 0.5);
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
-    }
   }
 
   /* ПК (от lg): шапка крупнее — по правке дизайнера навигация/лого были слишком мелкими */
@@ -282,9 +225,9 @@ const base = import.meta.env.BASE_URL;
      стороны) — видимое рассогласование краёв при открытии меню. */
   .nav-panel-card {
     margin-top: 0.5rem;
-    border-radius: 1.25rem;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(20, 22, 20, 0.1);
+    border-radius: 14px;
+    background: rgba(11, 24, 19, 0.94);
+    border: 1px solid rgba(255, 241, 217, 0.22);
     box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
