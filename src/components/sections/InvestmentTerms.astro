@@ -185,8 +185,8 @@ const doesNotFitIf = [
           const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
           draw(1, 180 * e);
         }
-        // «бегущая» струйка: сдвиг штриха
-        stream.setAttribute('stroke-dashoffset', String((Date.now() / 60) % 5));
+        // «бегущая» струйка: штрихи едут вниз (отрицательный dashoffset двигает узор по направлению линии)
+        stream.setAttribute('stroke-dashoffset', String(-((Date.now() / 60) % 5)));
       };
       tick();
       setInterval(tick, 80);
