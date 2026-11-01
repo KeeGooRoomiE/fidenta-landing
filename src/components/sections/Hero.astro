@@ -75,7 +75,7 @@ const cards = [
 
   {/* Контент — уже на сплошном фоне секции, текст нигде не лежит поверх
        фото, поэтому читаемость не зависит от того, что именно на кадре. */}
-  <div class="hero-content container-page relative -mt-10 flex flex-col gap-12 pb-16 pt-0 md:gap-8 md:pb-6">
+  <div class="hero-content container-page relative -mt-10 flex flex-col gap-12 pb-16 pt-0 md:gap-12 md:pb-24">
     <div class="flex max-w-2xl flex-col gap-5 md:max-w-4xl">
       <h1 class="hero-title font-accent font-normal">
         <span class="block text-fg">Коммерческая недвижимость,</span>
@@ -93,7 +93,7 @@ const cards = [
       </div>
     </div>
 
-    <div class="relative grid gap-5 md:grid-cols-3">
+    <div class="relative grid gap-5 md:grid-cols-3 md:gap-6">
       {/* Мягкое золотое свечение за карточками — CSS, не завязано на фото. */}
       <div
         class="pointer-events-none absolute inset-x-0 -bottom-16 -top-10 -z-10 mix-blend-screen"
@@ -155,7 +155,7 @@ const cards = [
     font-size: 1rem;
     letter-spacing: -0.01em;
     padding: 1rem 2rem;
-    border-radius: 999px;
+    border-radius: 10px;
     transition: transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   }
 

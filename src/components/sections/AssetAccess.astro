@@ -57,10 +57,10 @@ const demo = { totalMln: 120 };
       class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
     />
     {/* ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях */}
-    <div data-canvas data-mode="bleed" class="absolute inset-0 hidden lg:block"></div>
+    <div data-canvas data-mode="bleed" class="absolute inset-0 hidden xl:block"></div>
     {/* Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно */}
     <div
-      class="pointer-events-none absolute inset-0 hidden lg:block"
+      class="pointer-events-none absolute inset-0 hidden xl:block"
       style="background: linear-gradient(90deg, rgba(10,32,25,0.94) 0%, rgba(10,32,25,0.72) 34%, rgba(10,32,25,0) 62%);"
     >
     </div>
@@ -92,8 +92,8 @@ const demo = { totalMln: 120 };
       </div>
 
       {/* МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
-           (раньше пазл был фоном на весь экран и наезжал на кнопку). С lg скрыта. */}
-      <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 lg:hidden"></div>
+           (раньше пазл был фоном на весь экран и наезжал на кнопку). С xl (1280+) скрыта: на 1024–1279 пазл справа наезжал на текст, поэтому там тоже отдельная область. */}
+      <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 xl:hidden"></div>
 
       {/* Счётчик сборки (демо) */}
       <aside class="max-w-[360px] font-accent" aria-live="off">
@@ -124,7 +124,7 @@ const demo = { totalMln: 120 };
     const stage = sec.querySelector<HTMLElement>('[data-stage]')!;
     const boxes = [...sec.querySelectorAll<HTMLElement>('[data-canvas]')];
     // активный контейнер: на ПК — «bleed» (весь блок), иначе — «box» (область между текстом и счётчиком)
-    const desktop = matchMedia('(min-width: 1024px)');
+    const desktop = matchMedia('(min-width: 1280px)');
     const pickBox = () => boxes.find((b) => b.dataset.mode === (desktop.matches ? 'bleed' : 'box'))!;
     const total = Number(sec.dataset.total ?? 120);
     const ui = {
@@ -200,6 +200,11 @@ const demo = { totalMln: 120 };
       { rootMargin: '150% 0px' },
     );
     loader.observe(sec);
+    // Не ждём, пока блок подъедет: тяжёлая сцена (~3 МБ) начинает грузиться вскоре после загрузки страницы,
+    // иначе на медленной сети пазл долго показывается «постером» и выглядит неработающим.
+    const early = () => setTimeout(() => !started && ((started = true), loader.disconnect(), start()), 1500);
+    if (document.readyState === 'complete') early();
+    else addEventListener('load', early, { once: true });
 
     async function start() {
       try {

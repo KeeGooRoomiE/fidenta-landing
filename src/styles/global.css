@@ -82,8 +82,8 @@
 
   /* Заголовки — по умолчанию отображаемым (serif) шрифтом */
   h1, h2, h3, h4 {
-    font-family: var(--font-display);
-    font-weight: 600;
+    font-family: var(--font-accent);
+    font-weight: 400; /* у Forum нет жирного — иначе браузер рисует «синтетический» */
     line-height: 1.1;
   }
   /* Заголовки с шрифтом Forum (font-accent) — обычного начертания. У Forum нет жирного,

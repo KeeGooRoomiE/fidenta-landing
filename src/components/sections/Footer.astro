@@ -78,12 +78,12 @@ const year = new Date().getFullYear();
       {/* Логотип + телефон */}
       <div class="mx-auto flex w-[340px] max-w-full flex-col items-center gap-3.5">
         <div class="flex w-full flex-col gap-[33px]">
-          <img src={`${base}images/footer-bridge.svg`} loading="lazy" decoding="async" alt="" width="340" height="158" class="w-full" />
-          <img src={`${base}images/footer-wordmark.svg`} loading="lazy" decoding="async" alt="Фидента" width="340" height="56" class="w-full" />
+          <img src={`${base}images/footer-bridge.svg`} loading="eager" decoding="async" alt="" width="340" height="158" class="w-full" />
+          <img src={`${base}images/footer-wordmark.svg`} loading="eager" decoding="async" alt="Фидента" width="340" height="56" class="w-full" />
         </div>
         <div class="flex items-start gap-[11px]">
-          <img src={`${base}images/footer-tagline-1.svg`} loading="lazy" decoding="async" alt="" width="147" height="21" class="h-[20.5px] w-[147px]" />
-          <img src={`${base}images/footer-tagline-2.svg`} loading="lazy" decoding="async" alt="" width="105" height="14" class="h-[13.8px] w-[105px]" />
+          <img src={`${base}images/footer-tagline-1.svg`} loading="eager" decoding="async" alt="" width="147" height="21" class="h-[20.5px] w-[147px]" />
+          <img src={`${base}images/footer-tagline-2.svg`} loading="eager" decoding="async" alt="" width="105" height="14" class="h-[13.8px] w-[105px]" />
         </div>
         <a href={phones.footer.href} class="mt-6 whitespace-nowrap text-[40px] leading-none transition-colors hover:text-gold-hi">
           {phones.footer.text}
@@ -130,14 +130,14 @@ const year = new Date().getFullYear();
       <div class="flex gap-3">
         {socialLeft.map((s) => (
           <a href={s.href} aria-label={s.label} class="transition-opacity hover:opacity-80">
-            <img src={`${base}icons/${s.icon}`} loading="lazy" decoding="async" width="50" height="50" alt={s.label} class="size-[50px]" />
+            <img src={`${base}icons/${s.icon}`} loading="eager" decoding="async" width="50" height="50" alt={s.label} class="size-[50px]" />
           </a>
         ))}
       </div>
       <div class="flex gap-3">
         {socialRight.map((s) => (
           <a href={s.href} aria-label={s.label} class="transition-opacity hover:opacity-80">
-            <img src={`${base}icons/${s.icon}`} loading="lazy" decoding="async" width="50" height="50" alt={s.label} class="size-[50px]" />
+            <img src={`${base}icons/${s.icon}`} loading="eager" decoding="async" width="50" height="50" alt={s.label} class="size-[50px]" />
           </a>
         ))}
       </div>

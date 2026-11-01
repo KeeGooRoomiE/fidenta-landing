@@ -146,6 +146,7 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
     rotation: T.Vector3;
     label: HTMLSpanElement;
     order: number;
+    group_?: boolean; // деталь входит в «склеенную» группу (см. GROUPS ниже)
   }
   const pieces: Piece[] = [];
   const labelText = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format(totalMln / 12) + ' млн ₽';
@@ -215,6 +216,50 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
     });
   }
 
+  // ---- «Склеенные» группы ----
+  // По идее блока каждый инвестор приходит со своим куском бюджета, поэтому часть деталей в разобранном
+  // состоянии уже лежит вместе (как в собранном пазле) и летит к картинке ОДНИМ телом: полоска из 3,
+  // двойка и «уголок» из 3. Остальные 4 детали — одиночные. Сетка деталей 4×3, индексы по рядам снизу вверх:
+  //   8  9  10 11   (верх)
+  //   4  5  6  7
+  //   0  1  2  3    (низ)
+  const GROUPS = [
+    [9, 10, 11], // полоска сверху справа
+    [5, 6], // двойка в центре
+    [7, 3, 2], // «уголок» справа снизу
+  ];
+  interface Group {
+    members: Piece[];
+    center: T.Vector3; // центр группы в собранном виде
+    start: T.Vector3; // где группа лежит в разобранном виде
+    rotation: T.Vector3;
+    order: number;
+    label: HTMLSpanElement; // одна подпись на группу: сумма всех её деталей
+  }
+  const groups: Group[] = GROUPS.map((ids, gi) => {
+    const members = ids.map((id) => pieces[id]);
+    const center = members.reduce((acc, m) => acc.add(m.center), new T.Vector3()).divideScalar(members.length);
+    const angle = (gi + 3) * 2.1;
+    const label = document.createElement('span');
+    label.textContent =
+      new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format((totalMln / 12) * members.length) + ' млн ₽';
+    label.style.cssText = pieces[0].label.style.cssText;
+    labelsLayer.append(label);
+    members.forEach((m) => {
+      m.group_ = true;
+      m.label.remove(); // у деталей группы своей подписи нет
+    });
+    return {
+      members,
+      center,
+      // группы разлетаются дальше одиночных деталей, чтобы не наезжать друг на друга
+      start: new T.Vector3(center.x * 1.9 + Math.cos(angle) * 0.5, center.y * 1.9 + Math.sin(angle) * 0.4, 0.6 + gi * 0.4),
+      rotation: new T.Vector3(0.22 * Math.sin(gi * 2.3 + 1), 0.3 * Math.cos(gi * 1.7), 0.16 * Math.sin(gi * 3.1)),
+      order: Math.min(...members.map((m) => m.order)),
+      label,
+    };
+  });
+
   // Целая картинка поверх собранного пазла (последние 6% прогресса)
   const finalMat = new T.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0, depthWrite: false });
   const whole = new T.Mesh(new T.PlaneGeometry(4.024, 3.024), finalMat);
@@ -234,8 +279,13 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
     camera.aspect = aspect;
     const tanHalf = Math.tan(T.MathUtils.degToRad(camera.fov / 2));
     if (container.dataset.mode === 'bleed') {
-      camera.position.z = 9.6;
-      root.position.set(1.95, 0, 0);
+      // Пазл — в правой половине блока при ЛЮБОМ соотношении сторон: на узких окнах (1280×800) камера
+      // отъезжает, чтобы разлёт деталей (~6 ед.) помещался в правые 48% ширины, а центр пазла
+      // смещается на 23% видимой ширины вправо.
+      const zFit = 6.0 / (2 * tanHalf * aspect * 0.48);
+      camera.position.z = Math.max(9.6, zFit);
+      const visW = 2 * tanHalf * camera.position.z * aspect;
+      root.position.set(Math.max(1.95, 0.23 * visW), 0, 0);
     } else {
       // видимая ширина на расстоянии z = 2·tan(fov/2)·z·aspect; нужна ≈ 5.6 ед. (с запасом на разлёт)
       const zWidth = 5.6 / (2 * tanHalf * aspect);
@@ -275,7 +325,16 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
 
     const w = container.clientWidth;
     const h = container.clientHeight;
+    const labelOpacity = String((1 - smooth(0.05, 0.32, p)) * 0.85);
+    const placeLabel = (label: HTMLSpanElement, pos: T.Vector3) => {
+      v3.copy(pos).project(camera);
+      label.style.opacity = labelOpacity;
+      label.style.left = (v3.x * 0.5 + 0.5) * w + 'px';
+      label.style.top = (-v3.y * 0.5 + 0.5) * h + 'px';
+    };
+    // одиночные детали
     for (const piece of pieces) {
+      if (piece.group_) continue;
       const k = smooth(piece.order * 0.045, 0.4 + piece.order * 0.045, p);
       piece.group.position.lerpVectors(piece.start, piece.center, k);
       if (!reducedMotion) piece.group.position.y += Math.sin(time * 0.0005 + piece.order) * 0.035 * (1 - k);
@@ -285,10 +344,21 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
         piece.rotation.z * (1 - k),
       );
       piece.group.visible = p < 0.999;
-      piece.label.style.opacity = String((1 - smooth(0.05, 0.32, p)) * 0.85);
-      piece.group.getWorldPosition(v3).project(camera);
-      piece.label.style.left = (v3.x * 0.5 + 0.5) * w + 'px';
-      piece.label.style.top = (-v3.y * 0.5 + 0.5) * h + 'px';
+      piece.group.getWorldPosition(v3);
+      placeLabel(piece.label, v3.clone());
+    }
+    // склеенные группы: каждая деталь = центр группы + повёрнутое смещение (группа жёсткая, швы не расходятся)
+    for (const g of groups) {
+      const k = smooth(g.order * 0.045, 0.4 + g.order * 0.045, p);
+      const pivot = new T.Vector3().lerpVectors(g.start, g.center, k);
+      if (!reducedMotion) pivot.y += Math.sin(time * 0.0005 + g.order) * 0.035 * (1 - k);
+      const e = new T.Euler(g.rotation.x * (1 - k), g.rotation.y * (1 - k), g.rotation.z * (1 - k));
+      for (const m of g.members) {
+        m.group.position.copy(m.center).sub(g.center).applyEuler(e).add(pivot);
+        m.group.rotation.copy(e);
+        m.group.visible = p < 0.999;
+      }
+      placeLabel(g.label, pivot);
     }
     renderer.render(scene, camera);
   }
