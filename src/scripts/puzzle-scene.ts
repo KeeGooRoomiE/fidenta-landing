@@ -287,10 +287,14 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
       const visW = 2 * tanHalf * camera.position.z * aspect;
       root.position.set(Math.max(1.95, 0.23 * visW), 0, 0);
     } else {
-      // видимая ширина на расстоянии z = 2·tan(fov/2)·z·aspect; нужна ≈ 5.6 ед. (с запасом на разлёт)
+      // видимая ширина на расстоянии z = 2·tan(fov/2)·z·aspect; для разлёта деталей нужна ≈ 5.6 ед.
       const zWidth = 5.6 / (2 * tanHalf * aspect);
       const zHeight = 4.4 / (2 * tanHalf);
-      camera.position.z = Math.max(zWidth, zHeight, 7);
+      zScatter = Math.max(zWidth, zHeight, 7);
+      // Собранная картинка (4.02×3.02 ед.) должна занимать почти ВСЮ область — поля по бокам минимальные
+      // (по правке дизайнера: раньше собиралась в маленькую картинку). Камера по мере сборки подъезжает.
+      zAssembled = Math.max(4.1 / (2 * tanHalf * aspect), 3.1 / (2 * tanHalf));
+      camera.position.z = zScatter; // дальше положение камеры по прогрессу выставляет draw()
       root.position.set(0, 0, 0);
     }
     camera.updateProjectionMatrix();
@@ -302,6 +306,8 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
   // ---- Состояние и отрисовка ----
   let target = 0;
   let displayed = 0;
+  let zScatter = 0; // положение камеры мобильного режима: разлёт / собранная картинка
+  let zAssembled = 0;
   let active = true;
   let raf = 0;
   const pointer = { x: 0, y: 0 };
@@ -316,6 +322,9 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
   function draw(time: number) {
     const p = displayed;
     const finish = smooth(0.88, 1, p);
+    if (container.dataset.mode !== 'bleed' && zScatter) {
+      camera.position.z = T.MathUtils.lerp(zScatter, zAssembled, smooth(0.35, 0.95, p));
+    }
     // лёгкий параллакс от курсора, гаснет к финалу
     root.rotation.x = T.MathUtils.lerp(root.rotation.x, (-0.1 + pointer.y * 0.045) * (1 - finish), 0.06);
     root.rotation.y = T.MathUtils.lerp(root.rotation.y, (-0.12 + pointer.x * 0.065) * (1 - finish), 0.06);

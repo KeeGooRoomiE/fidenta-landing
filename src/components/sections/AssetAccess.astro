@@ -93,7 +93,7 @@ const demo = { totalMln: 120 };
 
       {/* МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
            (раньше пазл был фоном на весь экран и наезжал на кнопку). С xl (1280+) скрыта: на 1024–1279 пазл справа наезжал на текст, поэтому там тоже отдельная область. */}
-      <div data-canvas data-mode="box" class="relative -mx-6 my-3 min-h-[200px] flex-1 xl:hidden"></div>
+      <div data-canvas data-mode="box" class="relative -mx-6 my-1 min-h-[min(72vw,330px)] flex-1 xl:hidden"></div>
 
       {/* Счётчик сборки (демо) */}
       <aside class="max-w-[360px] font-accent" aria-live="off">
