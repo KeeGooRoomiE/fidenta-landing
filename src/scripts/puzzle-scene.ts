@@ -234,8 +234,13 @@ export async function createPuzzleScene(opts: PuzzleOptions): Promise<PuzzleScen
     camera.aspect = aspect;
     const tanHalf = Math.tan(T.MathUtils.degToRad(camera.fov / 2));
     if (container.dataset.mode === 'bleed') {
-      camera.position.z = 9.6;
-      root.position.set(1.95, 0, 0);
+      // Пазл — в правой половине блока при ЛЮБОМ соотношении сторон: на узких окнах (1280×800) камера
+      // отъезжает, чтобы разлёт деталей (~6 ед.) помещался в правые 48% ширины, а центр пазла
+      // смещается на 23% видимой ширины вправо.
+      const zFit = 6.0 / (2 * tanHalf * aspect * 0.48);
+      camera.position.z = Math.max(9.6, zFit);
+      const visW = 2 * tanHalf * camera.position.z * aspect;
+      root.position.set(Math.max(1.95, 0.23 * visW), 0, 0);
     } else {
       // видимая ширина на расстоянии z = 2·tan(fov/2)·z·aspect; нужна ≈ 5.6 ед. (с запасом на разлёт)
       const zWidth = 5.6 / (2 * tanHalf * aspect);
