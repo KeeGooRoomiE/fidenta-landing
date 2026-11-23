@@ -268,7 +268,8 @@
    от реального экрана и ломают раскладку) — только % или aspect-ratio. */
 @media (min-width: 1440px) {
   html {
-    zoom: 1.08;
+    --desktop-reference-zoom: 1.08;
+    zoom: var(--desktop-reference-zoom);
   }
 }
 @media (min-width: 1600px) {
