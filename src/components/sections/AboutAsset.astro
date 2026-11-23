@@ -1,104 +1,261 @@
 ---
-/*
-  УРОВЕНЬ 3 — БЛОК «Превращаем недвижимость в актив» (О компании)
-  Источник: Figma, узел 974:65230 («block 1 company») — ПЕРЕСОБРАН по макету
-  (раньше был рабочей заготовкой «по пропорциям»: Playfair/Inter, не те цвета,
-  огромные плитки; по правке дизайнера для ПК собран заново).
-
-  Раскладка ПК (холст 1280, у нас — контейнер 1120, колонки пропорциональны 466 : 800):
-   - Заголовок: eyebrow (Forum 20, tracking, plat) → H2 в одну строку («в актив» —
-     золотой градиент) → подзаголовок Forum 20.
-   - Слева «Left panel» — 4 плитки по 120px, зазор 20px: фон #192b29, рамка 0.7px
-     кремовая (#fff1d9), радиус 9. Внутри: иконка 63×58 (экспорт из Figma) + текст:
-     заголовок Forum 20 (золотой градиент, tracking -1px), описание Forum 16 #d4d4d4
-     (tracking -0.8px, плотный leading 1.1). Иконка и текст по центру плитки по
-     вертикали (items-center), левый отступ 40px.
-   - Справа — фото 800×400 с кремовой рамкой 1px (radius 9, затемнение снизу — scrim),
-     под ним такая же плитка 120px с текстом по центру. Высота правой колонки =
-     высоте левой (4×120 + 3×20 = 540): фото растягивается (flex-1).
-   - Четвёртая иконка («Архитектура капитала») в макете — знак моста в рамке-плашке
-     (радиус 20, кремовая рамка): рисуем рамку, внутри SVG моста.
-
-  МОБИЛЬНАЯ ВЕРСИЯ (правки дизайнера, сохранены): порядок — подзаголовок, фото (2:1),
-  подпись под фото простым текстом (короткая версия), затем компактные плитки.
-
-  Тексты — из макета дословно. ⚠️ В макете «Это наша философия» написано с латинской «a»
-  («нашa») — в тексте исправлено на кириллицу (визуально не отличается).
-  Описание под заголовком в Figma: «берет», «за счет», «надежный» (через «е»); у нас — «берёт»,
-  «за счёт», «надёжный» (орфография с «ё» принята в проекте); смысл не менялся.
-*/
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
-const base = import.meta.env.BASE_URL;
 
+const base = import.meta.env.BASE_URL;
 const cards = [
-  { icon: 'investor.svg', title: 'Для инвестора', text: 'Обеспечиваем прозрачные процессы, аналитику' },
-  { icon: 'owner.svg', title: 'Для собственника', text: 'Снимаем операционную нагрузку, повышаем доходность и сохраняем ценность актива' },
-  { icon: 'object.svg', title: 'Для объекта', text: 'Повышаем заполняемость и рыночную стоимость недвижимости.' },
-  { icon: 'bridge.svg', title: 'Архитектура капитала', text: 'Это наша философия. Мост соединяющий возможности.', framed: true },
+  {
+    icon: 'investor.svg',
+    title: 'Для инвестора',
+    text: 'Организуем совместное участие инвесторов в более масштабных проектах коммерческой недвижимости',
+  },
+  {
+    icon: 'owner.svg',
+    title: 'Для собственника',
+    text: 'Берём на себя согласованные задачи, освобождая ваше время для новых возможностей',
+  },
+  {
+    icon: 'object.svg',
+    title: 'Для объекта',
+    text: 'Анализируем состояние объекта и определяем варианты его дальнейшего использования.',
+  },
+  {
+    icon: 'bridge.svg',
+    title: 'Архитектура капитала',
+    text: 'Соединяем людей, ресурсы и возможности в проекты, рассчитанные на долгосрочное развитие',
+  },
 ];
 ---
 
-<Section id="about">
-    {/* Заголовок */}
-    <SectionHeading eyebrow="О компании">
-      Превращаем недвижимость <span class="text-gold-plate">в актив</span>
-      <Fragment slot="lead">
-        Фидента берёт на себя управление коммерческой недвижимостью, чтобы собственник получал стабильный доход, а объект становился дороже.
-      </Fragment>
-    </SectionHeading>
+<Section id="about" class="about-section" aria-label="О компании">
+  <SectionHeading eyebrow="О компании" leadMax="max-w-[948px]" class="about-heading">
+    <span class="text-gold-plate">Раскрываем потенциал</span> коммерческой недвижимости
+    <Fragment slot="lead">
+      Мы верим, что за каждым объектом стоят не только квадратные метры, но и возможности. Фидента объединяет капитал, опыт и людей, чтобы находить новые пути развития коммерческой недвижимости
+    </Fragment>
+  </SectionHeading>
 
-    {/* Плитки слева (466) | фото + текст справа (800). На мобильном: фото первым (order) */}
-    <div class="mt-8 grid gap-6 lg:mt-[46px] lg:grid-cols-[466fr_800fr] lg:gap-[14px]">
-      {/* Left panel */}
-      <div class="flex flex-col gap-3 max-lg:order-2 lg:gap-5">
-        {cards.map((card) => (
-          <article class="flex items-center gap-3.5 rounded-[9px] border-[0.7px] border-cream bg-tile px-4 py-3 md:min-h-[120px] lg:px-10">
-            {card.framed ? (
-              /* Знак моста в рамке-плашке (радиус 20) */
-              <div class="flex h-[44px] w-[48px] shrink-0 items-center justify-center rounded-[16px] border border-cream lg:h-[58px] lg:w-[63px] lg:rounded-[20px]">
-                <img src={`${base}icons/about/${card.icon}`} alt="" width="58" height="28" loading="eager" class="w-[34px] lg:w-[48px]" />
-              </div>
-            ) : (
-              <img src={`${base}icons/about/${card.icon}`} alt="" width="63" height="58" loading="eager" class="h-[44px] w-[48px] shrink-0 lg:h-[58px] lg:w-[63px]" />
-            )}
-            <div class="font-accent leading-[1.1]">
-              <h3 class="text-lg font-normal tracking-[-0.05em] text-gold-plate lg:text-xl">{card.title}</h3>
-              <p class="mt-1 text-sm tracking-[-0.05em] text-fg-dim lg:mt-0.5 lg:text-base">{card.text}</p>
-            </div>
-          </article>
-        ))}
+  <div class="about-grid">
+    <figure class="about-figure">
+      <div class="about-photo">
+        <img
+          src={`${base}images/office.webp`}
+          alt="Офис управляющей компании «Фидента»"
+          width="1535"
+          height="1024"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
 
-      {/* Photo and third title */}
-      <div class="flex flex-col gap-3 max-lg:order-1 lg:gap-5">
-        <div class="relative aspect-[2/1] flex-1 overflow-hidden rounded-[9px] border border-cream lg:aspect-auto lg:min-h-[320px]">
-          <img
-            src={`${base}images/office.webp`}
-            alt="Офис управляющей компании «Фидента»"
-            width="1535"
-            height="1024"
-            loading="eager"
-            decoding="async"
-            class="absolute inset-0 h-full w-full object-cover object-right lg:object-center"
-          />
-          {/* Scrim снизу (в макете: от прозрачного к rgba(11,20,16,.85)) */}
-          <div class="pointer-events-none absolute inset-0" style="background-image: linear-gradient(180deg, rgba(11,20,16,0) 55%, rgba(11,20,16,0.55) 100%);"></div>
-        </div>
+      <figcaption class="about-quote">
+        <blockquote>«Недвижимость становится по-настоящему ценным активом, когда за ней стоят стратегия, профессиональное управление и понимание перспектив».</blockquote>
+      </figcaption>
+    </figure>
 
-        {/* Подпись: на мобильном — простой текст (короткая версия), на lg — плитка 120px */}
-        <div class="flex items-center lg:min-h-[120px] lg:rounded-[9px] lg:border-[0.7px] lg:border-cream lg:bg-tile lg:px-[100px] lg:py-3">
-          <p class="font-accent text-sm leading-[1.3] text-fg-dim lg:text-base lg:leading-[1.1] lg:tracking-[-0.01em]">
-            <span class="lg:hidden">
-              Каждый объект имеет скрытый потенциал. Мы раскрываем его грамотным управлением и долгосрочной стратегией.
-            </span>
-            <span class="max-lg:hidden">
-              Каждый объект имеет скрытый потенциал. Мы раскрываем его за счёт грамотного управления, оптимизации
-              процессов и долгосрочной стратегии развития, превращая коммерческую недвижимость в надёжный
-              инвестиционный актив.
-            </span>
-          </p>
-        </div>
-      </div>
-    </div>
+    <ul class="about-cards">
+      {cards.map(({ icon, title, text }) => (
+        <li class="about-card">
+          <span class:list={['about-icon', { 'about-icon--bridge': icon === 'bridge.svg' }]}>
+            <img
+              src={`${base}icons/about/${icon}`}
+              width={icon === 'bridge.svg' ? 58 : 63}
+              height={icon === 'bridge.svg' ? 28 : 58}
+              alt=""
+              loading="lazy"
+            />
+          </span>
+          <div>
+            <h3 class="text-gold-plate">{title}</h3>
+            <p>{text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
 </Section>
+
+<style>
+  .about-section {
+    --gradient-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
+    font-family: var(--font-accent);
+    scroll-margin-top: 32px;
+    zoom: calc(1 / var(--desktop-reference-zoom, 1));
+  }
+
+  .about-section :global(.container-page) {
+    width: calc(100% - 2 * clamp(20px, 5.556%, 80px));
+    max-width: 1280px;
+    padding-inline: 0;
+  }
+
+  .about-section :global(.about-heading .text-eyebrow) {
+    font-size: clamp(16px, 1.4vw, 20px);
+    line-height: 1.2;
+    letter-spacing: 0.104em;
+  }
+
+  .about-section :global(.about-heading .text-h2) {
+    margin-top: 4px;
+    color: #f6f3e8;
+    font-size: clamp(30px, 3.48vw, 50px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .about-section :global(.about-heading .text-lead) {
+    margin-top: 0;
+    color: #b8c2b8;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .about-grid,
+  .about-figure,
+  .about-cards {
+    display: grid;
+    gap: 12px;
+  }
+
+  .about-grid {
+    gap: 20px;
+    margin-top: clamp(26px, 3.2vw, 46px);
+  }
+
+  .about-photo {
+    position: relative;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
+    border: 1px solid rgba(255, 241, 217, 0.7);
+    border-radius: 9px;
+  }
+
+  .about-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 8%;
+  }
+
+  .about-card,
+  .about-quote {
+    display: flex;
+    align-items: center;
+    border: 0.7px solid rgba(255, 241, 217, 0.58);
+    border-radius: 9px;
+    background: var(--color-tile);
+    color: #dedede;
+  }
+
+  .about-card {
+    min-height: 100px;
+    gap: 14px;
+    padding: 12px 16px;
+  }
+
+  .about-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 49px;
+    aspect-ratio: 63 / 58;
+  }
+
+  .about-icon img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .about-icon--bridge {
+    border: 1px solid rgba(255, 241, 217, 0.7);
+    border-radius: 9px;
+  }
+
+  .about-icon--bridge img {
+    max-width: calc(100% - 3px);
+  }
+
+  .about-card h3 {
+    font-size: clamp(18px, 1.4vw, 20px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .about-card p,
+  .about-quote {
+    font-size: 16px;
+    line-height: 1.1;
+  }
+
+  .about-card p {
+    margin-top: 3px;
+    letter-spacing: -0.05em;
+  }
+
+  .about-quote {
+    min-height: 86px;
+    justify-content: center;
+    padding: 14px 18px;
+  }
+
+  .about-quote blockquote {
+    width: 100%;
+    max-width: 534px;
+  }
+
+  @media (min-width: 640px) {
+    .about-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-section :global(.about-heading) {
+      margin-inline-start: 10px;
+    }
+
+    .about-grid {
+      grid-template-columns: minmax(0, 466fr) minmax(0, 800fr);
+      gap: 14px;
+    }
+
+    .about-cards {
+      grid-area: 1 / 1;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .about-figure {
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 20px;
+    }
+
+    .about-photo {
+      aspect-ratio: auto;
+    }
+
+    .about-card {
+      min-height: 120px;
+      padding-inline: clamp(18px, 2.78vw, 40px);
+    }
+
+    .about-card:first-child {
+      padding-inline-end: clamp(14px, 1.53vw, 22px);
+    }
+
+    .about-card:first-child p {
+      line-height: 1;
+    }
+
+    .about-icon {
+      width: 63px;
+    }
+
+    .about-quote {
+      min-height: 120px;
+    }
+  }
+</style>
