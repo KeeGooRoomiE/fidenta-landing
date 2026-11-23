@@ -17,7 +17,7 @@ const cards = [
   {
     icon: 'object.svg',
     title: 'Для объекта',
-    text: 'Анализируем состояние объекта и определяем варианты его дальнейшего использования.',
+    text: 'Изучаем потенциал недвижимости, выявляем сильные стороны, ограничения и точки роста',
   },
   {
     icon: 'bridge.svg',
@@ -48,8 +48,12 @@ const cards = [
         />
       </div>
 
-      <figcaption class="about-quote">
-        <blockquote>«Недвижимость становится по-настоящему ценным активом, когда за ней стоят стратегия, профессиональное управление и понимание перспектив».</blockquote>
+      <figcaption class="about-caption">
+        <p>
+          Что будет востребовано здесь через год, пять, десять лет?<br />
+          Во сколько это обойдётся? Кому доверить работу?<br />
+          Эти и другие вопросы стоит задать до того, как в проект вложены миллионы
+        </p>
       </figcaption>
     </figure>
 
@@ -126,7 +130,7 @@ const cards = [
     position: relative;
     aspect-ratio: 2 / 1;
     overflow: hidden;
-    border: 1px solid rgba(255, 241, 217, 0.7);
+    border: 0.7px solid rgba(255, 241, 217, 0.7);
     border-radius: 9px;
   }
 
@@ -140,7 +144,7 @@ const cards = [
   }
 
   .about-card,
-  .about-quote {
+  .about-caption {
     display: flex;
     align-items: center;
     border: 0.7px solid rgba(255, 241, 217, 0.58);
@@ -170,7 +174,7 @@ const cards = [
   }
 
   .about-icon--bridge {
-    border: 1px solid rgba(255, 241, 217, 0.7);
+    border: 0.7px solid rgba(255, 241, 217, 0.7);
     border-radius: 9px;
   }
 
@@ -185,7 +189,7 @@ const cards = [
   }
 
   .about-card p,
-  .about-quote {
+  .about-caption {
     font-size: 16px;
     line-height: 1.1;
   }
@@ -195,13 +199,14 @@ const cards = [
     letter-spacing: -0.05em;
   }
 
-  .about-quote {
+  .about-caption {
     min-height: 86px;
     justify-content: center;
     padding: 14px 18px;
+    text-align: center;
   }
 
-  .about-quote blockquote {
+  .about-caption p {
     width: 100%;
     max-width: 534px;
   }
@@ -254,7 +259,7 @@ const cards = [
       width: 63px;
     }
 
-    .about-quote {
+    .about-caption {
       min-height: 120px;
     }
   }
