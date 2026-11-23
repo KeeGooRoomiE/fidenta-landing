@@ -5,7 +5,6 @@ const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export function initInvestmentPuzzle(root: HTMLElement) {
   const desktop = matchMedia('(min-width: 1024px)');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const heading = root.querySelector<HTMLElement>('.investment-heading')!;
   const desktopPin = root.querySelector<HTMLElement>('[data-puzzle-pin="desktop"]')!;
   const mobilePin = root.querySelector<HTMLElement>('[data-puzzle-pin="mobile"]')!;
   const desktopMarker = root.querySelector<HTMLElement>('[data-puzzle-marker="desktop"]')!;
@@ -110,20 +109,25 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (reducedMotion.matches) {
       travel = 0;
       root.removeAttribute('data-puzzle-motion');
+      root.removeAttribute('data-puzzle-compact');
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       render(1);
       return;
     }
 
-    const pin = desktop.matches ? desktopPin : mobilePin;
-    marker = desktop.matches ? desktopMarker : mobileMarker;
-    const height = pin.getBoundingClientRect().height;
+    const wide = desktop.matches;
+    const pin = wide ? desktopPin : mobilePin;
+    marker = wide ? desktopMarker : mobileMarker;
+    const bounds = pin.getBoundingClientRect();
     // getBoundingClientRect учитывает масштаб страницы, а CSS top задаётся в локальных пикселях.
-    const scale = pin.offsetHeight ? height / pin.offsetHeight : 1;
+    const scale = pin.offsetWidth ? bounds.width / pin.offsetWidth : 1;
     const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + 10;
-    pinTop = Math.min(availableTop, innerHeight - height - 8);
-    travel = innerHeight * (desktop.matches ? 1.9 : 1.55);
+    const room = (innerHeight - availableTop - 8) / scale;
+    root.style.setProperty('--investment-room', `${Math.round(room)}px`);
+    root.toggleAttribute('data-puzzle-compact', wide && room < 670);
+    pinTop = wide ? availableTop : Math.min(availableTop, innerHeight - bounds.height - 8);
+    travel = innerHeight * (wide ? 1.9 : 1.55);
     root.style.setProperty('--investment-pin', `${pinTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
     root.setAttribute('data-puzzle-motion', '');
@@ -135,7 +139,6 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   desktop.addEventListener('change', measure);
   reducedMotion.addEventListener('change', measure);
   const layout = new ResizeObserver(measure);
-  layout.observe(heading);
   layout.observe(desktopPin);
   layout.observe(mobilePin);
   layout.observe(root.querySelector<HTMLElement>('.investment-copy')!);
