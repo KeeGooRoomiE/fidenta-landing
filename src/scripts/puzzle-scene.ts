@@ -12,7 +12,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const header = document.querySelector<HTMLElement>('.header-bar');
   const expand = root.querySelector<HTMLButtonElement>('[data-puzzle-expand]')!;
   const expandLabel = expand.querySelector<HTMLElement>('[data-puzzle-expand-label]')!;
-  const collapse = root.querySelector<HTMLButtonElement>('[data-puzzle-collapse]')!;
+  const firstDetail = root.querySelector<HTMLElement>('#investment-details p')!;
   const amount = root.querySelector<HTMLElement>('[data-puzzle-amount]')!;
   const count = root.querySelector<HTMLElement>('[data-puzzle-count]')!;
   const percent = root.querySelector<HTMLElement>('[data-puzzle-percent]')!;
@@ -49,11 +49,11 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     expandLabel.textContent = open ? 'Свернуть текст' : 'Читать далее';
   }
 
-  expand.addEventListener('click', () => setExpanded(expand.getAttribute('aria-expanded') !== 'true'));
-  collapse.addEventListener('click', () => {
-    setExpanded(false);
-    expand.focus({ preventScroll: true });
-    expand.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+  expand.addEventListener('click', (event) => {
+    const opening = expand.getAttribute('aria-expanded') !== 'true';
+    setExpanded(opening);
+    if (opening && event.detail === 0) firstDetail.focus();
+    if (!opening) expand.scrollIntoView({ block: 'nearest', behavior: 'instant' });
   });
   root.setAttribute('data-puzzle-ready', '');
 
