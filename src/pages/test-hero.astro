@@ -7,7 +7,7 @@
   существующих блока как есть — первые экраны сайта в том же порядке, что и в index.astro (Header, Hero, AboutAsset, InvestmentTerms) — остальной
   функционал не трогаем, никаких форков компонентов.
 
-  Кнопка «Консультация» в хедере здесь НЕ ведёт на форму (на странице нет
+  Кнопка «Связаться» в хедере здесь НЕ ведёт на форму (на странице нет
   #cta) — скрипт ниже перехватывает клик и открывает системный диалог
   выбора файла; выбранное фото через object URL подставляется в
   #hero-bg-image (id добавлен в Hero.astro — больше он ни на что не влияет).
@@ -29,14 +29,14 @@ import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
     <InvestmentTerms />
   </main>
 
-  {/* Скрытый input — открывается программно по клику на «Консультация» */}
+  {/* Скрытый input — открывается программно по клику на «Связаться» */}
   <input type="file" accept="image/*" id="hero-photo-input" class="hidden" aria-hidden="true" />
 
   {/* Подсказка для дизайнера: fixed, не часть дизайна блоков */}
   <div class="fixed bottom-4 left-4 z-[60] max-w-xs rounded-lg border border-accent/30 bg-surface/95 p-4 text-sm text-fg shadow-lg backdrop-blur">
     <p class="font-semibold text-accent">Тестовая страница подбора фото</p>
     <p class="mt-1 text-text-soft">
-      Кнопка «Консультация» в хедере открывает выбор файла — фото подставится в фон Hero.
+      Кнопка «Связаться» в хедере открывает выбор файла — фото подставится в фон Hero.
     </p>
     <button
       id="hero-photo-reset"
@@ -55,6 +55,7 @@ import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
   const resetBtn = document.getElementById('hero-photo-reset');
 
   const originalSrc = heroImg?.getAttribute('src') ?? '';
+  const originalSrcset = heroImg?.srcset ?? '';
   let currentObjectUrl: string | null = null;
 
   cta?.addEventListener('click', (e) => {
@@ -68,6 +69,7 @@ import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
 
     if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
     currentObjectUrl = URL.createObjectURL(file);
+    heroImg.removeAttribute('srcset');
     heroImg.src = currentObjectUrl;
   });
 
@@ -76,7 +78,10 @@ import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
       URL.revokeObjectURL(currentObjectUrl);
       currentObjectUrl = null;
     }
-    if (heroImg) heroImg.src = originalSrc;
+    if (heroImg) {
+      heroImg.src = originalSrc;
+      heroImg.srcset = originalSrcset;
+    }
     if (input) input.value = '';
   });
 </script>
