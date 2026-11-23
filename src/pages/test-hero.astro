@@ -4,7 +4,7 @@
 
   Только для подбора фото в Hero дизайнером. НЕ часть основного сайта,
   нигде не ссылается на себя и ниоткуда не ссылается. Собирает три
-  существующих блока как есть — первые экраны сайта в том же порядке, что и в index.astro (Header, Hero, AboutAsset, InvestmentTerms) — остальной
+  существующих блока как есть — первые экраны сайта в том же порядке, что и в index.astro (Header, Hero, AboutAsset, AssetAccess) — остальной
   функционал не трогаем, никаких форков компонентов.
 
   Кнопка «Связаться» в хедере здесь НЕ ведёт на форму (на странице нет
@@ -18,7 +18,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/sections/Header.astro';
 import Hero from '../components/sections/Hero.astro';
 import AboutAsset from '../components/sections/AboutAsset.astro';
-import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
+import AssetAccess from '../components/sections/AssetAccess.astro';
 ---
 
 <Layout title="Тест Hero — подбор фото (служебная страница)">
@@ -26,7 +26,7 @@ import InvestmentTerms from '../components/sections/InvestmentTerms.astro';
   <main>
     <Hero />
     <AboutAsset />
-    <InvestmentTerms />
+    <AssetAccess />
   </main>
 
   {/* Скрытый input — открывается программно по клику на «Связаться» */}
