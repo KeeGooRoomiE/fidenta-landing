@@ -240,7 +240,11 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       grid-template-areas: 'brand contact cta account menu';
       gap: 16px;
       min-height: 86px;
-      padding: 0 31px 4px;
+      /* Проценты от ширины шапки страницы, как у контейнера hero. */
+      --panel-width: min(calc(100% - 2 * var(--header-inset)), 1440px);
+      --content-width: min(calc(100% - 2 * clamp(32px, 5.556%, 80px)), 1280px);
+      padding: 0 0 4px;
+      padding-inline: calc((var(--panel-width) - var(--content-width)) / 2 - 1px);
       border-width: 1px;
       /* Подложка сохраняет контраст и поверх светлого фото первого экрана. */
       background: rgba(11, 24, 19, 0.9);

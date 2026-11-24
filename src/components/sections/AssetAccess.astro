@@ -136,7 +136,7 @@ const occlusion = (index: number) => index === 2
     font-family: var(--font-accent);
     scroll-margin-top: 98px;
     overflow-anchor: none;
-    zoom: var(--investment-layout-zoom, calc(1 / var(--desktop-reference-zoom, 1)));
+    zoom: calc(1 / var(--desktop-reference-zoom, 1));
   }
 
   .investment-container {
@@ -475,8 +475,7 @@ const occlusion = (index: number) => index === 2
     }
 
     .investment-container {
-      max-width: var(--investment-layout-max);
-      width: var(--investment-layout-width);
+      width: calc(100% - 2 * clamp(32px, 5.556%, 80px));
     }
 
     .investment-heading {
