@@ -120,7 +120,7 @@ const objects = [
 
   <div class="mt-8" id="portfolio-more" hidden>
     <div class="mb-4 flex items-center justify-between gap-4">
-      <h3 class="text-2xl text-fg" tabindex="-1">Другие объекты Фиденты</h3>
+      <h3 class="text-2xl leading-tight text-fg" tabindex="-1">Другие объекты</h3>
       <div class="flex shrink-0 gap-2">
         <button class="slider-arrow" type="button" data-track-step="-1" aria-label="Предыдущий объект">←</button>
         <button class="slider-arrow" type="button" data-track-step="1" aria-label="Следующий объект">→</button>
@@ -130,10 +130,13 @@ const objects = [
       {objects.slice(2).map((object, index) => (
         <ObjectCard {...object} id={`${object.id}-slider`} class={index < 4 ? 'track-mobile' : undefined} />
       ))}
-      <article class="project-card relative isolate flex min-h-[430px] flex-col items-start justify-end gap-4 overflow-hidden rounded-[9px] border border-cream/60 p-6 font-accent sm:p-7">
-        <img class="project-photo" src={`${base}images/process-bridge.webp`} alt="" width="1024" height="342" loading="lazy" decoding="async" />
-        <p class="text-eyebrow text-gold-plate">Следующая история</p>
-        <h4 class="max-w-[13ch] text-[clamp(34px,4vw,40px)] leading-[1.02] text-fg">Здесь может начаться ваш проект</h4>
+      <article class="project-card relative isolate flex min-h-[480px] flex-col items-start justify-end gap-3 overflow-hidden rounded-[9px] border border-cream/60 p-6 font-accent sm:p-7">
+        <img class="project-photo" src={`${base}images/project-retail.jpg`} alt="" width="960" height="640" loading="lazy" decoding="async" />
+        <p class="text-gold-plate text-base leading-tight tracking-[0.04em] uppercase">Следующая история</p>
+        <h4 class="project-title leading-[1.05] text-fg">
+          <span class="block">Здесь может начаться</span>
+          <span class="text-gold-plate">ваш проект</span>
+        </h4>
         <p class="max-w-[29ch] text-lg leading-snug text-fg">Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу.</p>
         <a href="#cta" class="mt-2 inline-flex min-h-11 items-center gap-2 border-t border-cream/30 pt-2 text-xl hover:underline"><span class="text-gold-plate">Обсудить проект <span aria-hidden="true">→</span></span></a>
       </article>
@@ -170,42 +173,40 @@ const objects = [
 
   .object-position {
     --position-track: linear-gradient(176deg, rgb(255 241 217 / 50%) 25.714%, rgb(168 133 72 / 50%) 120.56%);
-    --position-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12'%3E%3Cpath d='m5 3-3 3 3 3m4-6 3 3-3 3' fill='none' stroke='%230a2019' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 12px no-repeat, var(--gradient-gold), #917b52;
     display: block;
     width: 100%;
     height: 32px;
     margin-top: 6px;
     appearance: none;
-    background: var(--position-track) center / 100% 5px no-repeat;
+    background: var(--position-track) center / 100% 2px no-repeat;
     cursor: ew-resize;
   }
 
   .object-position::-webkit-slider-runnable-track {
-    height: 5px;
+    height: 2px;
     background: transparent;
   }
 
   .object-position::-moz-range-track {
-    height: 5px;
+    height: 2px;
     background: transparent;
   }
 
   .object-position::-webkit-slider-thumb {
     appearance: none;
-    width: 44px;
-    height: 21px;
-    margin-top: -8px;
-    border: 1px solid rgb(255 241 217 / 38%);
-    border-radius: 9px;
-    background: var(--position-thumb);
+    width: 28px;
+    height: 6px;
+    margin-top: -2px;
+    border-radius: 3px;
+    background: var(--gradient-gold);
   }
 
   .object-position::-moz-range-thumb {
-    width: 44px;
-    height: 21px;
-    border: 1px solid rgb(255 241 217 / 38%);
-    border-radius: 9px;
-    background: var(--position-thumb);
+    width: 28px;
+    height: 6px;
+    border: 0;
+    border-radius: 3px;
+    background: var(--gradient-gold);
   }
 
   .portfolio-read {
@@ -271,16 +272,29 @@ const objects = [
   }
 
   .slider-arrow {
+    position: relative;
     width: 44px;
     height: 44px;
-    border: 1px solid rgb(255 241 217 / 35%);
     border-radius: 6px;
     color: #fff1d9;
     cursor: pointer;
   }
 
+  .slider-arrow::before {
+    position: absolute;
+    inset: 0;
+    padding: 0.7px;
+    border-radius: inherit;
+    background: var(--gradient-gold);
+    opacity: 0.5;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    content: '';
+  }
+
   .slider-arrow:disabled {
-    opacity: 0.4;
+    color: rgb(255 241 217 / 40%);
     cursor: default;
   }
 
@@ -289,7 +303,12 @@ const objects = [
   }
 
   .project-card {
+    container-type: inline-size;
     background: radial-gradient(ellipse at 82% 9%, #173d53, transparent 70%), #091c17;
+  }
+
+  .project-title {
+    font-size: clamp(20px, 10.5cqi, 40px);
   }
 
   .project-photo,
@@ -302,14 +321,14 @@ const objects = [
 
   .project-photo {
     z-index: -2;
-    height: 49%;
+    height: 62%;
     object-fit: cover;
-    object-position: 76% top;
+    object-position: 55% center;
   }
 
   .project-card::before {
     z-index: -1;
-    background: linear-gradient(180deg, rgb(7 21 52 / 10%) 8%, rgb(9 28 23 / 76%) 43%, #091c17 62%);
+    background: linear-gradient(180deg, rgb(7 21 52 / 12%), rgb(9 28 23 / 32%) 29%, #091c17 66%);
     content: '';
   }
 </style>
