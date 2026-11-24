@@ -66,6 +66,7 @@ export function initPortfolio(root: HTMLElement) {
 
   const more = root.querySelector<HTMLButtonElement>('[data-portfolio-more] button')!;
   const panel = root.querySelector<HTMLElement>('#portfolio-more')!;
+  const closePortfolio = panel.querySelector<HTMLButtonElement>('[data-portfolio-close]')!;
   const track = panel.querySelector<HTMLElement>('[data-object-track]')!;
   const prev = panel.querySelector<HTMLButtonElement>('[data-track-step="-1"]')!;
   const next = panel.querySelector<HTMLButtonElement>('[data-track-step="1"]')!;
@@ -116,6 +117,14 @@ export function initPortfolio(root: HTMLElement) {
     more.hidden = true;
     updateNavigation();
     panel.querySelector('h3')?.focus();
+  });
+  closePortfolio.addEventListener('click', () => {
+    more.hidden = false;
+    more.setAttribute('aria-expanded', 'false');
+    panel.hidden = true;
+    equalizeCards();
+    more.focus({ preventScroll: true });
+    more.scrollIntoView({ block: 'center', behavior: 'instant' });
   });
   prev.addEventListener('click', () => move(-1));
   next.addEventListener('click', () => move(1));
