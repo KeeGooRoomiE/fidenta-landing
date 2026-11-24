@@ -1,7 +1,7 @@
 ---
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
-import { phones } from '../../data/site';
+import ContactMenu from '../ui/ContactMenu.astro';
 
 const base = import.meta.env.BASE_URL;
 const questions = [
@@ -27,7 +27,7 @@ const questions = [
   ],
   [
     "Что происходит после заявки?",
-    "Свяжемся с вами в течение рабочего дня, чтобы уточнить задачу. Если у вас есть объект, договоримся, какие сведения нужны для оценки. Если вы ищете проект, уточним, какой формат участия вам подходит"
+    "Свяжемся с вами по указанному номеру, чтобы уточнить задачу. Если у вас есть объект, договоримся, какие сведения нужны для оценки. Если вы ищете проект, уточним, какой формат участия вам подходит"
   ]
 ];
 const extraQuestions = [
@@ -61,23 +61,12 @@ const extraQuestions = [
     <button type="button" class="faq-more text-gold-plate w-fit" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
 
     <div class="faq-contact flex flex-col items-start">
-      <div class="faq-visual w-full max-w-[360px] border-l border-sand/45" aria-hidden="true">
+      <div class="faq-visual w-full max-w-[360px]" aria-hidden="true">
         <img src={`${base}images/faq-illustration.jpg`} width="720" height="480" alt="" loading="lazy" decoding="async" />
       </div>
       <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос? Обсудим вашу задачу</p>
-      <div class="w-full max-md:-mx-3 max-md:w-auto max-md:self-stretch">
-        <details class="faq-contact-menu relative">
-          <summary class="plat-outline flex min-h-12 cursor-pointer items-center justify-center gap-3 rounded-[9px] font-accent text-lg">
-            <span class="text-gold-plate">Задать вопрос специалисту</span>
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 4h5l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v5C11 21 3 13 4 4Z" stroke="#c7b590" stroke-width="1.4" stroke-linejoin="round"/>
-            </svg>
-          </summary>
-          <div class="faq-contact-options">
-            <a href="https://t.me/turvast"><span class="text-gold-plate">Написать в чат</span></a>
-            <a href={phones.header.href}><span class="text-gold-plate">Позвонить</span></a>
-          </div>
-        </details>
+      <div class="w-full max-w-[350px]">
+        <ContactMenu label="Задать вопрос специалисту" />
       </div>
     </div>
   </div>
@@ -87,17 +76,11 @@ const extraQuestions = [
   .faq-section { background: #071f18; }
   .faq-layout { grid-template-areas: 'intro' 'questions' 'more' 'contact'; }
   .faq-more { grid-area: more; min-height: 44px; font-family: var(--font-accent); justify-self: center; cursor: pointer; }
-  .faq-contact-menu { width: min(350px, 100%); }
-  .faq-contact-menu summary { list-style: none; background: #0d291f; padding-inline: 8px; }
-  .faq-contact-menu summary::-webkit-details-marker { display: none; }
-  .faq-contact-options { position: absolute; z-index: 5; top: calc(100% + 10px); right: 0; min-width: max-content; padding: 6px; border: 1px solid #766e5c; border-radius: 9px; background: var(--color-tile); }
-  .faq-contact-options a { display: block; padding: 10px 14px; font: 18px var(--font-accent); }
-  .faq-contact-options a:is(:hover, :focus-visible) { background: #243a32; }
   .faq-intro { grid-area: intro; }
   .faq-questions { grid-area: questions; }
   .faq-contact { grid-area: contact; }
-  .faq-question { background: #0a211a; }
-  .faq-question[open] { background: #122e25; }
+  .faq-question { background: var(--surface-40); }
+  .faq-question[open] { background: var(--surface-60); }
   .faq-question summary { list-style: none; }
   .faq-question summary::-webkit-details-marker { display: none; }
   .faq-plus { font-size: 24px; }
@@ -105,7 +88,7 @@ const extraQuestions = [
   .faq-visual img { display: block; width: 100%; height: auto; mask-image: radial-gradient(ellipse at center, black 45%, transparent 77%); }
   @media (width < 768px) {
     .faq-questions { gap: 0; border-block: 1px solid rgb(255 241 217 / 25%); }
-    .faq-question, .faq-question[open] { background: transparent; border-radius: 0; }
+    .faq-question { border-radius: 0; }
     .faq-question + .faq-question { border-top: 1px solid rgb(255 241 217 / 25%); }
     .faq-question::after { display: none; }
     .faq-question summary { padding-inline: 0; }
@@ -122,7 +105,7 @@ const extraQuestions = [
   if (faq) {
     const more = faq.querySelector<HTMLButtonElement>('[data-faq-more]')!;
     const extras = faq.querySelectorAll<HTMLDetailsElement>('[data-faq-extra]');
-    const menu = faq.querySelector<HTMLDetailsElement>('.faq-contact-menu')!;
+    const menu = faq.querySelector<HTMLDetailsElement>('.contact-choice')!;
     const contact = faq.querySelector<HTMLElement>('.faq-contact')!;
     const list = faq.querySelector<HTMLElement>('.faq-questions')!;
     const intro = faq.querySelector<HTMLElement>('.faq-intro')!;
@@ -147,14 +130,6 @@ const extraQuestions = [
     observer.observe(list);
     observer.observe(intro);
     observer.observe(contact);
-    document.addEventListener('click', event => {
-      if (menu.open && !menu.contains(event.target as Node)) menu.open = false;
-    });
-    menu.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && menu.open) {
-        menu.open = false;
-        menu.querySelector('summary')?.focus();
-      }
-    });
+
   }
 </script>

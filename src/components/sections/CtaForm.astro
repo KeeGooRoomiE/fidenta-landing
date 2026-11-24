@@ -30,6 +30,7 @@
 */
 import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
+import ContactMenu from '../ui/ContactMenu.astro';
 const copy = {
   investor: {
     eyebrow: 'Обратная связь',
@@ -37,13 +38,13 @@ const copy = {
     accent: 'и подберём решение',
     lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода',
     steps: [
-      'Свяжемся в течение одного рабочего дня и уточним вашу задачу',
+      'Уточним вашу задачу и удобный способ связи',
       'Пришлём карточку объекта с адресом и арендатором',
       'Съездим на объект вместе, если захотите',
     ],
     formTitle: 'Заявка инвестора',
     placeholder: 'Несколько слов о вашем запросе',
-    submit: 'Отправить обращение →',
+    submit: 'Заказать обратный звонок',
   },
   // ЧЕРНОВИК — см. примечание в шапке файла
   owner: {
@@ -52,13 +53,13 @@ const copy = {
     accent: 'и обсудим его потенциал',
     lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива',
     steps: [
-      'Свяжемся в течение одного рабочего дня и уточним вашу задачу',
+      'Уточним вашу задачу и удобный способ связи',
       'Уточним, как используется объект, какие есть договоры аренды и что нужно изменить',
       'Договоримся об осмотре и предложим план работ и условия управления',
     ],
     formTitle: 'Заявка собственника',
     placeholder: 'Например, офисное здание, 3 000 м², Санкт-Петербург',
-    submit: 'Отправить обращение →',
+    submit: 'Заказать обратный звонок',
   },
 };
 // Поле-подпись «Комментарий» одинаково для обоих вариантов (в Figma — «Комментарий / интересующий формат участия»)
@@ -83,7 +84,7 @@ const copy = {
       <p data-t="lead" class="max-w-[428px] text-lead text-copy">{copy.investor.lead}</p>
       <details class="cta-process">
         <summary class="text-gold-plate cursor-pointer">Читать далее <span aria-hidden="true"></span></summary>
-        <p class="mt-3 text-fg md:text-xl">Как мы работаем после заявки</p>
+        <p class="mt-3 text-gold-plate md:text-xl">Как мы обрабатываем заявки</p>
         <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
           {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
         </ul>
@@ -97,11 +98,10 @@ const copy = {
         <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile plat-outline">Я собственник</button>
       </div>
 
-      {/* Заголовок формы и «Ответим…» на мобильном скрыты: повторяют надпись и первый пункт сверху */}
       <h3 data-t="formTitle" class="mt-3 hidden font-accent text-4xl font-normal leading-[1.1] text-fg lg:block">
         {copy.investor.formTitle}
       </h3>
-      <p class="hidden text-xl leading-[1.12] text-copy lg:block">Ответим в течение одного рабочего дня</p>
+      <p class="text-lg leading-snug text-copy">Оставьте номер для обратного звонка. Если хотите связаться быстрее, позвоните нам или напишите в чат</p>
 
       <form id="cta-form" class="flex flex-col gap-3 md:gap-4" novalidate>
         {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
@@ -140,8 +140,9 @@ const copy = {
           </span>
         </label>
 
-        <div class="cta-submit max-md:-mx-3">
+        <div class="cta-submit grid gap-3 max-md:-mx-3 sm:grid-cols-2">
           <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
+          <ContactMenu label="Связаться сейчас" />
         </div>
 
         {/* Статус отправки */}
@@ -162,6 +163,9 @@ const copy = {
   .cta-process summary span { width: 8px; height: 8px; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
   .cta-process[open] summary span { rotate: 225deg; }
   .cta-process ul { margin-top: 8px; }
+  @media (width < 640px) {
+    .cta-submit { max-width: 350px; width: calc(100% + 24px); margin-inline: auto; align-self: center; }
+  }
   @media (width < 768px) {
     .cta-layout { gap: 36px; }
     .cta-intro { gap: 14px; }
@@ -251,7 +255,7 @@ const copy = {
     width: 100%;
     border-radius: 9px;
     border: 1px solid #4f5747;
-    background: #0c231c;
+    background: var(--surface-40);
     padding: 0 17px;
     font-family: var(--font-body);
     font-size: 16px;
@@ -270,7 +274,7 @@ const copy = {
       height: 48px;
       padding: 0 13px;
       border-color: #576652;
-      background: #061e16;
+      background: var(--surface-40);
     }
     textarea.cta-input { min-height: 65px; }
   }

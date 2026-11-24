@@ -1,0 +1,37 @@
+---
+import { phones } from '../../data/site';
+
+const { label } = Astro.props;
+---
+
+<details class="contact-choice">
+  <summary class="plat-outline">
+    <span class="text-gold-plate">{label}</span>
+  </summary>
+  <div class="contact-choice-options">
+    <a href="https://t.me/turvast"><span class="text-gold-plate">Написать в чат</span></a>
+    <a href={phones.header.href}><span class="text-gold-plate">Позвонить</span></a>
+  </div>
+</details>
+
+<style>
+  .contact-choice { position: relative; width: 100%; font-family: var(--font-accent); }
+  summary { display: grid; place-items: center; min-height: 48px; padding: 6px 12px; border-radius: 9px; background: var(--surface-40); cursor: pointer; list-style: none; text-align: center; font-size: 18px; }
+  summary::-webkit-details-marker { display: none; }
+  .contact-choice-options { position: absolute; z-index: 20; top: calc(100% + 8px); inset-inline: 0; padding: 6px; border: 1px solid #766e5c; border-radius: 9px; background: var(--surface-60); backdrop-filter: blur(12px); }
+  a { display: block; padding: 10px 14px; border-radius: 5px; font-size: 18px; }
+  a:is(:hover, :focus-visible) { background: var(--surface-90); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('details.contact-choice').forEach(menu => {
+    document.addEventListener('click', event => {
+      if (menu.open && !menu.contains(event.target as Node)) menu.open = false;
+    });
+    menu.addEventListener('keydown', event => {
+      if (event.key !== 'Escape' || !menu.open) return;
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
+    });
+  });
+</script>
