@@ -32,85 +32,91 @@ const occlusion = (index: number) => index === 2
           </button>
         </div>
 
-        <div class="investment-capital">
-          <p class="text-gold-plate investment-capital-label">Объединение капитала</p>
-          <div class="investment-amount">
-            <span><span data-puzzle-amount>{totalMln}</span> млн ₽</span>
-            <span>из {totalMln} млн ₽</span>
-          </div>
-          <div class="investment-count">
-            <span><span data-puzzle-count>{pieces.length}</span> из {pieces.length} долей</span>
-            <span class="text-gold-plate" data-puzzle-percent>100%</span>
-          </div>
-          <div class="investment-progress" role="progressbar" aria-label="Объединение капитала" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-puzzle-progress>
-            <span data-puzzle-bar></span>
-          </div>
-          <p class="investment-phase" data-puzzle-phase>Сбор долей завершён · этап управления</p>
-        </div>
+        <div class="investment-demo-track">
+          <div data-puzzle-demo-marker aria-hidden="true"></div>
+          <div class="investment-demo" data-puzzle-demo>
+            <div class="investment-capital">
+              <p class="text-gold-plate investment-capital-label">Объединение капитала</p>
+              <div class="investment-amount">
+                <span><span data-puzzle-amount>{totalMln}</span> млн ₽</span>
+                <span>из {totalMln} млн ₽</span>
+              </div>
+              <div class="investment-count">
+                <span><span data-puzzle-count>{pieces.length}</span> из {pieces.length} долей</span>
+                <span class="text-gold-plate" data-puzzle-percent>100%</span>
+              </div>
+              <div class="investment-progress" role="progressbar" aria-label="Объединение капитала" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-puzzle-progress>
+                <span data-puzzle-bar></span>
+              </div>
+              <p class="investment-phase" data-puzzle-phase>Сбор долей завершён · этап управления</p>
+            </div>
 
-        <figure class="investment-board">
-          <figcaption>Логистический комплекс</figcaption>
-          <div class="investment-scene plat-outline">
-            <svg viewBox={`0 0 ${sceneWidth} ${sceneHeight}`} role="img" aria-label="Логистический комплекс: кран, контейнеры, грузовики и склад">
-              <defs>
-                <image id="investment-image" href={`${base}images/investment-puzzle.webp`} width={sceneWidth} height={sceneHeight} />
-                <filter id="investment-monochrome" color-interpolation-filters="sRGB">
-                  <feColorMatrix type="saturate" values="0" />
-                </filter>
-                <mask id="investment-sky" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                  <path d={sky} fill="white" />
-                  {craneMetal.map((path) => <path d={path} fill="black" />)}
-                  <path d={craneCables} fill="none" stroke="black" stroke-width="2" />
-                </mask>
-                <mask id="investment-background-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                  <rect width={sceneWidth} height={sceneHeight} fill="white" />
-                  {foregroundPieces.map(({ path }) => <path d={path} fill="black" />)}
-                </mask>
-                <mask id="investment-crane-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                  <rect width={sceneWidth} height={sceneHeight} fill="white" />
-                  <path d={pieces[1].path} fill="black" />
-                </mask>
-                {pieces.map(({ id, path }) => (
-                  <clipPath id={`investment-piece-${id}`}><path d={path} /></clipPath>
-                ))}
-              </defs>
+            <figure class="investment-board">
+              <figcaption>Логистический комплекс</figcaption>
+              <div class="investment-scene plat-outline">
+                <svg viewBox={`0 0 ${sceneWidth} ${sceneHeight}`} role="img" aria-label="Логистический комплекс: кран, контейнеры, грузовики и склад">
+                  <defs>
+                    <image id="investment-image" href={`${base}images/investment-puzzle.webp`} width={sceneWidth} height={sceneHeight} />
+                    <filter id="investment-monochrome" color-interpolation-filters="sRGB">
+                      <feColorMatrix type="saturate" values="0" />
+                    </filter>
+                    <mask id="investment-sky" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
+                      <path d={sky} fill="white" />
+                      {craneMetal.map((path) => <path d={path} fill="black" />)}
+                      <path d={craneCables} fill="none" stroke="black" stroke-width="2" />
+                    </mask>
+                    <mask id="investment-background-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
+                      <rect width={sceneWidth} height={sceneHeight} fill="white" />
+                      {foregroundPieces.map(({ path }) => <path d={path} fill="black" />)}
+                    </mask>
+                    <mask id="investment-crane-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
+                      <rect width={sceneWidth} height={sceneHeight} fill="white" />
+                      <path d={pieces[1].path} fill="black" />
+                    </mask>
+                    {pieces.map(({ id, path }) => (
+                      <clipPath id={`investment-piece-${id}`}><path d={path} /></clipPath>
+                    ))}
+                  </defs>
 
-              <g class="investment-animated-art">
-                <use href="#investment-image" filter="url(#investment-monochrome)" />
-                <use class="investment-sky-color" href="#investment-image" mask="url(#investment-sky)" />
-                {pieces.map(({ id }, index) => (
-                  <g data-puzzle-reveal opacity="0" mask={occlusion(index)}>
-                    <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
+                  <g class="investment-animated-art">
+                    <use href="#investment-image" filter="url(#investment-monochrome)" />
+                    <use class="investment-sky-color" href="#investment-image" mask="url(#investment-sky)" />
+                    {pieces.map(({ id }, index) => (
+                      <g data-puzzle-reveal opacity="0" mask={occlusion(index)}>
+                        <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
+                      </g>
+                    ))}
+                    {pieces.map(({ id, path, amount, center }, index) => (
+                      <g data-puzzle-flight display="none">
+                        <g mask={occlusion(index)}>
+                          <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
+                          <path d={path} fill="none" stroke="#e1bf80" stroke-width="3" stroke-linejoin="round" />
+                        </g>
+                        <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label">+{amount} млн ₽</text>
+                      </g>
+                    ))}
                   </g>
-                ))}
-                {pieces.map(({ id, path, amount, center }, index) => (
-                  <g data-puzzle-flight display="none">
-                    <g mask={occlusion(index)}>
-                      <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
-                      <path d={path} fill="none" stroke="#e1bf80" stroke-width="3" stroke-linejoin="round" />
-                    </g>
-                    <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label">+{amount} млн ₽</text>
-                  </g>
-                ))}
-              </g>
-              <use data-puzzle-final href="#investment-image" />
-            </svg>
+                  <use data-puzzle-final href="#investment-image" />
+                </svg>
+                <button class="investment-replay" type="button" data-puzzle-replay aria-label="Запустить анимацию пазла заново" title="Запустить анимацию заново"></button>
+              </div>
+            </figure>
+
+            <div class="investment-directions plat-outline">
+              <span>Арендаторы</span>
+              <span>Согласования</span>
+              <span>Подрядчики</span>
+              <span>Инфраструктура</span>
+              <picture class="plat-outline">
+                <source media="(min-width: 1024px)" srcset={`${base}images/investment-puzzle/bridge-desktop.svg`} width="58" height="25" />
+                <img src={`${base}images/investment-puzzle/bridge-mobile.svg`} width="48" height="22" alt="" />
+              </picture>
+            </div>
+
+            <div class="investment-disclaimer">
+              <p><span class="investment-disclaimer-desktop">Представлена условная модель объединения капитала и формирования долей объекта. Демонстрация не является сбором средств или предложением участия в конкретном проекте. Все суммы, параметры и изображение объекта приведены исключительно для иллюстрации.</span><span class="investment-disclaimer-mobile">Демонстрация принципа, не сбор средств и не предложение конкретного проекта. Суммы условные. Изображение — концепция.</span>{' '}<span class="investment-disclaimer-terms">Форма участия, имущественные права и условия получения дохода определяются индивидуально для каждого проекта.</span></p>
+            </div>
           </div>
-        </figure>
-
-        <div class="investment-directions plat-outline">
-          <span>Арендаторы</span>
-          <span>Согласования</span>
-          <span>Подрядчики</span>
-          <span>Инфраструктура</span>
-          <picture class="plat-outline">
-            <source media="(min-width: 1024px)" srcset={`${base}images/investment-puzzle/bridge-desktop.svg`} width="58" height="25" />
-            <img src={`${base}images/investment-puzzle/bridge-mobile.svg`} width="48" height="22" alt="" />
-          </picture>
-        </div>
-
-        <div class="investment-disclaimer">
-          <p><span class="investment-disclaimer-desktop">Представлена условная модель объединения капитала и формирования долей объекта. Демонстрация не является сбором средств или предложением участия в конкретном проекте. Все суммы, параметры и изображение объекта приведены исключительно для иллюстрации.</span><span class="investment-disclaimer-mobile">Демонстрация принципа, не сбор средств и не предложение конкретного проекта. Суммы условные. Изображение — концепция.</span>{' '}<span class="investment-disclaimer-terms">Форма участия, имущественные права и условия получения дохода определяются индивидуально для каждого проекта.</span></p>
         </div>
       </div>
     </div>
@@ -197,6 +203,39 @@ const occlusion = (index: number) => index === 2
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 10px;
+  }
+
+  .investment-demo-track,
+  .investment-demo {
+    display: contents;
+  }
+
+  [data-puzzle-demo-marker],
+  .investment-replay {
+    display: none;
+  }
+
+  @media (width < 1024px) {
+    [data-puzzle-expanded] .investment-demo-track {
+      display: block;
+      grid-column: 1 / -1;
+    }
+
+    [data-puzzle-expanded] [data-puzzle-demo-marker] {
+      display: block;
+      height: 0;
+    }
+
+    [data-puzzle-expanded] .investment-demo {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 10px;
+      background: var(--puzzle-background);
+    }
+
+    [data-puzzle-expanded] .investment-demo > * {
+      grid-area: auto;
+    }
   }
 
   .investment-copy {
@@ -631,12 +670,33 @@ const occlusion = (index: number) => index === 2
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    [data-puzzle-ready] .investment-replay {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      display: block;
+      width: 100%;
+      border-radius: inherit;
+      cursor: pointer;
+    }
+
     [data-puzzle-motion] .investment-scroll-space {
       display: block;
       height: var(--investment-scroll, 0px);
     }
 
     [data-puzzle-motion] [data-puzzle-pin] {
+      position: sticky;
+      top: var(--investment-pin, 0px);
+    }
+
+    [data-puzzle-demo-motion] .investment-demo-track::after {
+      display: block;
+      height: var(--investment-scroll, 0px);
+      content: '';
+    }
+
+    [data-puzzle-demo-motion] [data-puzzle-demo] {
       position: sticky;
       top: var(--investment-pin, 0px);
     }

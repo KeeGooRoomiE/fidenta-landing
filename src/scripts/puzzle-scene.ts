@@ -8,7 +8,10 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const pin = root.querySelector<HTMLElement>('[data-puzzle-pin]')!;
   const marker = root.querySelector<HTMLElement>('[data-puzzle-marker]')!;
+  const demo = root.querySelector<HTMLElement>('[data-puzzle-demo]')!;
+  const demoMarker = root.querySelector<HTMLElement>('[data-puzzle-demo-marker]')!;
   const photo = root.querySelector<SVGSVGElement>('.investment-scene svg')!;
+  const replay = root.querySelector<HTMLButtonElement>('[data-puzzle-replay]')!;
   const header = document.querySelector<HTMLElement>('.header-bar');
   const expand = root.querySelector<HTMLButtonElement>('[data-puzzle-expand]')!;
   const expandLabel = expand.querySelector<HTMLElement>('[data-puzzle-expand-label]')!;
@@ -42,6 +45,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   let progressStart = 0;
   let lastCount = -1;
   let lastProgress = -1;
+  let replayFrame = 0;
+  let replayPosition: number | undefined;
 
   function setExpanded(open: boolean) {
     root.toggleAttribute('data-puzzle-expanded', open);
@@ -51,17 +56,18 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   expand.addEventListener('click', (event) => {
     const opening = expand.getAttribute('aria-expanded') !== 'true';
+    stopReplay();
     setExpanded(opening);
     measure();
     if (!opening) {
       marker.scrollIntoView({ block: 'start', behavior: 'instant' });
     } else {
       if (event.detail === 0) firstDetail.focus({ preventScroll: true });
-      const detailTop = firstDetail.getBoundingClientRect().top;
-      if (detailTop < (header?.getBoundingClientRect().bottom ?? 0) || detailTop > innerHeight - 40) {
-        firstDetail.scrollIntoView({ block: 'start', behavior: 'instant' });
-      }
+      const detailTop = firstDetail.getBoundingClientRect().top + scrollY;
+      const headerBottom = header?.getBoundingClientRect().bottom ?? 0;
+      window.scrollTo({ top: detailTop - headerBottom - 12, behavior: 'instant' });
     }
+    update();
   });
   root.setAttribute('data-puzzle-ready', '');
 
@@ -107,7 +113,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   function update() {
     frame = 0;
-    if (travel === 0) return;
+    if (travel === 0 || replayFrame || replayPosition === scrollY) return;
+    replayPosition = undefined;
     const offset = progressStart - progressAnchor.getBoundingClientRect().top;
     render(clamp(offset / travel));
   }
@@ -116,24 +123,64 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (!frame && travel > 0) frame = requestAnimationFrame(update);
   }
 
+  function stopReplay() {
+    cancelAnimationFrame(replayFrame);
+    replayFrame = 0;
+    replayPosition = undefined;
+  }
+
+  replay.addEventListener('click', () => {
+    if (reducedMotion.matches || travel === 0) return;
+    stopReplay();
+    const pinned = root.hasAttribute('data-puzzle-motion') || root.hasAttribute('data-puzzle-demo-motion');
+    const startScroll = scrollY + progressAnchor.getBoundingClientRect().top - progressStart;
+    const started = performance.now();
+    render(0);
+    if (pinned) window.scrollTo({ top: startScroll, behavior: 'instant' });
+
+    function replayStep(now: number) {
+      const progress = clamp((now - started) / 3800);
+      if (pinned) window.scrollTo({ top: startScroll + progress * travel, behavior: 'instant' });
+      render(progress);
+      if (progress < 1) {
+        replayFrame = requestAnimationFrame(replayStep);
+      } else {
+        replayFrame = 0;
+        replayPosition = scrollY;
+      }
+    }
+
+    replayFrame = requestAnimationFrame(replayStep);
+  });
+
+  function interruptReplay() {
+    if (replayFrame) {
+      stopReplay();
+      scheduleUpdate();
+    }
+  }
+
   function measure() {
     root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;
     const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
-    if (reducedMotion.matches || reading) {
+    if (reducedMotion.matches) {
+      stopReplay();
       travel = 0;
       root.removeAttribute('data-puzzle-motion');
+      root.removeAttribute('data-puzzle-demo-motion');
       root.removeAttribute('data-puzzle-compact');
       root.removeAttribute('data-puzzle-short');
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
-      render(reducedMotion.matches ? 1 : 0);
+      render(1);
       return;
     }
 
-    const bounds = pin.getBoundingClientRect();
+    const stage = reading ? demo : pin;
+    const bounds = stage.getBoundingClientRect();
     // getBoundingClientRect учитывает масштаб страницы, а CSS top задаётся в локальных пикселях.
-    const scale = pin.offsetWidth ? bounds.width / pin.offsetWidth : 1;
+    const scale = stage.offsetWidth ? bounds.width / stage.offsetWidth : 1;
     const viewportHeight = visualViewport?.height ?? innerHeight;
     const headerGap = wide ? Math.min(64, Math.max(24, viewportHeight * 0.045)) : 10;
     const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + headerGap;
@@ -141,30 +188,37 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     const room = availableHeight / scale;
     root.style.setProperty('--investment-room', `${Math.round(room)}px`);
     root.toggleAttribute('data-puzzle-compact', wide && room < 670);
-    root.toggleAttribute('data-puzzle-short', !wide && room < 565);
-    if (pin.getBoundingClientRect().height > availableHeight) {
-      root.toggleAttribute('data-puzzle-tight', phone.matches);
-      if (pin.getBoundingClientRect().height > availableHeight) {
+    root.toggleAttribute('data-puzzle-short', !wide && !reading && room < 565);
+    if (stage.getBoundingClientRect().height > availableHeight) {
+      root.toggleAttribute('data-puzzle-tight', phone.matches && !reading);
+      if (stage.getBoundingClientRect().height > availableHeight) {
         // На низких экранах сцена проходит под шапкой вместе со страницей.
         root.removeAttribute('data-puzzle-tight');
         root.removeAttribute('data-puzzle-motion');
-        progressAnchor = photo;
-        progressStart = viewportHeight - 24;
-        travel = Math.max(1, progressStart - availableTop);
+        root.removeAttribute('data-puzzle-demo-motion');
+        progressAnchor = reading ? demoMarker : photo;
+        progressStart = reading ? availableTop : viewportHeight - 24;
+        travel = Math.max(1, reading ? availableHeight * 0.65 : progressStart - availableTop);
         update();
         return;
       }
     }
-    progressAnchor = marker;
+    progressAnchor = reading ? demoMarker : marker;
     progressStart = availableTop;
     travel = viewportHeight * (wide ? 0.95 : 1.55);
     root.style.setProperty('--investment-pin', `${availableTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
-    root.setAttribute('data-puzzle-motion', '');
+    root.toggleAttribute('data-puzzle-motion', !reading);
+    root.toggleAttribute('data-puzzle-demo-motion', reading);
     update();
   }
 
   addEventListener('scroll', scheduleUpdate, { passive: true });
+  addEventListener('wheel', interruptReplay, { passive: true });
+  addEventListener('touchstart', interruptReplay, { passive: true });
+  addEventListener('keydown', (event) => {
+    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) interruptReplay();
+  });
   addEventListener('resize', measure, { passive: true });
   visualViewport?.addEventListener('resize', measure, { passive: true });
   desktop.addEventListener('change', measure);
