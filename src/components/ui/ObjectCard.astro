@@ -17,7 +17,7 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
 
 <article class:list={['flex flex-col overflow-hidden rounded-[9px] border border-border bg-canvas font-accent text-fg', className]} data-object-card>
   <div class="flex grow flex-col" data-object-front>
-    <div class="relative aspect-[402/225] touch-pan-y select-none overflow-hidden" data-gallery role="group" aria-label={`Фото объекта «${title}»`}>
+    <div class="relative isolate aspect-[402/225] touch-pan-y select-none overflow-hidden" data-gallery role="group" aria-label={`Фото объекта «${title}»`}>
       {photos.map((src, index) => (
         <img
           src={src}
@@ -36,17 +36,13 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
       <div class="photo-tone" aria-hidden="true"></div>
       <span class="photo-control absolute left-3 top-3 rounded-full px-3 py-1 text-xs uppercase tracking-[0.08em]">{type}</span>
 
-      {photos.length > 1 && (
-        <>
-          <button class="photo-arrow left-1" type="button" data-photo-step="-1" aria-label="Предыдущее фото">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
-          </button>
-          <button class="photo-arrow right-1" type="button" data-photo-step="1" aria-label="Следующее фото">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
-          </button>
-          <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums" data-photo-count aria-live="polite">1 / {photos.length}</span>
-        </>
-      )}
+      <button class="photo-arrow left-1" type="button" data-photo-step="-1" aria-label="Предыдущее фото" disabled={photos.length < 2}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+      </button>
+      <button class="photo-arrow right-1" type="button" data-photo-step="1" aria-label="Следующее фото" disabled={photos.length < 2}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+      </button>
+      <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums" data-photo-count aria-live="polite">1 / {photos.length}</span>
     </div>
 
     <div class="flex grow flex-col gap-4 p-5 sm:p-6">
@@ -62,7 +58,7 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
           </div>
         ))}
       </dl>
-      <button type="button" class="min-h-11 border-t border-cream/20 pt-3 text-left text-cream hover:underline" data-object-open aria-controls={id} aria-expanded="false">Подробнее об объекте <span aria-hidden="true">→</span></button>
+      <button type="button" class="min-h-11 border-t border-cream/20 pt-3 text-left hover:underline" data-object-open aria-controls={id} aria-expanded="false"><span class="text-gold-plate">Подробнее об объекте <span aria-hidden="true">→</span></span></button>
     </div>
   </div>
 
@@ -77,23 +73,25 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
         </li>
       ))}
     </ol>
-    <button type="button" class="mt-5 min-h-11 w-full border-t border-cream/20 pt-3 text-left text-cream hover:underline" data-object-close><span aria-hidden="true">←</span> Вернуться к объекту</button>
+    <button type="button" class="mt-5 min-h-11 w-full border-t border-cream/20 pt-3 text-left hover:underline" data-object-close><span class="text-gold-plate"><span aria-hidden="true">←</span> Вернуться к объекту</span></button>
   </div>
 </article>
 
 <style>
   [data-gallery] {
-    --photo-control-bg: rgb(9 30 25 / 86%);
-    --photo-control-color: #fff1d9;
+    --photo-control-bg: var(--gradient-gold);
+    --photo-control-color: #0a2019;
   }
 
   .photo-control {
-    background: var(--photo-control-bg);
+    z-index: 2;
+    background: var(--photo-control-bg), #b5a076;
     color: var(--photo-control-color);
   }
   .photo-tone {
     position: absolute;
     inset: 0;
+    z-index: 1;
     pointer-events: none;
     background: linear-gradient(180deg, rgb(7 21 52 / 18%), rgb(12 30 62 / 8%) 60%, rgb(7 21 52 / 17%));
   }
@@ -101,6 +99,7 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
   .photo-arrow {
     position: absolute;
     top: 50%;
+    z-index: 2;
     display: grid;
     width: 48px;
     height: 48px;
@@ -116,12 +115,17 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     inset: 5px;
     z-index: -1;
     border-radius: 9px;
-    background: var(--photo-control-bg);
+    background: var(--photo-control-bg), #b5a076;
     content: '';
   }
 
-  .photo-arrow:hover::before {
-    background: rgb(9 30 25 / 92%);
+  .photo-arrow:hover:not(:disabled)::before {
+    filter: brightness(1.12);
+  }
+
+  .photo-arrow:disabled {
+    opacity: 0.7;
+    cursor: default;
   }
 
   .story {

@@ -14,7 +14,7 @@ const objects = [
     id: 'bogatyrsky', type: 'Редевелопмент', title: 'Автомобильный комплекс', storyTitle: 'Объект на Богатырском',
     photos: [cover(3)],
     lead: 'Здание требовало реконструкции. Обновили помещения и территорию, нашли арендаторов — сегодня здесь работает автоцентр.',
-    facts: ['С 2022 года', 'Автоцентр', 'Все помещения сданы'],
+    facts: ['С 2022 года', 'Автоцентр', 'Полная'],
     story: [
       { title: 'Исходная точка', text: 'Здание требовало реконструкции, помещения и территория — обновления.' },
       { title: 'Что изменилось', text: 'Реконструировали здание, обновили помещения и территорию, нашли арендаторов.' },
@@ -135,7 +135,7 @@ const objects = [
         <p class="text-eyebrow text-gold-plate">Следующая история</p>
         <h4 class="max-w-[13ch] text-[clamp(34px,4vw,40px)] leading-[1.02] text-fg">Здесь может начаться ваш проект</h4>
         <p class="max-w-[29ch] text-lg leading-snug text-fg">Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу.</p>
-        <a href="#cta" class="mt-2 inline-flex min-h-11 items-center gap-2 border-t border-cream/30 pt-2 text-xl text-cream hover:underline">Обсудить проект <span aria-hidden="true">→</span></a>
+        <a href="#cta" class="mt-2 inline-flex min-h-11 items-center gap-2 border-t border-cream/30 pt-2 text-xl hover:underline"><span class="text-gold-plate">Обсудить проект <span aria-hidden="true">→</span></span></a>
       </article>
     </div>
     <input class="object-position" type="range" min="0" max="1" value="0" aria-label="Позиция в галерее объектов" data-track-position />
@@ -170,41 +170,39 @@ const objects = [
 
   .object-position {
     --position-track: linear-gradient(176deg, rgb(255 241 217 / 50%) 25.714%, rgb(168 133 72 / 50%) 120.56%);
-    --position-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12'%3E%3Cpath d='m5 3-3 3 3 3m4-6 3 3-3 3' fill='none' stroke='%23fff1d9' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 12px no-repeat, linear-gradient(176deg, rgb(162 137 96 / 75%), rgb(87 72 50 / 75%));
+    --position-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12'%3E%3Cpath d='m5 3-3 3 3 3m4-6 3 3-3 3' fill='none' stroke='%230a2019' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 12px no-repeat, var(--gradient-gold), #917b52;
     display: block;
     width: 100%;
     height: 32px;
     margin-top: 6px;
     appearance: none;
-    background: transparent;
+    background: var(--position-track) center / 100% 5px no-repeat;
     cursor: ew-resize;
   }
 
   .object-position::-webkit-slider-runnable-track {
-    height: 4px;
-    border-radius: 3px;
-    background: var(--position-track);
+    height: 5px;
+    background: transparent;
   }
 
   .object-position::-moz-range-track {
-    height: 4px;
-    border-radius: 3px;
-    background: var(--position-track);
+    height: 5px;
+    background: transparent;
   }
 
   .object-position::-webkit-slider-thumb {
     appearance: none;
-    width: 38px;
-    height: 18px;
-    margin-top: -7px;
+    width: 44px;
+    height: 21px;
+    margin-top: -8px;
     border: 1px solid rgb(255 241 217 / 38%);
     border-radius: 9px;
     background: var(--position-thumb);
   }
 
   .object-position::-moz-range-thumb {
-    width: 38px;
-    height: 18px;
+    width: 44px;
+    height: 21px;
     border: 1px solid rgb(255 241 217 / 38%);
     border-radius: 9px;
     background: var(--position-thumb);
