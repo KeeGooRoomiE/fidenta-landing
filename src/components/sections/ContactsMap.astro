@@ -54,30 +54,15 @@ const info = [
     <SectionHeading eyebrow="Контакты">
       Большие проекты начинаются <span class="text-gold-plate">с малого</span>
     </SectionHeading>
-    <p class="mt-5 max-w-[460px] text-lead text-fg md:mt-8">
-      Приглашаем в офис Фиденты в Санкт-Петербурге. Познакомимся, обсудим ваши задачи и возможные направления сотрудничества.
-    </p>
+    <div class="mt-5 grid gap-y-6 md:mt-8 lg:grid-cols-[minmax(0,0.63fr)_minmax(0,1fr)] lg:gap-x-16">
+      <p class="max-w-[460px] text-lead text-fg lg:col-start-1 lg:row-start-1">
+        Приглашаем в офис Фиденты в Санкт-Петербурге. Познакомимся, обсудим ваши задачи и возможные направления сотрудничества.
+      </p>
 
-    {/* Реквизиты | карта */}
-    {/* Мобильный порядок (правка дизайнера: контактов слишком много перед картой): карта ПЕРВОЙ
-         (max-lg:order-1), реквизиты после неё компактно: Офис и Связь в 2 колонки, мелкий шрифт */}
-    <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,0.63fr)_minmax(0,1fr)] lg:gap-16">
-      <div class="grid grid-cols-2 gap-x-4 gap-y-5 max-lg:order-2 lg:flex lg:flex-col lg:gap-6">
-        {info.map((block, bi) => (
-          <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
-            <span class="h-px w-full bg-gold-line"></span>
-            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
-            <div class="font-accent text-sm leading-snug text-fg lg:text-lg lg:leading-7">
-              {block.lines.map((line) => block.href ? <a href={block.href} class="hover:underline">{line}</a> : <p>{line}</p>)}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div class="flex min-w-0 flex-1 flex-col gap-3 max-lg:order-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
+      <div class="flex min-w-0 flex-col gap-3 lg:col-start-2 lg:row-span-2 lg:row-start-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
         {/* Карта. isolate + z-0: у Leaflet свои z-index (до 1000) — не даём им
              перекрыть шапку сайта и cookie-плашку */}
-        <div class="map-frame plat-outline isolate z-0 h-[280px] overflow-hidden rounded-[9px] bg-[#0d291f] p-[3px] md:h-[433px]">
+        <div class="map-frame plat-outline isolate z-0 h-[280px] overflow-hidden rounded-[9px] bg-[#0d291f] p-[3px] md:h-[433px] lg:h-auto lg:flex-1">
           <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
         </div>
 
@@ -110,6 +95,18 @@ const info = [
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-x-4 gap-y-5 lg:col-start-1 lg:row-start-2 lg:flex lg:flex-col lg:gap-6">
+        {info.map((block, bi) => (
+          <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
+            <span class="h-px w-full bg-gold-line"></span>
+            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
+            <div class="font-accent text-sm leading-snug text-fg lg:text-lg lg:leading-7">
+              {block.lines.map((line) => block.href ? <a href={block.href} class="hover:underline">{line}</a> : <p>{line}</p>)}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
    </div>
