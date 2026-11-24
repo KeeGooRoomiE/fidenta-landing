@@ -16,7 +16,7 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
 const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text-xl leading-tight hover:underline';
 ---
 
-<article class:list={['object-card relative flex flex-col overflow-hidden rounded-[9px] bg-interface/50 font-accent text-fg', className]} data-object-card={projectHref ? undefined : ''}>
+<article class:list={['object-card relative overflow-hidden rounded-[9px] bg-interface/50 font-accent text-fg', className]} data-object-card={projectHref ? undefined : ''}>
   <div class="flex grow flex-col" data-object-front>
     <div class="relative isolate aspect-[402/225] touch-pan-y select-none overflow-hidden" data-gallery={projectHref ? undefined : ''} role="group" aria-label={projectHref ? undefined : `Фото объекта «${title}»`}>
       {photos.map((src, index) => (
@@ -212,7 +212,7 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
     opacity: 0.6;
   }
 
-  .object-card { display: grid; min-height: var(--object-height, 0px); }
+  .object-card { display: grid; grid-template-columns: minmax(0, 1fr); min-height: var(--object-height, 0px); }
   .object-card > [data-object-front], .object-card > [data-object-back] { grid-area: 1 / 1; display: flex; flex-direction: column; }
   .object-card > [inert] { visibility: hidden; pointer-events: none; }
   .story-card {
