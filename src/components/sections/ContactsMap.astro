@@ -34,8 +34,6 @@ const base = import.meta.env.BASE_URL;
 
 // Блоки реквизитов слева: заголовок + строки
 const info = [
-  { label: 'Офис', lines: [office.full] },
-  { label: 'Связь', lines: [phones.header.text], href: phones.header.href },
   {
     label: 'Реквизиты',
     lines: ['[ДАННЫЕ: полное наименование юрлица]', 'ИНН [ДАННЫЕ] · ОГРН [ДАННЫЕ]', 'Юридический адрес: [ДАННЫЕ]'],
@@ -76,11 +74,12 @@ const info = [
               data-route-btn
               aria-haspopup="true"
               aria-expanded="false"
-              class="gap-2"
+              class="gap-3"
             >
               <span class="text-gold-plate">Построить маршрут</span>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="m13.5 2.5-4 11-2-5-5-2 11-4Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                <defs><linearGradient id="route-plat" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#fff1d9" stop-opacity=".87" /><stop offset="1" stop-color="#a88548" stop-opacity=".87" /></linearGradient></defs>
+                <path d="m13.5 2.5-4 11-2-5-5-2 11-4Z" stroke="url(#route-plat)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </Button>
             <div
@@ -97,13 +96,22 @@ const info = [
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-x-4 gap-y-5 lg:col-start-1 lg:row-start-2 lg:flex lg:flex-col lg:gap-6">
-        {info.map((block, bi) => (
-          <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
+      <div class="flex flex-col gap-5 lg:col-start-1 lg:row-start-2 lg:gap-6">
+        <div class="flex flex-col gap-1.5 lg:gap-2">
+          <span class="h-px w-full bg-gold-line"></span>
+          <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">Контакты</span>
+          <div class="grid gap-1 font-accent text-sm leading-snug text-copy lg:text-lg">
+            <p>Адрес: {office.full}</p>
+            <p>Номер телефона: <a href={phones.header.href} class="hover:underline">{phones.header.text}</a></p>
+            <p>Email: <a href="mailto:info@uk-fidenta.ru" class="hover:underline">info@uk-fidenta.ru</a></p>
+          </div>
+        </div>
+        {info.map((block) => (
+          <div class="flex flex-col gap-1.5 lg:gap-2">
             <span class="h-px w-full bg-gold-line"></span>
             <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
             <div class="font-accent text-sm leading-snug text-copy lg:text-lg lg:leading-7">
-              {block.lines.map((line) => block.href ? <a href={block.href} class="hover:underline">{line}</a> : <p>{line}</p>)}
+              {block.lines.map((line) => <p>{line}</p>)}
             </div>
           </div>
         ))}
