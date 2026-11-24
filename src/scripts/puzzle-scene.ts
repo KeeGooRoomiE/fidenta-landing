@@ -4,6 +4,7 @@ const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
 export function initInvestmentPuzzle(root: HTMLElement) {
   const desktop = matchMedia('(min-width: 1024px)');
+  const phone = matchMedia('(width < 640px)');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const pin = root.querySelector<HTMLElement>('[data-puzzle-pin]')!;
   const marker = root.querySelector<HTMLElement>('[data-puzzle-marker]')!;
@@ -37,7 +38,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   let frame = 0;
   let travel = 0;
-  let pinTop = 0;
+  let progressAnchor: Element = marker;
+  let progressStart = 0;
   let lastCount = -1;
   let lastProgress = -1;
 
@@ -106,7 +108,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   function update() {
     frame = 0;
     if (travel === 0) return;
-    const offset = pinTop - marker.getBoundingClientRect().top;
+    const offset = progressStart - progressAnchor.getBoundingClientRect().top;
     render(clamp(offset / travel));
   }
 
@@ -115,6 +117,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   }
 
   function measure() {
+    root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;
     const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
     if (reducedMotion.matches || reading) {
@@ -133,17 +136,28 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     const scale = pin.offsetWidth ? bounds.width / pin.offsetWidth : 1;
     const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + 10;
     const viewportHeight = visualViewport?.height ?? innerHeight;
-    const room = (viewportHeight - availableTop - 8) / scale;
+    const availableHeight = viewportHeight - availableTop - 8;
+    const room = availableHeight / scale;
     root.style.setProperty('--investment-room', `${Math.round(room)}px`);
     root.toggleAttribute('data-puzzle-compact', wide && room < 670);
     root.toggleAttribute('data-puzzle-short', !wide && room < 565);
-    if (!wide) {
-      const occupied = (pin.getBoundingClientRect().height - photo.getBoundingClientRect().height) / scale;
-      root.style.setProperty('--investment-mobile-photo', `${Math.max(70, Math.floor(room - occupied - 2))}px`);
+    if (!wide && pin.getBoundingClientRect().height > availableHeight) {
+      root.toggleAttribute('data-puzzle-tight', phone.matches);
+      if (pin.getBoundingClientRect().height > availableHeight) {
+        // На низких экранах сцена проходит под шапкой вместе со страницей.
+        root.removeAttribute('data-puzzle-tight');
+        root.removeAttribute('data-puzzle-motion');
+        progressAnchor = photo;
+        progressStart = viewportHeight - 24;
+        travel = Math.max(1, progressStart - availableTop);
+        update();
+        return;
+      }
     }
-    pinTop = availableTop;
+    progressAnchor = marker;
+    progressStart = availableTop;
     travel = viewportHeight * (wide ? 1.9 : 1.55);
-    root.style.setProperty('--investment-pin', `${pinTop / scale}px`);
+    root.style.setProperty('--investment-pin', `${availableTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
     root.setAttribute('data-puzzle-motion', '');
     update();

@@ -21,9 +21,9 @@ const occlusion = (index: number) => index === 2
 
       <div class="investment-grid">
         <div class="investment-copy">
-          <p>Фидента объединяет участников вокруг проектов коммерческой недвижимости.<br />Каждая доля становится частью общего капитала, необходимого для реализации проекта</p>
+          <p>Фидента объединяет участников вокруг проектов коммерческой недвижимости</p>
           <div id="investment-details" class="investment-details">
-            <p tabindex="-1">Капитал направляют в торговые помещения, склады, сервисные и другие коммерческие объекты с потенциалом арендного дохода и роста стоимости.</p>
+            <p tabindex="-1">Каждая доля становится частью общего капитала, необходимого для реализации проекта. Капитал направляют в торговые помещения, склады, сервисные и другие коммерческие объекты с потенциалом арендного дохода и роста стоимости.</p>
             <p>Для нас недвижимость — долгосрочный актив. Её ценность раскрывают грамотное использование, профессиональное управление и развитие.</p>
           </div>
           <button type="button" class="investment-more" data-puzzle-expand aria-expanded="false" aria-controls="investment-details">
@@ -427,6 +427,13 @@ const occlusion = (index: number) => index === 2
   }
 
   @media (width < 640px) {
+    [data-puzzle-tight] .investment-heading { padding-top: 5px; margin-bottom: 6px; }
+    [data-puzzle-tight] .investment-grid { gap: 5px; }
+    [data-puzzle-tight] .investment-capital { padding-block: 8px; }
+    [data-puzzle-tight] .investment-board figcaption { margin-bottom: 4px; }
+    [data-puzzle-tight] .investment-scene { padding-block: 4px; }
+    [data-puzzle-tight] .investment-directions { min-height: 50px; padding-block: 4px; }
+
     [data-puzzle-short] .investment-heading { margin-bottom: 5px; }
     [data-puzzle-short] .investment-heading h2 { font-size: clamp(24px, 7.3vw, 29px); }
     [data-puzzle-short] .investment-grid { gap: 4px; }
@@ -447,7 +454,6 @@ const occlusion = (index: number) => index === 2
 
     .investment-copy { grid-column: 1 / -1; }
     .investment-copy > p { display: inline; }
-    .investment-copy > p br { display: none; }
     .investment-more { min-height: 30px; }
     .investment-capital { grid-area: 2 / 1 / 4; }
 
@@ -626,12 +632,6 @@ const occlusion = (index: number) => index === 2
       top: var(--investment-pin, 0px);
     }
 
-    @media (width < 1024px) {
-      [data-puzzle-motion] .investment-scene svg {
-        width: min(100%, calc(var(--investment-mobile-photo, 360px) * 1880 / 836));
-        margin-inline: auto;
-      }
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
