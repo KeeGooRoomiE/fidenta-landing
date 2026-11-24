@@ -34,15 +34,15 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
       ))}
 
       <div class="photo-tone" aria-hidden="true"></div>
-      <span class="photo-control absolute left-3 top-3 rounded-full px-3 py-1 text-xs uppercase tracking-[0.08em]">{type}</span>
+      <span class="photo-control absolute left-3 top-3 rounded-full px-3 py-1 text-xs uppercase tracking-[0.08em]"><span class="text-gold-plate">{type}</span></span>
 
       <button class="photo-arrow left-1" type="button" data-photo-step="-1" aria-label="Предыдущее фото" disabled={photos.length < 2}>
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+        <span class="photo-chevron" aria-hidden="true"></span>
       </button>
       <button class="photo-arrow right-1" type="button" data-photo-step="1" aria-label="Следующее фото" disabled={photos.length < 2}>
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+        <span class="photo-chevron" aria-hidden="true"></span>
       </button>
-      <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums" data-photo-count aria-live="polite">1 / {photos.length}</span>
+      <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums"><span class="text-gold-plate" data-photo-count aria-live="polite">1 / {photos.length}</span></span>
     </div>
 
     <div class="flex grow flex-col gap-4 p-5 sm:p-6">
@@ -62,31 +62,42 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     </div>
   </div>
 
-  <div id={id} class="p-5 sm:p-6" data-object-back hidden>
-    <p class="text-eyebrow text-gold-plate">История объекта</p>
-    <h3 class="mt-2 border-b border-cream/20 pb-4 text-[28px] leading-tight" tabindex="-1">{storyTitle}</h3>
-    <ol class="story mt-5">
-      {story.map(({ title: step, text }, index) => (
-        <li>
-          <h4 class="text-xl text-cream">{step}</h4>
-          <p class:list={['mt-1 whitespace-pre-line text-base leading-snug text-fg-dim', index === story.length - 1 && 'rounded-lg border border-cream/50 bg-[#071814] p-3']}>{text}</p>
-        </li>
-      ))}
+  <div id={id} class="story-card px-5 pb-2.5 pt-5 sm:px-6" data-object-back hidden>
+    <p class="text-gold-plate font-body text-xs uppercase">История объекта</p>
+    <h3 class="mt-3 border-b border-[#38604d] pb-4 text-[26px] leading-[1.16] text-[#f4f1e9]" tabindex="-1">{storyTitle}</h3>
+    <ol class="story mt-[18px]">
+      {story.map(({ title: step, text }, index) => {
+        const result = index === story.length - 1 && step === 'Результат';
+        const [summary, ...description] = text.split('\n');
+        return (
+          <li>
+            <h4 class:list={['text-xl leading-[1.16]', result ? 'text-[#d4b981]' : index === 1 ? 'text-gold-plate' : 'text-[#dedede]']}>{step}</h4>
+            {result ? (
+              <div class="mt-2.5 rounded-[9px] border border-cream bg-[#071814] px-4 py-3">
+                <p class="text-xl leading-[1.16] text-[#d4b981]">{summary}</p>
+                {description.length > 0 && <p class="mt-1.5 whitespace-pre-line text-[15px] leading-[1.22] text-[#dedede]">{description.join('\n')}</p>}
+              </div>
+            ) : (
+              <p class="mt-2 whitespace-pre-line text-sm leading-[1.27] text-[#dedede]">{text}</p>
+            )}
+          </li>
+        );
+      })}
     </ol>
-    <button type="button" class="mt-5 min-h-11 w-full border-t border-cream/20 pt-3 text-left hover:underline" data-object-close><span class="text-gold-plate"><span aria-hidden="true">←</span> Вернуться к объекту</span></button>
+    <div class="mt-auto pt-3">
+      <button type="button" class="min-h-9 w-full border-t border-[#38604d] text-left hover:underline" data-object-close><span class="text-gold-plate"><span aria-hidden="true">←</span> Вернуться к объекту</span></button>
+    </div>
   </div>
 </article>
 
 <style>
   [data-gallery] {
-    --photo-control-bg: var(--gradient-gold);
-    --photo-control-color: #0a2019;
+    --photo-control-bg: #071814;
   }
 
   .photo-control {
     z-index: 2;
-    background: var(--photo-control-bg), #b5a076;
-    color: var(--photo-control-color);
+    background: var(--photo-control-bg);
   }
   .photo-tone {
     position: absolute;
@@ -106,7 +117,6 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     translate: 0 -50%;
     place-items: center;
     isolation: isolate;
-    color: var(--photo-control-color);
     cursor: pointer;
   }
 
@@ -115,7 +125,7 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     inset: 5px;
     z-index: -1;
     border-radius: 9px;
-    background: var(--photo-control-bg), #b5a076;
+    background: var(--photo-control-bg);
     content: '';
   }
 
@@ -124,31 +134,68 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
   }
 
   .photo-arrow:disabled {
-    opacity: 0.7;
     cursor: default;
+  }
+
+  .photo-chevron {
+    width: 9px;
+    height: 16px;
+    background-image: var(--gradient-gold);
+    clip-path: polygon(16% 0, 100% 50%, 16% 100%, 0 91%, 69% 50%, 0 9%);
+  }
+
+  .photo-arrow[data-photo-step='-1'] .photo-chevron {
+    scale: -1 1;
+  }
+
+  .photo-arrow:disabled .photo-chevron {
+    opacity: 0.6;
+  }
+
+  .story-card:not([hidden]) {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background: #0a2019;
+    box-shadow: inset 0 0 0 1px #fff1d9;
+    border-radius: 8px;
   }
 
   .story {
     display: grid;
-    gap: 16px;
+    gap: 14px;
     margin-inline-start: 6px;
-    border-inline-start: 1px solid rgb(255 241 217 / 30%);
-    padding-inline-start: 17px;
+    padding-inline-start: 28px;
   }
 
   .story li {
     position: relative;
   }
 
+  .story li:not(:last-child) {
+    min-height: 79px;
+  }
+
+  .story li:not(:last-child)::after {
+    position: absolute;
+    top: 10px;
+    bottom: -24px;
+    left: -22.5px;
+    width: 1.5px;
+    background: #38604d;
+    content: '';
+  }
+
   .story li::before {
     position: absolute;
-    top: 8px;
-    left: -22px;
-    width: 9px;
-    height: 9px;
+    top: 4px;
+    left: -28px;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
     border: 1px solid #d6bd8d;
     border-radius: 50%;
-    background: #0a2019;
+    background: radial-gradient(circle, #d4b981 28%, #0a2019 31%);
     content: '';
   }
 </style>
