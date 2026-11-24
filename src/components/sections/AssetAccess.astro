@@ -50,7 +50,7 @@ const occlusion = (index: number) => index === 2
 
         <figure class="investment-board">
           <figcaption>Логистический комплекс</figcaption>
-          <div class="investment-scene">
+          <div class="investment-scene plat-outline">
             <svg viewBox={`0 0 ${sceneWidth} ${sceneHeight}`} role="img" aria-label="Логистический комплекс: кран, контейнеры, грузовики и склад">
               <defs>
                 <image id="investment-image" href={`${base}images/investment-puzzle.webp`} width={sceneWidth} height={sceneHeight} />
@@ -98,12 +98,12 @@ const occlusion = (index: number) => index === 2
           </div>
         </figure>
 
-        <div class="investment-directions">
+        <div class="investment-directions plat-outline">
           <span>Арендаторы</span>
           <span>Согласования</span>
           <span>Подрядчики</span>
           <span>Инфраструктура</span>
-          <picture>
+          <picture class="plat-outline">
             <source media="(min-width: 1024px)" srcset={`${base}images/investment-puzzle/bridge-desktop.svg`} width="58" height="25" />
             <img src={`${base}images/investment-puzzle/bridge-mobile.svg`} width="48" height="22" alt="" />
           </picture>
@@ -321,7 +321,6 @@ const occlusion = (index: number) => index === 2
 
   .investment-scene {
     padding: 5px 4px 7px;
-    border: 1px solid var(--puzzle-edge);
     border-radius: 9px;
     background: #071814;
   }
@@ -353,7 +352,6 @@ const occlusion = (index: number) => index === 2
     gap: 5px;
     min-height: 78px;
     padding: 9px 12px;
-    border: 1px solid var(--puzzle-edge);
     border-radius: 9px;
     background: #081a14;
     color: #ebd6b0;
@@ -381,7 +379,6 @@ const occlusion = (index: number) => index === 2
     justify-content: center;
     width: 50px;
     min-height: 45px;
-    border: 1px solid var(--puzzle-edge);
     border-radius: 9px;
   }
 
@@ -600,7 +597,10 @@ const occlusion = (index: number) => index === 2
     .investment-directions picture {
       width: 58px;
       min-height: 25px;
-      border: 0;
+    }
+
+    .investment-directions picture::after {
+      display: none;
     }
 
     .investment-disclaimer {

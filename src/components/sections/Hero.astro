@@ -42,17 +42,17 @@ const cards = [
 
     <div class="hero-actions">
       <a href="#cta" data-cta-audience="investor" class="hero-btn hero-btn--primary">Обсудить инвестиции</a>
-      <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary">Я собственник</a>
+      <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary plat-outline">Я собственник</a>
     </div>
 
     <ul class="hero-cards">
       {cards.map(({ title, description }) => (
-        <li class="hero-card">
+        <li class="plat-outline hero-card">
           <h2 class="text-gold-plate">{title}</h2>
           <p>{description}</p>
         </li>
       ))}
-      <li class="hero-card hero-news">
+      <li class="plat-outline hero-card hero-news">
         <div>
           <h2 class="text-gold-plate">Смотрите за проектами Фидента</h2>
           <p>Новые объекты | Новости Фидента<br />В нашем канале «Архитектура Капитала»</p>
@@ -189,7 +189,6 @@ const cards = [
   .hero-btn--secondary {
     min-height: 54px;
     color: #dedede;
-    border: 1px solid rgba(255, 241, 217, 0.65);
     background: rgba(7, 33, 26, 0.8);
   }
 
@@ -203,7 +202,6 @@ const cards = [
   .hero-card {
     min-height: 106px;
     padding: 11px 17px;
-    border: 1px solid rgba(255, 241, 217, 0.38);
     border-radius: 9px;
     background: var(--color-tile);
   }
@@ -352,7 +350,6 @@ const cards = [
     .hero-card {
       min-height: 120px;
       padding: 19px;
-      border-color: rgba(255, 241, 217, 0.62);
       background: var(--hero-card-surface);
     }
 
