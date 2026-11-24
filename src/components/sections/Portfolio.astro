@@ -111,7 +111,9 @@ const objects = [
   </button>
 
   <div class="object-grid mt-8 grid gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-8">
-    {objects.slice(0, 6).map((object) => <ObjectCard {...object} />)}
+    {objects.slice(0, 6).map((object, index) => (
+      <ObjectCard {...object} class={index === 0 ? 'object-card--deeper-tone' : undefined} />
+    ))}
   </div>
 
   <div class="mt-8 flex justify-center" data-portfolio-more>
