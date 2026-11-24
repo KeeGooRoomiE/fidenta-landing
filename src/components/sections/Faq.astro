@@ -76,6 +76,14 @@ const questions = [
   .faq-plus { font-size: 24px; }
   .faq-question[open] .faq-plus { rotate: 45deg; }
   .faq-visual img { display: block; width: 100%; height: auto; mask-image: radial-gradient(ellipse at center, black 45%, transparent 77%); }
+  @media (width < 768px) {
+    .faq-questions { gap: 0; border-block: 1px solid rgb(255 241 217 / 25%); }
+    .faq-question, .faq-question[open] { background: transparent; border-radius: 0; }
+    .faq-question + .faq-question { border-top: 1px solid rgb(255 241 217 / 25%); }
+    .faq-question::after { display: none; }
+    .faq-question summary { padding-inline: 0; }
+    .faq-question > p { margin-inline: 0; border-top: 0; padding-top: 0; }
+  }
   @media (min-width: 1024px) {
     .faq-layout { grid-template-areas: 'intro questions' 'contact questions'; grid-template-columns: minmax(0, 2fr) minmax(0, 3.6fr); grid-template-rows: auto 1fr; align-items: start; }
     .faq-contact { align-self: end; }

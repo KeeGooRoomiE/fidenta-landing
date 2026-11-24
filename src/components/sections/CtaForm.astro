@@ -65,12 +65,9 @@ const copy = {
 ---
 
 <Section id="cta" class="contact-form-section" data-cta data-copy={JSON.stringify(copy)}>
-  {/* МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
-         потом короткий призыв, потом форма. Для этого правая колонка на <lg «растворяется»
-         (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. */}
-    <div class="grid gap-6 border-t border-cream/25 pt-8 lg:grid-cols-[minmax(0,0.65fr)_minmax(0,1fr)] lg:gap-12 lg:pt-14">
+    <div class="cta-layout grid gap-6 border-t border-cream/25 pt-8 lg:grid-cols-[minmax(0,0.65fr)_minmax(0,1fr)] lg:gap-12 lg:pt-14">
     {/* Левая колонка: призыв (тексты подменяются скриптом по data-copy) */}
-    <div class="flex flex-col gap-3 font-accent max-lg:order-2 lg:gap-[15px]">
+    <div class="cta-intro flex flex-col gap-3 font-accent lg:gap-[15px]">
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0 bg-gold-line"></span>
         <span data-t="eyebrow" class="text-eyebrow text-gold-plate">
@@ -84,15 +81,15 @@ const copy = {
         <span data-t="accent" class="text-gold-plate">{copy.investor.accent}</span>
       </h2>
       <p data-t="lead" class="max-w-[428px] text-lead text-fg">{copy.investor.lead}</p>
-      <p class="text-base text-white md:text-xl">Что будет дальше?</p>
+      <p class="cta-next text-base text-white md:text-xl">Что будет дальше?</p>
       <ul class="list-disc ps-6 text-base leading-snug text-white md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
         {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
       </ul>
     </div>
 
     {/* Правая колонка: переключатель + форма */}
-    <div class="flex flex-col gap-4 font-accent max-lg:contents">
-      <div class="grid grid-cols-2 gap-3 max-lg:order-1 md:gap-5" role="group" aria-label="Тип заявки">
+    <div class="cta-form-column flex min-w-0 flex-col gap-4 font-accent">
+      <div class="cta-audiences grid grid-cols-2 gap-3 md:gap-5" role="group" aria-label="Тип заявки">
         <button type="button" data-audience="investor" aria-pressed="true" class="aud-btn aud-btn--sm-mobile plat-outline">Я инвестор</button>
         <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile plat-outline">Я собственник</button>
       </div>
@@ -103,7 +100,7 @@ const copy = {
       </h3>
       <p class="hidden text-xl leading-[1.12] text-fg lg:block">Ответим в течение одного рабочего дня.</p>
 
-      <form id="cta-form" class="flex flex-col gap-3 max-lg:order-3 md:gap-4" novalidate>
+      <form id="cta-form" class="flex flex-col gap-3 md:gap-4" novalidate>
         {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
         <input type="hidden" name="audience" value="investor" />
 
@@ -114,14 +111,17 @@ const copy = {
           </label>
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
             Телефон *
-            <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 (812) ..." class="cta-input" />
+            <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 (___) ___-__-__" class="cta-input" />
           </label>
         </div>
 
         <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
           Электронная почта (по желанию)
           <input name="client_email" type="email" autocomplete="email" placeholder="name@example.ru" class="cta-input" />
-          <span class="text-sm text-muted">Если удобнее получить документы или ответ письменно.</span>
+          <span class="text-sm text-muted">
+            <span class="lg:hidden">Для документов или письменного ответа.</span>
+            <span class="hidden lg:inline">Если удобнее получить документы или ответ письменно.</span>
+          </span>
         </label>
 
         <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
@@ -143,12 +143,28 @@ const copy = {
         <p id="cta-status" class="hidden font-accent text-base" role="status"></p>
       </form>
 
-      <p class="mt-2 font-accent text-sm leading-5 text-sand max-lg:order-3">
-        Не является публичной офертой. Условия конкретной сделки фиксируются в договоре.
+      <p class="cta-note mt-2 font-accent text-sm leading-5 text-sand">
+        <span class="lg:hidden">Телефон обязателен. Email и сообщение можно не заполнять.</span>
+        <span class="hidden lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре.</span>
       </p>
     </div>
   </div>
 </Section>
+
+<style>
+  @media (width < 768px) {
+    .cta-layout { gap: 36px; }
+    .cta-intro { gap: 14px; }
+    .cta-intro > [data-t='lead'] { margin-top: 6px; }
+    .cta-next { margin-top: 6px; color: #d9c49c; }
+    .cta-form-column { gap: 24px; }
+    .cta-audiences { padding-inline: 13px; }
+    .cta-audiences button { min-height: 44px; font-size: 17px; }
+    #cta-form { gap: 19px; padding-inline: 17px; }
+    #cta-form > div:first-of-type { gap: 19px; }
+    .cta-note { margin-top: 0; }
+  }
+</style>
 
 <script>
   type Audience = 'investor' | 'owner';
@@ -241,9 +257,12 @@ const copy = {
   }
   @media (max-width: 767px) {
     .cta-input {
-      height: 46px;
+      height: 48px;
       padding: 0 13px;
+      border-color: #576652;
+      background: #061e16;
     }
+    textarea.cta-input { min-height: 65px; }
   }
   .cta-input::placeholder {
     color: rgba(244, 241, 234, 0.5);

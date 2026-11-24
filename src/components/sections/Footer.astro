@@ -3,6 +3,8 @@ import { nav, office, phones } from '../../data/site';
 
 const base = import.meta.env.BASE_URL;
 const year = new Date().getFullYear();
+const [officeCity, officeStreet] = office.full.split(', ');
+const disclaimer = 'Вся информация, представленная на сайте, включая характеристики объектов, цены, сроки окупаемости и ориентировочные показатели доходности, носит исключительно справочный характер и не является публичной офертой в соответствии со ст. 437 ГК РФ. Приведённые расчёты окупаемости являются прогнозными, основаны на допущениях и рыночной конъюнктуре на момент публикации, не гарантируются и могут изменяться. Инвестиции в коммерческую недвижимость связаны с рисками, в том числе риском снижения стоимости актива, простоя помещений, изменения арендных ставок и законодательства. Решение об инвестировании принимается самостоятельно, инвестор несёт все связанные с ним риски. Точные условия сделки и параметры объектов уточняйте у наших специалистов.';
 const media = [
   { label: 'YouTube', file: 'footer-component19.svg', size: 50 },
   { label: 'Rutube', file: 'footer-group2.svg', size: 45 },
@@ -19,8 +21,9 @@ const legal = [
 ---
 
 <footer class="footer-preview font-accent text-sand">
-  <div class="container-page pb-8 pt-16 lg:pt-[107px]">
+  <div class="container-page footer-inner pb-8 pt-16 lg:pt-[107px]">
     <div class="footer-top grid gap-8 lg:items-start lg:gap-10">
+      <a href="#top" class="footer-top-link plat-outline rounded-[9px] px-6 py-2.5 uppercase hover:bg-white/5"><span class="text-gold-plate">Наверх <span class="hidden lg:inline" aria-hidden="true">↑</span></span></a>
       <nav class="footer-navigation grid grid-cols-2 gap-3.5 text-xl lg:flex lg:flex-col" aria-label="Навигация в подвале">
         {nav.map(({href, label}) => <a href={href} class="text-gold-plate w-fit hover:underline">{label}</a>)}
       </nav>
@@ -30,23 +33,22 @@ const legal = [
         <a href={phones.header.href} class="text-gold-plate whitespace-nowrap text-[clamp(28px,7vw,40px)] leading-none">{phones.header.text}</a>
       </div>
 
-      <div class="footer-office flex flex-col items-start gap-5 text-xl lg:items-end lg:gap-18 lg:text-right">
-        <a href="#top" class="plat-outline rounded-[9px] px-6 py-2.5 uppercase hover:bg-white/5">Наверх ↑</a>
+      <div class="footer-office flex flex-col items-center text-center text-xl lg:items-end lg:text-right">
         <div>
-          <p class="text-gold-plate">Офис компании Фидента</p>
-          <p class="mt-3 text-gold-plate">{office.full}</p>
+          <p class="text-gold-plate"><span class="lg:hidden">офис продаж</span><span class="hidden lg:inline">Офис компании Фидента</span></p>
+          <p class="mt-3 text-gold-plate">{officeCity},<br class="lg:hidden" /> {officeStreet}</p>
         </div>
       </div>
     </div>
 
-    <p class="mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-gold-plate lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда, управление и развитие объектов.</p>
+    <p class="footer-description mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-gold-plate lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда<span class="lg:hidden"> и управление.</span><span class="hidden lg:inline">, управление и развитие объектов.</span></p>
 
-    <div class="mt-9 flex flex-col items-center text-xl">
+    <div class="footer-documents mt-9 flex flex-col items-center text-xl">
       <span>Проектная документация</span>
       <span class="mt-0.5 h-px w-[213px] bg-gold-line" aria-hidden="true"></span>
     </div>
 
-    <div class="mt-4 flex flex-wrap justify-between gap-3">
+    <div class="footer-socials mt-4 flex flex-wrap justify-between gap-3">
       <div class="flex gap-2 md:gap-3">
         {media.map(({ label, file, size }) => (
           <span class="footer-icon plat-outline grid size-10 place-items-center rounded-[9px] bg-canvas sm:size-[50px]">
@@ -68,30 +70,67 @@ const legal = [
       </div>
     </div>
 
-    <div class="mt-3 flex flex-col gap-3 border-t border-canvas pt-4 text-sm lg:flex-row lg:items-center lg:justify-between">
+    <div class="footer-legal mt-3 flex flex-col gap-3 border-t border-canvas pt-4 text-sm lg:flex-row lg:items-center lg:justify-between">
       <p>© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
-      <div class="flex flex-wrap gap-x-7 gap-y-2">
+      <div class="footer-legal-links flex flex-wrap gap-x-7 gap-y-2">
         {legal.map(label => <span>{label}</span>)}
       </div>
     </div>
 
-    <div class="mt-4 text-xs leading-snug text-fg md:text-[15px]">
+    <div class="mt-4 hidden text-[15px] leading-snug text-fg lg:block">
       <p>Дисклеймер</p>
-      <p>Вся информация, представленная на сайте, включая характеристики объектов, цены, сроки окупаемости и ориентировочные показатели доходности, носит исключительно справочный характер и не является публичной офертой в соответствии со ст. 437 ГК РФ. Приведённые расчёты окупаемости являются прогнозными, основаны на допущениях и рыночной конъюнктуре на момент публикации, не гарантируются и могут изменяться. Инвестиции в коммерческую недвижимость связаны с рисками, в том числе риском снижения стоимости актива, простоя помещений, изменения арендных ставок и законодательства. Решение об инвестировании принимается самостоятельно, инвестор несёт все связанные с ним риски. Точные условия сделки и параметры объектов уточняйте у наших специалистов.</p>
+      <p>{disclaimer}</p>
+    </div>
+    <div class="footer-disclaimer text-sm leading-snug lg:hidden">
+      <p>Инвестиции в коммерческую недвижимость связаны с рисками. Прогнозы и расчёты не гарантируют результат. Информация не является публичной офертой.</p>
+      <details>
+        <summary class="plat-outline mt-5 cursor-pointer rounded-[9px] bg-[#0b1b16] px-3 py-3 text-center text-lg">
+          <span class="text-gold-plate when-closed">Читать полный дисклеймер ↓</span>
+          <span class="text-gold-plate when-open">Свернуть дисклеймер ↑</span>
+        </summary>
+        <p class="mt-4">{disclaimer}</p>
+      </details>
     </div>
   </div>
 </footer>
 
 <style>
   .footer-preview { background: linear-gradient(#061e17, #101612 86px); }
-  .footer-top { grid-template-areas: 'brand' 'navigation' 'office'; }
+  .footer-top { grid-template-areas: 'top' 'navigation' 'brand' 'office'; }
+  .footer-top-link { grid-area: top; justify-self: center; }
   .footer-brand { grid-area: brand; }
   .footer-navigation { grid-area: navigation; }
   .footer-office { grid-area: office; }
   .footer-icon { overflow: hidden; }
   .rutube-clip { position: relative; display: block; width: 30px; height: 30px; mask-image: var(--rutube-mask); }
   .rutube-clip img { position: absolute; max-width: none; top: -15px; }
+  .footer-disclaimer summary { list-style: none; }
+  .footer-disclaimer summary::-webkit-details-marker { display: none; }
+  .footer-disclaimer .when-open, .footer-disclaimer details[open] .when-closed { display: none; }
+  .footer-disclaimer details[open] .when-open { display: inline; }
+  @media (width < 1024px) {
+    .footer-preview { background: #101612; }
+    .footer-inner { padding-bottom: 58px; }
+    .footer-top { gap: 24px; padding-top: 22px; border-top: 1px solid rgb(87 92 79 / 80%); }
+    .footer-top-link { padding: 7px 18px; font-size: 16px; }
+    .footer-navigation { grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 8px 18px; grid-template-columns: 1fr auto; }
+    .footer-navigation a:nth-child(n + 3) { grid-column: 2; }
+    .footer-navigation a:nth-child(3) { grid-row: 1; }
+    .footer-navigation a:nth-child(4) { grid-row: 2; }
+    .footer-navigation a:nth-child(5) { grid-row: 3; }
+    .footer-brand { width: 100%; gap: 21px; }
+    .footer-brand a { font-size: 28px; }
+    .footer-office { margin-top: -8px; font-size: 18px; }
+    .footer-description { max-width: 31ch; margin-top: 24px; font-size: 15px; }
+    .footer-documents { margin-top: 9px; }
+    .footer-socials { justify-content: center; margin-top: 46px; gap: 8px; }
+    .footer-legal { margin-top: 22px; border-color: rgb(87 92 79 / 80%); }
+    .footer-legal-links { display: grid; padding-top: 14px; border-top: 1px solid rgb(87 92 79 / 80%); }
+    .footer-disclaimer { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgb(87 92 79 / 80%); }
+  }
   @media (min-width: 1024px) {
     .footer-top { grid-template-areas: 'navigation brand office'; grid-template-columns: minmax(0, 1fr) 341px minmax(0, 1fr); }
+    .footer-top-link { grid-area: office; justify-self: end; align-self: start; }
+    .footer-office { padding-top: 128px; }
   }
 </style>

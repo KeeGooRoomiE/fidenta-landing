@@ -20,7 +20,7 @@ const base = import.meta.env.BASE_URL;
   <div class="container-page flex flex-col items-center gap-4 py-4 sm:flex-row sm:justify-between sm:gap-8 sm:py-5">
     <p class="font-accent text-sm leading-normal text-fg/90 sm:text-base">
       Мы используем cookie для корректной работы сайта и аналитики. Продолжая пользоваться сайтом,
-      вы соглашаетесь с <a href={`${base}cookie`} class="cookie-link">политикой использования cookie</a>.
+      <span class="text-gold-plate">вы соглашаетесь с <a href={`${base}cookie`} class="cookie-link">политикой использования cookie</a></span>.
     </p>
     <button id="cookie-accept" type="button" class="cookie-accept shrink-0">Принять</button>
   </div>
@@ -35,7 +35,7 @@ const base = import.meta.env.BASE_URL;
   }
 
   .cookie-link {
-    color: var(--color-accent-soft);
+    text-decoration: underline rgb(217 196 156 / 65%);
     text-underline-offset: 2px;
   }
 
