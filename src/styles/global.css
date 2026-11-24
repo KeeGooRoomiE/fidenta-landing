@@ -41,6 +41,7 @@
   --color-text-soft: #C5D2CB;    /* text-soft: вторичный текст              → text-text-soft */
   --color-muted: #9FB3AA;        /* text-muted: приглушённый                 → text-muted    */
   --color-on-gold: #0A2019;      /* text-on-gold: текст на золотой заливке   → text-on-gold  */
+  --color-cta-dark: #0D291F;
 
   /* --- Служебные --------------------------------------------------- */
   /* --- Дополнительные цвета интерфейса (раньше были хардкодом #hex в разметке; чистка 28.10) --- */
@@ -159,8 +160,17 @@
    Инсет-тень — ТОЛЬКО у primary-кнопки (у outline-варианта её нет). */
 @utility btn-plat {
   background-image: var(--gradient-gold);
-  color: var(--color-on-gold);
+  color: #000;
   box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
+}
+
+@media (width < 768px) {
+  .mobile-cta {
+    display: flex;
+    width: min(100%, 350px);
+    height: 48px;
+    margin-inline: auto;
+  }
 }
 
 /* Прозрачная кнопка: только сплошная кремовая рамка (btn-hero), без заливки и тени.

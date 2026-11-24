@@ -137,7 +137,9 @@ const copy = {
           </span>
         </label>
 
-        <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
+        <div class="cta-submit max-md:-mx-3">
+          <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
+        </div>
 
         {/* Статус отправки */}
         <p id="cta-status" class="hidden font-accent text-base" role="status"></p>
@@ -160,7 +162,8 @@ const copy = {
     .cta-form-column { gap: 24px; }
     .cta-audiences { padding-inline: 13px; }
     .cta-audiences button { min-height: 44px; font-size: 17px; }
-    #cta-form { gap: 19px; padding-inline: 17px; }
+    #cta-form { gap: 19px; }
+    #cta-form > :is(label, div:not(.cta-submit), [role='status']) { margin-inline: 17px; }
     #cta-form > div:first-of-type { gap: 19px; }
     .cta-note { margin-top: 0; }
   }

@@ -168,7 +168,7 @@ const cards = [
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 56px;
+    height: 52px;
     padding: 8px 12px;
     border-radius: 9px;
     font-size: 20px;
@@ -182,20 +182,19 @@ const cards = [
   }
 
   .hero-btn--primary {
-    color: var(--color-on-gold);
+    color: #000;
     background: linear-gradient(172deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
   }
 
   .hero-btn--secondary {
-    min-height: 54px;
-    color: #dedede;
-    background: rgba(7, 33, 26, 0.8);
+    color: #fff;
+    background: var(--color-cta-dark);
   }
 
   .hero-cards {
     display: grid;
     gap: 12px;
-    margin-top: 36px;
+    margin-top: 46px;
     list-style: none;
   }
 
@@ -296,6 +295,9 @@ const cards = [
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
       margin-top: 64px;
+      @media (width < 768px) {
+        margin-top: 74px;
+      }
     }
 
     .hero-news {
@@ -328,7 +330,6 @@ const cards = [
     }
 
     .hero-btn {
-      min-height: 70px;
       padding-inline: 30px;
     }
 
@@ -338,7 +339,6 @@ const cards = [
 
     .hero-btn--secondary {
       min-width: 213px;
-      background: rgba(25, 43, 41, 0.7);
     }
 
     .hero-cards {
