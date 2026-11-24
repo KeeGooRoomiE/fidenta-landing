@@ -144,19 +144,6 @@ const occlusion = (index: number) => index === 2
     zoom: calc(1 / var(--desktop-reference-zoom, 1));
   }
 
-  /* The scroll runway remains part of the sticky scene. Its paint has no effect on timing. */
-  .asset-puzzle:is([data-puzzle-motion], [data-puzzle-demo-motion]) {
-    background:
-      radial-gradient(ellipse at center bottom, rgb(126 143 133 / 12%), transparent 66%) bottom / 100% min(52vh, 420px) no-repeat,
-      linear-gradient(to bottom, transparent, var(--color-canvas)) bottom / 100% 80px no-repeat,
-      var(--puzzle-background);
-  }
-
-  .investment-scroll-space {
-    background: repeating-radial-gradient(ellipse at 50% 115%, transparent 0 35px, rgb(195 184 152 / 13%) 36px 37px, transparent 38px 72px);
-    mask-image: radial-gradient(ellipse at 50% 100%, black 0%, transparent 72%);
-  }
-
   .investment-container {
     width: calc(100% - 40px);
     max-width: 1280px;
@@ -507,7 +494,6 @@ const occlusion = (index: number) => index === 2
     .asset-puzzle {
       padding-top: 48px;
       scroll-margin-top: 112px;
-      border-block: 0.7px solid rgba(255, 241, 217, 0.55);
     }
 
     .investment-container {

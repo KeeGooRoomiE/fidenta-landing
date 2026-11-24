@@ -65,7 +65,6 @@
 
   /* --- Металлик-градиент («plate») — для логотипа, золотого текста и кнопок ---
      Точный «Plat» из Figma: светлый блик → тёмное золото (с лёгкой прозрачностью). */
-  --gradient-plat-text: linear-gradient(170deg, #d8cbb0 0%, #efe3cb 27%, #b39a70 79%, #c1ab84 100%);
   --gradient-gold: linear-gradient(140.35deg, rgba(255, 241, 217, 0.87) -25.71%, rgba(168, 133, 72, 0.87) 120.56%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
@@ -137,7 +136,7 @@
 /* Металлик-золото как заливка ТЕКСТА (обрезка градиента по глифам).
    Пример: <span class="text-gold-plate font-display">ФИДЕНТА</span> */
 @utility text-gold-plate {
-  background-image: var(--gradient-plat-text);
+  background-image: var(--gradient-gold);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
