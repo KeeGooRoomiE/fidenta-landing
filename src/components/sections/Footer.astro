@@ -25,7 +25,7 @@ const legal = [
 <footer class="footer-preview font-accent text-sand">
   <div class="container-page footer-inner pb-8 pt-16 lg:pt-[107px]">
     <div class="footer-top grid gap-8 lg:items-start lg:gap-10">
-      <a href="#top" class="footer-top-link plat-outline rounded-[9px] px-6 py-2.5 uppercase hover:bg-white/5"><span class="text-gold-plate">Наверх <span class="hidden lg:inline" aria-hidden="true">↑</span></span></a>
+      <a href="#top" class="footer-top-link plat-outline rounded-[9px] px-6 py-2.5 uppercase hover:bg-white/5"><span class="text-gold-plate">К началу страницы <span class="inline" aria-hidden="true">↑</span></span></a>
       <nav class="footer-navigation grid grid-cols-2 gap-3.5 text-xl lg:flex lg:flex-col" aria-label="Навигация в подвале">
         {footerNav.map(({href, label}) => <a href={href} class="text-gold-plate w-fit hover:underline">{label}</a>)}
       </nav>
@@ -44,7 +44,7 @@ const legal = [
       </div>
     </div>
 
-    <p class="footer-description mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-copy lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда<span class="lg:hidden"> и управление.</span><span class="hidden lg:inline">, управление и развитие объектов.</span></p>
+    <p class="footer-description mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-copy lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда<span class="lg:hidden"> и управление</span><span class="hidden lg:inline">, управление и развитие объектов</span></p>
 
     <div class="footer-documents mt-9 flex flex-col items-center text-xl">
       <span>Проектная документация</span>
@@ -74,7 +74,7 @@ const legal = [
     </div>
 
     <div class="footer-legal mt-3 flex flex-col gap-3 border-t border-canvas pt-4 text-sm text-legal lg:flex-row lg:items-center lg:justify-between">
-      <p>© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
+      <p>© 2013–{year} ООО «УК Фидента». Все права защищены</p>
       <div class="footer-legal-links flex flex-wrap gap-x-7 gap-y-2">
         {legal.map(label => <span>{label}</span>)}
       </div>
@@ -85,7 +85,7 @@ const legal = [
       <p>{disclaimer}</p>
     </div>
     <div class="footer-disclaimer text-sm leading-snug text-legal lg:hidden">
-      <p>Инвестиции в коммерческую недвижимость связаны с рисками. Прогнозы и расчёты не гарантируют результат. Информация не является публичной офертой.</p>
+      <p>Инвестиции в коммерческую недвижимость связаны с рисками. Прогнозы и расчёты не гарантируют результат. Информация не является публичной офертой</p>
       <details>
         <summary class="plat-outline mt-5 cursor-pointer rounded-[9px] bg-[#0b1b16] px-3 py-3 text-center text-lg">
           <span class="text-gold-plate when-closed">Читать полный дисклеймер<span class="ml-3 text-gold-plate" aria-hidden="true">↓</span></span>
@@ -100,7 +100,7 @@ const legal = [
 <style>
   .footer-preview { background: linear-gradient(to bottom, #0a2019, #0d1b16 47.294%, #101612) top / 100% clamp(72px, 15vw, 156px) no-repeat, #101612; }
   .footer-top { grid-template-areas: 'top' 'navigation' 'brand' 'office'; }
-  .footer-top-link { grid-area: top; justify-self: center; }
+  .footer-top-link { grid-area: top; justify-self: center; min-width: 200px; text-align: center; }
   .footer-brand { grid-area: brand; }
   .footer-navigation { grid-area: navigation; }
   .footer-office { grid-area: office; }

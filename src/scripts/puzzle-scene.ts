@@ -205,7 +205,9 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     }
     progressAnchor = reading ? demoMarker : marker;
     progressStart = availableTop;
-    travel = viewportHeight * (wide ? 0.95 : 1.55);
+    // A taller free area under the pinned scene needs a shorter handoff to the next section.
+    const freeSpace = Math.max(0, availableHeight - stage.getBoundingClientRect().height);
+    travel = Math.max(viewportHeight * 0.55, viewportHeight * (wide ? 0.95 : 1.55) - freeSpace);
     root.style.setProperty('--investment-pin', `${availableTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
     root.toggleAttribute('data-puzzle-motion', !reading);
