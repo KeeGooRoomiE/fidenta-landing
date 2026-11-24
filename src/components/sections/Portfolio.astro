@@ -131,7 +131,8 @@ const objects = [
         <ObjectCard {...object} id={`${object.id}-slider`} class={index < 4 ? 'track-mobile' : undefined} />
       ))}
       <article class="project-card relative isolate flex min-h-[480px] flex-col items-start justify-end gap-3 overflow-hidden rounded-[9px] border border-cream/60 p-6 font-accent sm:p-7">
-        <img class="project-photo" src={`${base}images/project-retail.jpg`} alt="" width="960" height="640" loading="lazy" decoding="async" />
+        {/* Azamat Hatypov, Pexels: https://www.pexels.com/photo/26711212/ */}
+        <img class="project-photo" src={`${base}images/project-redevelopment.jpg`} alt="" width="900" height="810" loading="lazy" decoding="async" />
         <p class="text-gold-plate text-base leading-tight tracking-[0.04em] uppercase">Следующая история</p>
         <h4 class="project-title leading-[1.05] text-fg">
           <span class="block">Здесь может начаться</span>
@@ -323,7 +324,7 @@ const objects = [
     z-index: -2;
     height: 62%;
     object-fit: cover;
-    object-position: 55% center;
+    object-position: center top;
   }
 
   .project-card::before {
