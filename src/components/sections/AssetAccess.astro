@@ -144,6 +144,19 @@ const occlusion = (index: number) => index === 2
     zoom: calc(1 / var(--desktop-reference-zoom, 1));
   }
 
+  /* The scroll runway remains part of the sticky scene. Its paint has no effect on timing. */
+  .asset-puzzle:is([data-puzzle-motion], [data-puzzle-demo-motion]) {
+    background:
+      radial-gradient(ellipse at center bottom, rgb(126 143 133 / 12%), transparent 66%) bottom / 100% min(52vh, 420px) no-repeat,
+      linear-gradient(to bottom, transparent, var(--color-canvas)) bottom / 100% 80px no-repeat,
+      var(--puzzle-background);
+  }
+
+  .investment-scroll-space {
+    background: repeating-radial-gradient(ellipse at 50% 115%, transparent 0 35px, rgb(195 184 152 / 13%) 36px 37px, transparent 38px 72px);
+    mask-image: radial-gradient(ellipse at 50% 100%, black 0%, transparent 72%);
+  }
+
   .investment-container {
     width: calc(100% - 40px);
     max-width: 1280px;
@@ -179,11 +192,6 @@ const occlusion = (index: number) => index === 2
 
   .investment-heading h2 .text-gold-plate {
     display: block;
-  }
-
-  .investment-heading h2 .text-gold-plate,
-  .investment-capital .text-gold-plate {
-    --gradient-gold: var(--investment-gold);
   }
 
   .investment-disclaimer-desktop,
@@ -392,14 +400,6 @@ const occlusion = (index: number) => index === 2
     background: var(--surface-60);
     color: #ebd6b0;
     font-size: clamp(9px, 2.8vw, 11px);
-  }
-
-  .investment-directions::before {
-    content: '';
-    position: absolute;
-    inset: 50% 12px auto;
-    height: 1px;
-    background: linear-gradient(90deg, #d1b58261, transparent 42% 58%, #d1b58261);
   }
 
   .investment-directions span:nth-child(1) { grid-area: tenants; }
@@ -614,10 +614,6 @@ const occlusion = (index: number) => index === 2
       padding: 7px clamp(10px, 1.87vw, 27px);
       gap: clamp(4px, 0.69vw, 10px);
       font-size: clamp(11px, 1.12vw, 16px);
-    }
-
-    .investment-directions::before {
-      display: none;
     }
 
     .investment-directions span:nth-child(even) { text-align: left; }

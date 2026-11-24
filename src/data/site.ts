@@ -12,6 +12,7 @@ export const nav = [
   { label: 'О компании', href: '#about' },
   { label: 'Инвестиции', href: '#asset' },
   { label: 'Объекты', href: '#portfolio' },
+  { label: 'Услуги', href: '#comparison' },
   { label: 'Вопросы', href: '#faq' },
   { label: 'Контакты', href: '#contacts' },
 ];

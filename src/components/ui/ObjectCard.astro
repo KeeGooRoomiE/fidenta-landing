@@ -1,6 +1,5 @@
 ---
 interface Props {
-  type: string;
   title: string;
   lead: string;
   photos: string[];
@@ -12,7 +11,7 @@ interface Props {
   projectHref?: string;
 }
 
-const { type, title, lead, photos, facts = [], story = [], storyTitle = title, id, class: className, projectHref } = Astro.props;
+const { title, lead, photos, facts = [], story = [], storyTitle = title, id, class: className, projectHref } = Astro.props;
 const factLabels = ['В управлении', 'Профиль', 'Заполняемость'];
 const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text-xl leading-tight hover:underline';
 ---
@@ -36,7 +35,6 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
       ))}
 
       <div class="photo-tone" aria-hidden="true"></div>
-      <span class="photo-control absolute left-3 top-3 rounded-full px-3 py-1 text-xs uppercase tracking-[0.08em]"><span class="text-gold-plate">{type}</span></span>
 
       {!projectHref && (
         <>

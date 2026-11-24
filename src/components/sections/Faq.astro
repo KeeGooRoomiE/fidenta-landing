@@ -39,36 +39,41 @@ const extraQuestions = [
 
 <Section id="faq" class="faq-section">
   <div class="faq-layout grid gap-7 border-t border-cream/25 pt-8 lg:gap-x-10 lg:pt-10">
-    <div class="faq-intro">
-      <SectionHeading eyebrow="Вопросы и ответы">
-        Разбираем самые<br /><span class="text-gold-plate">частые вопросы</span>
-        <Fragment slot="lead">Коротко о проектах, управлении и первом обращении</Fragment>
-      </SectionHeading>
-    </div>
-
-    <div class="faq-questions flex flex-col gap-3">
-      {[...questions, ...extraQuestions].map(([question, answer], index) => (
-        <details hidden={index >= questions.length} data-faq-extra={index >= questions.length ? "" : undefined} name="fidenta-faq" class="faq-question plat-outline rounded-[9px]">
-          <summary class="flex min-h-[60px] cursor-pointer items-center justify-between gap-4 px-5 py-4 font-accent text-lg leading-snug md:min-h-[69px] md:text-xl">
-            <span>{question}</span>
-            <span class="faq-plus text-gold-plate" aria-hidden="true">+</span>
-          </summary>
-          <p class="mx-5 border-t border-cream/20 pb-5 pt-3 font-accent text-base leading-snug text-copy md:text-lg">{answer.replace(/\.$/, "")}</p>
-        </details>
-      ))}
-    </div>
-
-    <button type="button" class="faq-more text-gold-plate w-fit" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
-
-    <div class="faq-contact flex flex-col items-start">
-      <div class="faq-visual w-full max-w-[360px]" aria-hidden="true">
-        <img src={`${base}images/faq-illustration.jpg`} width="720" height="480" alt="" loading="lazy" decoding="async" />
+    <div class="faq-sidebar">
+      <div class="faq-intro">
+        <SectionHeading eyebrow="Вопросы и ответы">
+          Разбираем самые<br /><span class="text-gold-plate">частые вопросы</span>
+          <Fragment slot="lead">Коротко о проектах, управлении и первом обращении</Fragment>
+        </SectionHeading>
       </div>
-      <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос? Обсудим вашу задачу</p>
-      <div class="w-full max-w-[350px]">
-        <ContactMenu label="Задать вопрос специалисту" />
+      <div class="faq-contact flex flex-col items-start">
+        <div class="faq-visual w-full max-w-[360px]" aria-hidden="true">
+          <img src={`${base}images/faq-illustration.jpg`} width="720" height="480" alt="" loading="lazy" decoding="async" />
+        </div>
+        <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос? Обсудим вашу задачу</p>
+        <div class="w-full max-w-[350px]">
+          <ContactMenu label="Задать вопрос специалисту" />
+        </div>
       </div>
     </div>
+
+    <div class="faq-list">
+      <div class="faq-questions flex flex-col gap-3">
+        {[...questions, ...extraQuestions].map(([question, answer], index) => (
+          <details hidden={index >= questions.length} data-faq-extra={index >= questions.length ? "" : undefined} name="fidenta-faq" class="faq-question plat-outline rounded-[9px]">
+            <summary class="flex min-h-[60px] cursor-pointer items-center justify-between gap-4 px-5 py-4 font-accent text-lg leading-snug md:min-h-[69px] md:text-xl">
+              <span>{question}</span>
+              <span class="faq-plus text-gold-plate" aria-hidden="true">+</span>
+            </summary>
+            <p class="mx-5 border-t border-cream/20 pb-5 pt-3 font-accent text-base leading-snug text-copy md:text-lg">{answer.replace(/\.$/, "")}</p>
+          </details>
+        ))}
+      </div>
+
+      <button type="button" class="faq-more text-gold-plate w-fit" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
+    </div>
+
+
   </div>
 </Section>
 
@@ -76,6 +81,8 @@ const extraQuestions = [
   .faq-section { background: #071f18; }
   .faq-layout { grid-template-areas: 'intro' 'questions' 'more' 'contact'; }
   .faq-more { grid-area: more; min-height: 44px; font-family: var(--font-accent); justify-self: center; cursor: pointer; }
+  .faq-list, .faq-sidebar { display: contents; }
+  .faq-layout { reading-flow: grid-rows; }
   .faq-intro { grid-area: intro; }
   .faq-questions { grid-area: questions; }
   .faq-contact { grid-area: contact; }
@@ -95,8 +102,9 @@ const extraQuestions = [
     .faq-question > p { margin-inline: 0; border-top: 0; padding-top: 0; }
   }
   @media (min-width: 1024px) {
-    .faq-layout { grid-template-areas: 'intro questions' 'contact questions' '. more'; grid-template-columns: minmax(0, 2fr) minmax(0, 3.6fr); grid-template-rows: auto 1fr auto; align-items: start; }
-    .faq-contact { align-self: end; }
+    .faq-layout { grid-template-areas: 'sidebar list'; grid-template-columns: minmax(0, 2fr) minmax(0, 3.6fr); align-items: start; }
+    .faq-list { grid-area: list; display: grid; gap: 16px; }
+    .faq-sidebar { grid-area: sidebar; display: flex; flex-direction: column; gap: 16px; }
   }
 </style>
 
@@ -105,31 +113,11 @@ const extraQuestions = [
   if (faq) {
     const more = faq.querySelector<HTMLButtonElement>('[data-faq-more]')!;
     const extras = faq.querySelectorAll<HTMLDetailsElement>('[data-faq-extra]');
-    const menu = faq.querySelector<HTMLDetailsElement>('.contact-choice')!;
-    const contact = faq.querySelector<HTMLElement>('.faq-contact')!;
-    const list = faq.querySelector<HTMLElement>('.faq-questions')!;
-    const intro = faq.querySelector<HTMLElement>('.faq-intro')!;
-    const desktop = matchMedia('(min-width: 1024px)');
-    function alignContact() {
-      contact.style.translate = '';
-      const open = list.querySelector('details[open]:not([hidden])');
-      if (!desktop.matches || !open) return;
-      const delta = open.getBoundingClientRect().bottom - menu.querySelector('summary')!.getBoundingClientRect().bottom;
-      const topLimit = intro.getBoundingClientRect().bottom + 8 - menu.getBoundingClientRect().top;
-      contact.style.translate = `0 ${Math.max(delta, topLimit) / (contact.getBoundingClientRect().height / contact.offsetHeight)}px`;
-    }
     more.addEventListener('click', () => {
       const expanded = more.getAttribute('aria-expanded') === 'true';
       extras.forEach(item => { item.hidden = expanded; if (expanded) item.open = false; });
       more.setAttribute('aria-expanded', String(!expanded));
       more.textContent = expanded ? 'Показать ещё вопросы' : 'Скрыть дополнительные вопросы';
-      alignContact();
     });
-    list.addEventListener('toggle', alignContact, true);
-    const observer = new ResizeObserver(alignContact);
-    observer.observe(list);
-    observer.observe(intro);
-    observer.observe(contact);
-
   }
 </script>

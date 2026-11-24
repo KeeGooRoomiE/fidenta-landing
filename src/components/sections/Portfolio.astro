@@ -11,7 +11,7 @@ const cover = (object: number) => `${base}images/objects/obj${object}-1.webp`;
 
 const objects = [
   {
-    id: 'bogatyrsky', type: 'Редевелопмент', title: 'Автомобильный комплекс', storyTitle: 'Объект на Богатырском',
+    id: 'bogatyrsky', title: 'Автомобильный комплекс', storyTitle: 'Объект на Богатырском',
     photos: [cover(3), ...exterior(2, 12)],
     lead: 'Здание требовало реконструкции. Обновили помещения и территорию, нашли арендаторов — сегодня здесь работает автоцентр',
     facts: ['С 2022 года', 'Автоцентр', 'Полная'],
@@ -22,7 +22,7 @@ const objects = [
     ],
   },
   {
-    id: 'park-five', type: 'Строительство', title: 'Автосервис «ПАРК 5»', photos: [cover(1), ...exterior(7, 0), `${base}images/objects/obj1-2.webp`],
+    id: 'park-five', title: 'Автосервис «ПАРК 5»', photos: [cover(1), ...exterior(7, 0), `${base}images/objects/obj1-2.webp`],
     lead: 'Автосервис построен с нуля в 2022 году. Отдельный объект для обслуживания автомобилей',
     facts: ['С 2022 года', 'Автосервис', 'Полная'],
     story: [
@@ -32,7 +32,7 @@ const objects = [
     ],
   },
   {
-    id: 'wash', type: 'Субаренда', title: 'Автомойка', photos: [cover(2), ...exterior(3, 2), photo('disk-3-0')],
+    id: 'wash', title: 'Автомойка', photos: [cover(2), ...exterior(3, 2), photo('disk-3-0')],
     lead: 'Автомойка и детейлинг на одной площадке. Объект работает в формате субаренды с 2024 года',
     facts: ['С 2024 года', 'Автомойка', '3 помещения — 100% на площадке'],
     story: [
@@ -42,7 +42,7 @@ const objects = [
     ],
   },
   {
-    id: 'warehouse', type: 'Склад', title: 'Помещение под склад', photos: [photo('disk-6-5')],
+    id: 'warehouse', title: 'Помещение под склад', photos: [photo('disk-6-5')],
     lead: '450 м² складских помещений, сданных в аренду «Яндексу»',
     facts: ['С 2024 года', 'Склад', 'Полная'],
     story: [
@@ -52,7 +52,7 @@ const objects = [
     ],
   },
   {
-    id: 'containers', type: 'Контейнеры', title: 'Контейнерная площадка', photos: [cover(5), ...exterior(2, 7), `${base}images/objects/obj5-2.webp`],
+    id: 'containers', title: 'Контейнерная площадка', photos: [cover(5), ...exterior(2, 7), `${base}images/objects/obj5-2.webp`],
     lead: 'Пустой участок получил новое назначение: площадка для складских контейнеров. Найдены арендаторы',
     facts: ['С 2022 года', 'Хранение', '—'],
     story: [
@@ -62,7 +62,7 @@ const objects = [
     ],
   },
   {
-    id: 'sewing', type: 'Производство', title: 'Швейный цех', photos: [cover(6), photo('production-4'), ...exterior(5, 2)],
+    id: 'sewing', title: 'Швейный цех', photos: [cover(6), photo('production-4'), ...exterior(5, 2)],
     lead: 'Производственный объект на арендованном участке. Швейный цех построен и запущен в 2019 году',
     facts: ['С 2019 года', 'Швейный цех', '3 помещения — 100%'],
     story: [
@@ -72,25 +72,25 @@ const objects = [
     ],
   },
   {
-    id: 'detailing', type: 'Субаренда', title: 'Детейлинг-студия', photos: [photo('detailing-facade'), ...exterior(4, 0)],
+    id: 'detailing', title: 'Детейлинг-студия', photos: [photo('detailing-facade'), ...exterior(4, 0)],
     lead: 'Отдельное помещение для детейлинга на одной площадке с автомойкой',
     facts: ['С 2024 года', 'Детейлинг', '—'],
     story: [{ title: 'Площадка', text: 'Детейлинг занимает отдельное помещение по соседству с моечными постами' }],
   },
   {
-    id: 'kudrovo-service', type: 'Автосервис', title: 'Автосервис в Кудрово', photos: [photo('disk-1-0'), ...exterior(1, 25), photo('exterior-kudrovo-side')],
+    id: 'kudrovo-service', title: 'Автосервис в Кудрово', photos: [photo('disk-1-0'), ...exterior(1, 25), photo('exterior-kudrovo-side')],
     lead: 'Помещение с ремонтными постами для обслуживания автомобилей',
     facts: ['—', 'Автосервис', '—'],
     story: [{ title: 'Назначение', text: 'На площадке работает сервис по ремонту и техническому обслуживанию автомобилей' }],
   },
   {
-    id: 'cnc', type: 'Производство', title: 'ЧПУ-мастерская в Кудрово', photos: [photo('production-3'), ...exterior(5, 7)],
+    id: 'cnc', title: 'ЧПУ-мастерская в Кудрово', photos: [photo('production-3'), ...exterior(5, 7)],
     lead: 'Мастерская со станками с ЧПУ расположена в сером здании между двумя корпусами швейного цеха',
     facts: ['—', 'ЧПУ-мастерская', '—'],
     story: [{ title: 'Площадка', text: 'Среднее здание производственной площадки в Кудрово занимает ЧПУ-мастерская. В двух соседних зданиях работает швейный цех' }],
   },
   {
-    id: 'autograd', type: 'Автосервис', title: 'Автосервис «Ауто Град»', photos: [photo('autograd-facade'), ...exterior(4, 6)],
+    id: 'autograd', title: 'Автосервис «Ауто Град»', photos: [photo('autograd-facade'), ...exterior(4, 6)],
     lead: 'Отдельный автосервис с малярно-кузовным центром',
     facts: ['—', 'Кузовной ремонт', '—'],
     story: [{ title: 'Назначение', text: 'В здании работают посты диагностики, обслуживания и кузовного ремонта автомобилей' }],
@@ -136,7 +136,6 @@ const objects = [
       <ObjectCard
         id="portfolio-project"
         class="project-card"
-        type="Следующая история"
         title="Здесь может начаться ваш проект"
         photos={[`${base}images/project-factory.jpg`]}
         lead="Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу."

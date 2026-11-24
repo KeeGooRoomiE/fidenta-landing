@@ -17,7 +17,7 @@ import Section from '../ui/Section.astro';
 const base = import.meta.env.BASE_URL;
 ---
 
-<Section pad="tight">
+<Section pad="tight" class="management-section">
     <div
       class="management-banner plat-outline grid items-center gap-8 rounded-[9px] p-5 max-md:-mx-3 sm:p-6 lg:grid-cols-[1fr_416px] lg:gap-10 lg:py-[27px] lg:pl-[23px] lg:pr-[26px]"
     >
@@ -28,7 +28,7 @@ const base = import.meta.env.BASE_URL;
           <span class="text-eyebrow text-gold-plate">Как работаем</span>
         </div>
         <h2 class="text-h2 text-fg [--h2-fs:1.65rem]">
-          Управляем объектом<br /><span class="text-gold-plate">по согласованному плану</span>
+          Ваш объект<br /><span class="text-gold-plate">наша ответственность</span>
         </h2>
         <p class="max-w-[713px] text-lead text-copy">
           Если помещение пустует, разберёмся, что мешает его сдать. Если арендаторы уже работают, посмотрим, где теряются время и деньги.
@@ -63,6 +63,7 @@ const base = import.meta.env.BASE_URL;
 </Section>
 
 <style>
+  .management-section { background: linear-gradient(to bottom, var(--color-canvas) 45%, #0a2019 76%, #061e16); }
   .management-banner {
     background-color: var(--surface-90);
     background-image: repeating-linear-gradient(118deg, transparent 0 23px, rgb(213 202 177 / 2.4%) 23px 24px);
