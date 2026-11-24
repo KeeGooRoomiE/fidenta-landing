@@ -51,7 +51,7 @@ const extraQuestions = [
           <img src={`${base}images/faq-illustration.jpg`} width="720" height="480" alt="" loading="lazy" decoding="async" />
         </div>
         <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос? Обсудим вашу задачу</p>
-        <div class="w-full max-w-[350px]">
+        <div class="faq-contact-action w-full max-w-[350px]">
           <ContactMenu label="Задать вопрос специалисту" />
         </div>
       </div>
@@ -102,8 +102,17 @@ const extraQuestions = [
     .faq-question > p { margin-inline: 0; border-top: 0; padding-top: 0; }
   }
   @media (min-width: 1024px) {
-    .faq-layout { grid-template-areas: 'sidebar list'; grid-template-columns: minmax(0, 2fr) minmax(0, 3.6fr); align-items: start; }
-    .faq-sidebar { grid-area: sidebar; display: flex; flex-direction: column; gap: 16px; }
+    .faq-layout { grid-template-areas: 'sidebar list' '. more'; grid-template-rows: auto min-content; grid-template-columns: minmax(0, 2fr) minmax(0, 3.6fr); align-items: start; }
+    .faq-list { display: contents; }
+    .faq-questions { grid-area: list; }
+    .faq-more { grid-area: more; }
+    .faq-sidebar { grid-area: sidebar; align-self: stretch; display: flex; flex-direction: column; gap: 16px; }
+    .faq-contact { flex: 1; }
+    .faq-visual { max-width: 270px; }
+    .faq-contact-action { margin-top: auto; }
+    .faq-questions { align-self: stretch; }
+    .faq-question:last-of-type, .faq-question:not([hidden]):has(+ [hidden]) { flex: 1; }
+    .faq-question[hidden] { display: none; }
   }
 </style>
 

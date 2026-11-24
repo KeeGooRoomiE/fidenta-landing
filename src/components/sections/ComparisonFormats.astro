@@ -92,7 +92,7 @@ const base = import.meta.env.BASE_URL;
   .compare-panel { scroll-margin-top: 120px; }
   .compare-trigger { min-height: 44px; justify-content: center; text-align: center; }
   .compare-trigger span { display: none; }
-  .compare-trigger[aria-expanded='true'] { background: var(--gradient-gold), #ae9971; color: #071814; }
+  .compare-trigger[aria-expanded='true'] { background: var(--surface-90); }
   .hourglass-vessel { position: relative; display: block; width: 30px; height: 40px; }
   .sand-chamber { position: absolute; left: 3px; width: 24px; height: 15px; }
   .sand-chamber::after { position: absolute; inset: 0; background: linear-gradient(#f5dfaa, #d6b574); content: ''; }
@@ -106,7 +106,7 @@ const base = import.meta.env.BASE_URL;
     .compare-panel { order: -1; }
     .compare-trigger { min-height: 77px; justify-content: space-between; text-align: left; }
     .compare-trigger span { display: inline; }
-    .compare-trigger[aria-expanded='true'] span { color: currentColor; background: none; rotate: 45deg; }
+    .compare-trigger[aria-expanded='true'] span { rotate: 45deg; }
     .compare-pair { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: clamp(16px, 4vw, 64px); }
   }
   @media (prefers-reduced-motion: no-preference) {
