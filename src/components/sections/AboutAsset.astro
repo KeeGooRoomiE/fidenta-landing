@@ -62,17 +62,6 @@ const cards = [
       {cards.map(({ icon, title, text }) => (
         <li class="about-card plat-outline">
           <span class:list={['about-icon', { 'about-icon--bridge': icon === 'bridge.svg' }]}>
-            {icon === 'bridge.svg' && (
-              <svg class="about-icon-frame" viewBox="0 0 63 58" aria-hidden="true">
-                <defs>
-                  <linearGradient id="about-bridge-frame" x1="-16.2" y1="-14.9143" x2="58.6232" y2="83.1439" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#fff1d9" />
-                    <stop offset="1" stop-color="#a88548" />
-                  </linearGradient>
-                </defs>
-                <rect x="0.35" y="0.35" width="62.3" height="57.3" rx="8.65" fill="none" stroke="url(#about-bridge-frame)" stroke-opacity="0.87" stroke-width="0.7" />
-              </svg>
-            )}
             <img
               src={`${base}icons/about/${icon}`}
               width={icon === 'bridge.svg' ? 58 : 63}
@@ -202,15 +191,8 @@ const cards = [
   }
 
   .about-icon--bridge {
-    position: relative;
-  }
-
-  .about-icon-frame {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+    border-radius: 14% / 15%;
+    box-shadow: inset 0 0 0 1px rgb(201 184 147 / 50%);
   }
 
   .about-icon--bridge img {
