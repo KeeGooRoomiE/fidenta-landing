@@ -34,7 +34,13 @@ const roles = [
 
     {roles.map(({ key, stages }, roleIndex) => (
       <div class="cooperation-panel relative" id={`cooperation-${key}`} data-cooperation-panel={key} hidden={roleIndex > 0}>
-        <div class="bridge-progress" data-cooperation-progress style={`--stage-progress: ${50 / stages.length}%`} aria-hidden="true"><span></span></div>
+        <div class="bridge-progress" data-cooperation-progress style={`--stage-progress: ${100 / stages.length}`} aria-hidden="true">
+          <span></span>
+          <svg viewBox="0 0 280 30" width="280" height="30" aria-hidden="true">
+            <ellipse cx="140" cy="15" rx="138" ry="13" pathLength="100" />
+            <ellipse class="bridge-oval-fill" cx="140" cy="15" rx="138" ry="13" pathLength="100" transform="rotate(180 140 15)" />
+          </svg>
+        </div>
         <div id={`cooperation-track-${key}`} class="stage-track mt-6" data-cooperation-track role="region" aria-label="Карусель этапов сотрудничества" tabindex="0">
           {stages.map(([, title, description], index) => (
             <article class="stage-detail plat-outline grid gap-3 rounded-xl bg-[#303a28]/45 p-5 font-accent md:items-center md:gap-6 md:p-6" data-cooperation-detail>
@@ -79,11 +85,19 @@ const roles = [
       const next = panel.querySelector<HTMLButtonElement>('[data-cooperation-next]')!;
       const count = panel.querySelector<HTMLElement>('[data-cooperation-count]')!;
       const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      const wide = matchMedia('(min-width: 1024px)');
       let current = 0;
 
       const position = (index: number) => details[index].offsetLeft - details[0].offsetLeft;
       function update() {
         if (panel.hidden) return;
+        if (wide.matches && !reduced.matches) {
+          details.forEach((detail, index) => {
+            const distance = Math.min(1, Math.abs(position(index) - track.scrollLeft) / track.clientWidth);
+            const lift = 32 * Math.sqrt(1 - (2 * distance - 1) ** 2);
+            detail.style.setProperty('--stage-arc', `${-lift}px`);
+          });
+        }
         const closest = details.reduce((best, _, index) =>
           Math.abs(position(index) - track.scrollLeft) < Math.abs(position(best) - track.scrollLeft) ? index : best, 0);
         if (closest === current) return;
@@ -91,7 +105,7 @@ const roles = [
         count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(details.length).padStart(2, '0')}`;
         back.disabled = current === 0;
         next.disabled = current === details.length - 1;
-        progress.style.setProperty('--stage-progress', `${(current + 0.5) / details.length * 100}%`);
+        progress.style.setProperty('--stage-progress', String((current + 1) / details.length * 100));
       }
 
       function move(index: number) {
@@ -102,6 +116,7 @@ const roles = [
       back.addEventListener('click', () => move(current - 1));
       next.addEventListener('click', () => move(current + 1));
       track.addEventListener('scroll', update, { passive: true });
+      new ResizeObserver(update).observe(track);
       track.addEventListener('keydown', (event) => {
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
         event.preventDefault();
@@ -126,8 +141,8 @@ const roles = [
   .role-step[aria-pressed='true'] { color: #0a2019; background: var(--gradient-gold); }
   .cooperation-panel { margin-top: 42px; }
   .bridge-progress { height: 1px; background: rgb(209 184 135 / 25%); }
-  .bridge-progress span { position: relative; display: block; top: -1px; width: var(--stage-progress); height: 3px; border-radius: 4px; background: #d1b887; }
-  .bridge-progress span::after { content: ''; position: absolute; right: -4px; top: -2.5px; width: 8px; height: 8px; border-radius: 50%; background: #d1b887; }
+  .bridge-progress span { position: relative; display: block; top: -1px; width: calc(var(--stage-progress) * 1%); height: 3px; border-radius: 4px; background: #d1b887; }
+  .bridge-progress svg { display: none; }
   .stage-track {
     position: relative;
     display: grid;
@@ -152,8 +167,17 @@ const roles = [
     .bridge-visual { position: absolute; z-index: -1; top: -12px; right: -12px; width: 70%; height: 420px; mask-image: linear-gradient(#000 73%, transparent), linear-gradient(to right, transparent, #000 27%, #000 84%, transparent); mask-composite: intersect; }
     .bridge-visual img { height: 100%; object-fit: contain; object-position: right center; }
     .cooperation-intro { min-height: 315px; }
+    .bridge-progress { height: auto; background: none; }
+    .bridge-progress span { display: none; }
+    .bridge-progress svg { display: block; margin-inline: auto; fill: none; stroke: rgb(209 184 135 / 25%); }
+    .bridge-oval-fill { stroke: #d1b887; stroke-width: 1.5; stroke-dasharray: var(--stage-progress) 100; }
+    .stage-track { margin-top: 0; padding-top: 34px; }
   }
   @media (prefers-reduced-motion: no-preference) {
     .bridge-progress span { transition: width 250ms ease; }
+    .bridge-oval-fill { transition: stroke-dasharray 300ms ease; }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .stage-detail { translate: 0 var(--stage-arc, 0px); }
   }
 </style>

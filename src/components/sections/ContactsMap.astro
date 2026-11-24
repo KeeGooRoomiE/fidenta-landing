@@ -25,6 +25,7 @@
   (второй похож на заглушку); подтвердить у клиента.
 */
 import SectionHeading from '../ui/SectionHeading.astro';
+import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 import { locations } from '../../data/locations';
 import { office, phones } from '../../data/site';
@@ -80,20 +81,23 @@ const info = [
           <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
         </div>
 
-        <div class="flex justify-end">
+        <div class="px-[17px] md:px-0">
 
           {/* Кнопка + выпадающий выбор сервиса */}
-          <div class="relative shrink-0">
-            <button
+          <div class="relative">
+            <Button
+              variant="plat-form"
               type="button"
               data-route-btn
               aria-haspopup="true"
               aria-expanded="false"
-              class="plat-outline w-full rounded-[9px] bg-[#0d291f] px-[14px] py-2.5 font-accent text-xl text-sand transition-colors hover:bg-[rgba(255,241,217,0.08)] sm:w-[233px]"
-              style="text-shadow: 0 4px 4px rgba(0,0,0,0.11);"
+              class="gap-2"
             >
               Построить маршрут
-            </button>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="m13.5 2.5-4 11-2-5-5-2 11-4Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </Button>
             <div
               data-route-menu
               hidden

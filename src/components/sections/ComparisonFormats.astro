@@ -35,7 +35,7 @@ const base = import.meta.env.BASE_URL;
             <span class="hourglass-vessel">
               <img src={`${base}images/comparison-hourglass.svg`} width="30" height="40" alt="" loading="lazy" />
               <span class="sand-chamber sand-chamber--top"></span>
-              <span class="sand-stream"></span>
+              <span class="sand-stream"><i></i><i></i><i></i></span>
               <span class="sand-chamber sand-chamber--bottom"></span>
             </span>
           </span>
@@ -92,12 +92,13 @@ const base = import.meta.env.BASE_URL;
   .compare-trigger[aria-expanded='true'] { background: var(--gradient-gold), #ae9971; color: #071814; }
   .hourglass-vessel { position: relative; display: block; width: 30px; height: 40px; }
   .sand-chamber { position: absolute; left: 3px; width: 24px; height: 15px; }
-  .sand-chamber::after { position: absolute; inset: 0; background: var(--gradient-gold); content: ''; }
+  .sand-chamber::after { position: absolute; inset: 0; background: linear-gradient(#f5dfaa, #d6b574); content: ''; }
   .sand-chamber--top { top: 4px; clip-path: polygon(0 0, 100% 0, 50% 100%); }
   .sand-chamber--top::after { transform: translateY(24%); }
   .sand-chamber--bottom { bottom: 4px; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   .sand-chamber--bottom::after { transform: translateY(38%); }
-  .sand-stream { position: absolute; top: 20px; left: 14.5px; width: 1px; height: 14px; background: repeating-linear-gradient(to bottom, #e2c890 0 1px, transparent 1px 4px); opacity: 0; }
+  .sand-stream { position: absolute; top: 20px; left: 14px; width: 2px; height: 15px; overflow: hidden; opacity: 0; }
+  .sand-stream i { position: absolute; inset: 0 auto auto 0; width: 2px; height: 2px; border-radius: 50%; background: #ffe5a7; }
   @media (min-width: 768px) {
     .compare-panel { order: -1; }
     .compare-trigger { min-height: 77px; justify-content: space-between; text-align: left; }
@@ -109,11 +110,14 @@ const base = import.meta.env.BASE_URL;
     .compare-panel:not([hidden]) .hourglass-vessel { animation: hourglass-turn 4.8s infinite; }
     .compare-panel:not([hidden]) .sand-chamber--top::after { animation: sand-drain 4.8s linear infinite; }
     .compare-panel:not([hidden]) .sand-chamber--bottom::after { animation: sand-fill 4.8s linear infinite; }
-    .compare-panel:not([hidden]) .sand-stream { animation: sand-visible 4.8s linear infinite, sand-fall 180ms linear infinite; }
+    .compare-panel:not([hidden]) .sand-stream { animation: sand-visible 4.8s linear infinite; }
+    .compare-panel:not([hidden]) .sand-stream i { animation: sand-fall 360ms linear infinite; }
+    .compare-panel:not([hidden]) .sand-stream i:nth-child(2) { animation-delay: -120ms; }
+    .compare-panel:not([hidden]) .sand-stream i:nth-child(3) { animation-delay: -240ms; }
     @keyframes hourglass-turn { 0%, 86% { rotate: 0deg; } 100% { rotate: 180deg; } }
     @keyframes sand-drain { 0% { transform: translateY(0); } 70%, 100% { transform: translateY(102%); } }
     @keyframes sand-fill { 0% { transform: translateY(102%); } 70%, 100% { transform: translateY(0); } }
     @keyframes sand-visible { 0%, 70% { opacity: 1; } 71%, 100% { opacity: 0; } }
-    @keyframes sand-fall { to { background-position: 0 4px; } }
+    @keyframes sand-fall { from { translate: 0 -2px; } to { translate: 0 15px; } }
   }
 </style>
