@@ -298,6 +298,10 @@
   position: relative;
 }
 
+.aud-btn.plat-outline {
+  border: 0;
+}
+
 .plat-outline::after {
   content: '';
   position: absolute;

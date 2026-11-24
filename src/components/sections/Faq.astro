@@ -78,16 +78,16 @@ const audiences = [
     {/* Переключатель аудитории */}
     <div class="mt-12 flex gap-5" role="group" aria-label="Для кого вопросы">
       {audiences.map((a, i) => (
-        <button type="button" class="aud-btn" data-audience={a.key} aria-pressed={i === 0 ? 'true' : 'false'}>{a.label}</button>
+        <button type="button" class="aud-btn plat-outline" data-audience={a.key} aria-pressed={i === 0 ? 'true' : 'false'}>{a.label}</button>
       ))}
     </div>
 
     {/* Списки вопросов: по одному на аудиторию, неактивный скрыт */}
     {audiences.map((a, listIdx) => (
-      <div data-list={a.key} hidden={listIdx !== 0} class="mt-4">
+      <div data-list={a.key} hidden={listIdx !== 0} class="plat-outline mt-4">
         {faq[a.key].map((item, i) => (
           <div
-            class:list={['faq-item border border-border', i > 0 && '-mt-px']}
+            class:list={['faq-item', i > 0 && 'border-t border-border']}
             data-item
             data-extra={i >= VISIBLE ? '' : undefined}
             hidden={i >= VISIBLE}
@@ -117,9 +117,15 @@ const audiences = [
 
     {/* «Ещё вопросы»: показывает ещё 3, затем исчезает */}
     <div class="flex justify-center pt-[22px]" data-more-wrap>
-      <Button variant="more" data-more>Ещё вопросы</Button>
+      <Button variant="more" data-more class="plat-outline">Ещё вопросы</Button>
     </div>
 </Section>
+
+<style>
+  [data-more-wrap] :global(.plat-outline) {
+    border: 0;
+  }
+</style>
 
 <script>
   import { accordion, showMore } from '../../scripts/ui';
