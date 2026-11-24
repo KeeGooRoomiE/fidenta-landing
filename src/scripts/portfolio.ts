@@ -1,4 +1,17 @@
 export function initPortfolio(root: HTMLElement) {
+  const read = root.querySelector<HTMLButtonElement>('[data-portfolio-read]')!;
+  const readLabel = read.querySelector('span')!;
+  const details = root.querySelector<HTMLElement>('#portfolio-details')!;
+  root.setAttribute('data-portfolio-ready', '');
+  read.addEventListener('click', () => {
+    const expanded = root.toggleAttribute('data-portfolio-expanded');
+    read.setAttribute('aria-expanded', String(expanded));
+    readLabel.textContent = expanded ? 'свернуть текст' : 'читать далее';
+    if (expanded && details.getBoundingClientRect().top < 98) {
+      details.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
+  });
+
   for (const card of root.querySelectorAll<HTMLElement>('[data-object-card]')) {
     const front = card.querySelector<HTMLElement>('[data-object-front]')!;
     const back = card.querySelector<HTMLElement>('[data-object-back]')!;
@@ -56,28 +69,43 @@ export function initPortfolio(root: HTMLElement) {
   const track = panel.querySelector<HTMLElement>('[data-object-track]')!;
   const prev = panel.querySelector<HTMLButtonElement>('[data-track-step="-1"]')!;
   const next = panel.querySelector<HTMLButtonElement>('[data-track-step="1"]')!;
+  const position = panel.querySelector<HTMLInputElement>('[data-track-position]')!;
+  const card = track.querySelector<HTMLElement>('article:not(.track-mobile)')!;
 
-  function updateArrows() {
+  function stepWidth() {
+    return card.offsetWidth + Number.parseFloat(getComputedStyle(track).columnGap);
+  }
+
+  function updateNavigation() {
+    if (panel.hidden) return;
+    const last = Math.round((track.scrollWidth - track.clientWidth) / stepWidth());
+    position.max = String(last);
+    position.value = String(Math.round(track.scrollLeft / stepWidth()));
+    position.setAttribute('aria-valuetext', `${position.valueAsNumber + 1} из ${last + 1}`);
     prev.disabled = track.scrollLeft < 2;
     next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
   }
 
   function move(direction: number) {
-    const card = track.querySelector<HTMLElement>('article:not(.track-mobile)')!;
-    const gap = Number.parseFloat(getComputedStyle(track).columnGap);
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    track.scrollBy({ left: direction * (card.offsetWidth + gap), behavior: reducedMotion ? 'instant' : 'smooth' });
+    track.scrollTo({
+      left: (position.valueAsNumber + direction) * stepWidth(),
+      behavior: reducedMotion ? 'instant' : 'smooth',
+    });
   }
 
   more.addEventListener('click', () => {
     panel.hidden = false;
     more.setAttribute('aria-expanded', 'true');
     more.hidden = true;
-    updateArrows();
+    updateNavigation();
     panel.querySelector('h3')?.focus();
   });
   prev.addEventListener('click', () => move(-1));
   next.addEventListener('click', () => move(1));
-  track.addEventListener('scroll', updateArrows, { passive: true });
-  new ResizeObserver(updateArrows).observe(track);
+  position.addEventListener('input', () => {
+    track.scrollTo({ left: position.valueAsNumber * stepWidth(), behavior: 'instant' });
+  });
+  track.addEventListener('scroll', updateNavigation, { passive: true });
+  new ResizeObserver(updateNavigation).observe(track);
 }

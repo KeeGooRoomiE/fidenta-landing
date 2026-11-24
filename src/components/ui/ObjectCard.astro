@@ -4,13 +4,15 @@ interface Props {
   title: string;
   lead: string;
   photos: string[];
-  facts?: { label: string; value: string }[];
+  facts: string[];
   story?: { title: string; text: string }[];
+  storyTitle?: string;
   id: string;
   class?: string;
 }
 
-const { type, title, lead, photos, facts = [], story = [], id, class: className } = Astro.props;
+const { type, title, lead, photos, facts, story = [], storyTitle = title, id, class: className } = Astro.props;
+const factLabels = ['В управлении', 'Профиль', 'Заполняемость'];
 ---
 
 <article class:list={['flex flex-col overflow-hidden rounded-[9px] border border-border bg-canvas font-accent text-fg', className]} data-object-card>
@@ -32,7 +34,7 @@ const { type, title, lead, photos, facts = [], story = [], id, class: className 
       ))}
 
       <div class="photo-tone" aria-hidden="true"></div>
-      <span class="absolute left-3 top-3 rounded-full bg-[#091d17]/90 px-3 py-1 text-xs uppercase tracking-[0.08em] text-cream">{type}</span>
+      <span class="photo-control absolute left-3 top-3 rounded-full px-3 py-1 text-xs uppercase tracking-[0.08em]">{type}</span>
 
       {photos.length > 1 && (
         <>
@@ -42,7 +44,7 @@ const { type, title, lead, photos, facts = [], story = [], id, class: className 
           <button class="photo-arrow right-1" type="button" data-photo-step="1" aria-label="Следующее фото">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
           </button>
-          <span class="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-[#081320]/75 px-2.5 py-0.5 text-sm tabular-nums text-white" data-photo-count aria-live="polite">1 / {photos.length}</span>
+          <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums" data-photo-count aria-live="polite">1 / {photos.length}</span>
         </>
       )}
     </div>
@@ -52,36 +54,43 @@ const { type, title, lead, photos, facts = [], story = [], id, class: className 
         <h3 class="text-[28px] leading-tight">{title}</h3>
         <p class="mt-2 text-base leading-snug text-fg-dim">{lead}</p>
       </div>
-      {facts.length > 0 && (
-        <dl class="flex flex-wrap gap-x-5 gap-y-2">
-          {facts.map(({ label, value }) => (
-            <div>
-              <dt class="text-xs uppercase tracking-wide text-muted">{label}</dt>
-              <dd class="mt-0.5 text-lg leading-tight">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-      <button type="button" class="border-t border-cream/20 pt-3 text-left text-cream hover:underline" data-object-open aria-controls={id} aria-expanded="false">История объекта <span aria-hidden="true">↗</span></button>
+      <dl class="grid grid-cols-3 gap-2 border-t border-cream/20 pt-3">
+        {factLabels.map((label, index) => (
+          <div>
+            <dt class="text-[11px] leading-tight text-muted">{label}</dt>
+            <dd class="mt-1 text-base leading-tight">{facts[index]}</dd>
+          </div>
+        ))}
+      </dl>
+      <button type="button" class="min-h-11 border-t border-cream/20 pt-3 text-left text-cream hover:underline" data-object-open aria-controls={id} aria-expanded="false">Подробнее об объекте <span aria-hidden="true">→</span></button>
     </div>
   </div>
 
   <div id={id} class="p-5 sm:p-6" data-object-back hidden>
     <p class="text-eyebrow text-gold-plate">История объекта</p>
-    <h3 class="mt-2 border-b border-cream/20 pb-4 text-[28px] leading-tight" tabindex="-1">{title}</h3>
+    <h3 class="mt-2 border-b border-cream/20 pb-4 text-[28px] leading-tight" tabindex="-1">{storyTitle}</h3>
     <ol class="story mt-5">
       {story.map(({ title: step, text }, index) => (
         <li>
           <h4 class="text-xl text-cream">{step}</h4>
-          <p class:list={['mt-1 text-base leading-snug text-fg-dim', index === story.length - 1 && 'rounded-lg border border-cream/20 bg-[#102923] p-3']}>{text}</p>
+          <p class:list={['mt-1 whitespace-pre-line text-base leading-snug text-fg-dim', index === story.length - 1 && 'rounded-lg border border-cream/50 bg-[#071814] p-3']}>{text}</p>
         </li>
       ))}
     </ol>
-    <button type="button" class="mt-5 w-full border-t border-cream/20 pt-3 text-left text-cream hover:underline" data-object-close>← Назад к карточке</button>
+    <button type="button" class="mt-5 min-h-11 w-full border-t border-cream/20 pt-3 text-left text-cream hover:underline" data-object-close><span aria-hidden="true">←</span> Вернуться к объекту</button>
   </div>
 </article>
 
 <style>
+  [data-gallery] {
+    --photo-control-bg: rgb(9 30 25 / 86%);
+    --photo-control-color: #fff1d9;
+  }
+
+  .photo-control {
+    background: var(--photo-control-bg);
+    color: var(--photo-control-color);
+  }
   .photo-tone {
     position: absolute;
     inset: 0;
@@ -98,7 +107,7 @@ const { type, title, lead, photos, facts = [], story = [], id, class: className 
     translate: 0 -50%;
     place-items: center;
     isolation: isolate;
-    color: white;
+    color: var(--photo-control-color);
     cursor: pointer;
   }
 
@@ -107,7 +116,7 @@ const { type, title, lead, photos, facts = [], story = [], id, class: className 
     inset: 5px;
     z-index: -1;
     border-radius: 9px;
-    background: rgb(9 30 25 / 76%);
+    background: var(--photo-control-bg);
     content: '';
   }
 

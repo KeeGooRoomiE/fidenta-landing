@@ -14,9 +14,6 @@ import Header from '../components/sections/Header.astro';
 import Hero from '../components/sections/Hero.astro';
 import AboutAsset from '../components/sections/AboutAsset.astro';
 import AssetAccess from '../components/sections/AssetAccess.astro';
-import TeamIntro from '../components/sections/TeamIntro.astro';
-import ComparisonTable from '../components/sections/ComparisonTable.astro';
-import HowWeWork from '../components/sections/HowWeWork.astro';
 import Portfolio from '../components/sections/Portfolio.astro';
 import ManagementBanner from '../components/sections/ManagementBanner.astro';
 import FullSpectrum from '../components/sections/FullSpectrum.astro';
@@ -43,12 +40,9 @@ const show = {
     <Hero />
     <AboutAsset />
     <AssetAccess />
-    {show.dealStructure && <DealStructure />}
-    <TeamIntro />
-    <ComparisonTable />
-    <HowWeWork />
     <Portfolio />
     <ManagementBanner />
+    {show.dealStructure && <DealStructure />}
     <FullSpectrum />
     <Faq />
     <CtaForm />

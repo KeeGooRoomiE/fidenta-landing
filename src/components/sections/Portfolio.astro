@@ -11,70 +11,88 @@ const cover = (object: number) => `${base}images/objects/obj${object}-1.webp`;
 
 const objects = [
   {
-    id: 'bogatyrsky', type: 'Редевелопмент', title: 'Автомобильный комплекс', photos: [cover(3), ...exterior(2, 10, 12)],
-    lead: 'На Богатырском проспекте реконструировали здание и нашли арендаторов для автоцентра.',
-    facts: [{ label: 'В управлении', value: 'С 2022 года' }, { label: 'Заполняемость', value: 'Все помещения сданы' }],
+    id: 'bogatyrsky', type: 'Редевелопмент', title: 'Автомобильный комплекс', storyTitle: 'Объект на Богатырском',
+    photos: [cover(3)],
+    lead: 'Здание требовало реконструкции. Обновили помещения и территорию, нашли арендаторов — сегодня здесь работает автоцентр.',
+    facts: ['С 2022 года', 'Автоцентр', 'Все помещения сданы'],
     story: [
       { title: 'Исходная точка', text: 'Здание требовало реконструкции, помещения и территория — обновления.' },
       { title: 'Что изменилось', text: 'Реконструировали здание, обновили помещения и территорию, нашли арендаторов.' },
-      { title: 'Результат', text: 'Все помещения сданы в аренду.' },
+      { title: 'Результат', text: 'Уже в 2022 году\nВсе помещения сданы в аренду' },
     ],
   },
   {
-    id: 'park-five', type: 'Строительство', title: 'Автосервис «ПАРК 5»', photos: [cover(1), ...exterior(7, 0, 5)],
-    lead: 'Отдельный объект для обслуживания автомобилей, построенный с нуля в 2022 году.',
-    facts: [{ label: 'Построен', value: 'В 2022 году' }, { label: 'Заполняемость', value: 'Полная' }],
+    id: 'park-five', type: 'Строительство', title: 'Автосервис «ПАРК 5»', photos: [cover(1)],
+    lead: 'Автосервис построен с нуля в 2022 году. Отдельный объект для обслуживания автомобилей.',
+    facts: ['С 2022 года', 'Автосервис', 'Полная'],
     story: [
-      { title: 'Что изменилось', text: 'Построили здание с отдельными ремонтными постами.' },
-      { title: 'Результат', text: 'На площадке работает автосервис с постом развала-схождения.' },
+      { title: 'Исходная точка', text: 'Создание нового объекта под автосервис.' },
+      { title: 'Что изменилось', text: 'Построили здание с нуля.' },
+      { title: 'Результат', text: 'В 2022 году\nЗавершено строительство' },
     ],
   },
   {
-    id: 'wash', type: 'Субаренда', title: 'Автомойка', photos: [photo('disk-3-0'), ...exterior(3, 2, 3)],
-    lead: 'Помещение под автомойку на общей площадке с детейлингом.',
-    facts: [{ label: 'Формат', value: 'Субаренда' }],
-    story: [{ title: 'Площадка', text: 'Моечные посты расположены рядом с детейлинг-студией. Площадка работает в формате субаренды с 2024 года.' }],
+    id: 'wash', type: 'Субаренда', title: 'Автомойка', photos: exterior(3, 3),
+    lead: 'Автомойка и детейлинг на одной площадке. Объект работает в формате субаренды с 2024 года.',
+    facts: ['С 2024 года', 'Автомойка', '3 помещения — 100% на площадке'],
+    story: [
+      { title: 'Исходная точка', text: 'Площадка для автомойки и детейлинга.' },
+      { title: 'Что изменилось', text: 'Взяли объект в субаренду.' },
+      { title: 'Результат', text: 'С 2024 года\nРабота в формате субаренды' },
+    ],
   },
   {
-    id: 'warehouse', type: 'Склад', title: 'Помещение под склад', photos: [photo('disk-6-5'), ...exterior(6, 19, 20)],
+    id: 'warehouse', type: 'Склад', title: 'Помещение под склад', photos: [photo('disk-6-5')],
     lead: '450 м² складских помещений, сданных в аренду «Яндексу».',
-    facts: [{ label: 'Площадь', value: '450 м²' }, { label: 'В управлении', value: 'С 2024 года' }],
-    story: [{ title: 'Результат', text: 'Складское помещение полностью сдано в аренду.' }],
-  },
-  {
-    id: 'containers', type: 'Контейнеры', title: 'Контейнерная площадка', photos: [cover(5), ...exterior(2, 4, 7, 9)],
-    lead: 'Пустой участок переоборудовали в площадку для складских контейнеров.',
-    facts: [{ label: 'В управлении', value: 'С 2022 года' }],
+    facts: ['С 2024 года', 'Склад', 'Полная'],
     story: [
-      { title: 'Исходная точка', text: 'Участок пустовал.' },
-      { title: 'Результат', text: 'Организовали контейнерное хранение и нашли арендаторов.' },
+      { title: 'Исходная точка', text: 'Коммерческое помещение площадью 450 м².' },
+      { title: 'Что изменилось', text: 'Нашли арендатора для складского использования.' },
+      { title: 'Результат', text: 'Сдано в аренду\nАрендатор — Яндекс' },
     ],
   },
   {
-    id: 'sewing', type: 'Производство', title: 'Швейный цех в Кудрово', photos: [cover(6), photo('production-4'), ...exterior(5, 2)],
-    lead: 'Производственный объект на арендованном участке.',
-    facts: [{ label: 'Цех запущен', value: 'В 2019 году' }],
-    story: [{ title: 'Результат', text: 'Швейный цех построили и запустили в 2019 году.' }],
+    id: 'containers', type: 'Контейнеры', title: 'Контейнерная площадка', photos: [cover(5), ...exterior(2, 7)],
+    lead: 'Пустой участок получил новое назначение: площадка для складских контейнеров. Найдены арендаторы.',
+    facts: ['С 2022 года', 'Хранение', '—'],
+    story: [
+      { title: 'Исходная точка', text: 'Пустой земельный участок. Земля не предназначена для строительства' },
+      { title: 'Что изменилось', text: 'Закуплены контейнеры под склад временного хранения' },
+      { title: 'Результат', text: 'Новое назначение\nДополнительные складские мощности и доход для объекта' },
+    ],
   },
   {
-    id: 'detailing', type: 'Субаренда', title: 'Детейлинг-студия', photos: [photo('detailing-facade'), ...exterior(4, 0, 2)],
+    id: 'sewing', type: 'Производство', title: 'Швейный цех', photos: [cover(6), photo('production-4'), ...exterior(5, 2)],
+    lead: 'Производственный объект на арендованном участке. Швейный цех построен и запущен в 2019 году.',
+    facts: ['С 2019 года', 'Швейный цех', '3 помещения — 100%'],
+    story: [
+      { title: 'Исходная точка', text: 'Арендованный земельный участок — пустая площадка' },
+      { title: 'Что изменилось', text: 'Построили и запустили швейный цех. Произведен ремонт, поиск арендаторов' },
+      { title: 'Результат', text: 'В 2019 году\n3 помещения с 2019 года сданы в аренду на постоянной основе' },
+    ],
+  },
+  {
+    id: 'detailing', type: 'Субаренда', title: 'Детейлинг-студия', photos: [photo('detailing-facade')],
     lead: 'Отдельное помещение для детейлинга на одной площадке с автомойкой.',
-    facts: [{ label: 'Формат', value: 'Субаренда' }],
+    facts: ['С 2024 года', 'Детейлинг', '—'],
     story: [{ title: 'Площадка', text: 'Детейлинг занимает отдельное помещение по соседству с моечными постами.' }],
   },
   {
-    id: 'kudrovo-service', type: 'Автосервис', title: 'Автосервис в Кудрово', photos: [photo('disk-1-0'), photo('exterior-kudrovo-side'), ...exterior(1, 25)],
+    id: 'kudrovo-service', type: 'Автосервис', title: 'Автосервис в Кудрово', photos: [photo('disk-1-0'), ...exterior(1, 25)],
     lead: 'Помещение с ремонтными постами для обслуживания автомобилей.',
+    facts: ['—', 'Автосервис', '—'],
     story: [{ title: 'Назначение', text: 'На площадке работает сервис по ремонту и техническому обслуживанию автомобилей.' }],
   },
   {
-    id: 'cnc', type: 'Производство', title: 'ЧПУ-мастерская в Кудрово', photos: [photo('production-3'), ...exterior(5, 7, 8)],
+    id: 'cnc', type: 'Производство', title: 'ЧПУ-мастерская в Кудрово', photos: [photo('production-3'), ...exterior(5, 7)],
     lead: 'Мастерская со станками с ЧПУ расположена в сером здании между двумя корпусами швейного цеха.',
+    facts: ['—', 'ЧПУ-мастерская', '—'],
     story: [{ title: 'Площадка', text: 'Среднее здание производственной площадки в Кудрово занимает ЧПУ-мастерская. В двух соседних зданиях работает швейный цех.' }],
   },
   {
-    id: 'autograd', type: 'Автосервис', title: 'Автосервис «Ауто Град»', photos: [photo('autograd-facade'), ...exterior(4, 6, 1)],
+    id: 'autograd', type: 'Автосервис', title: 'Автосервис «Ауто Град»', photos: [photo('autograd-facade'), ...exterior(4, 6)],
     lead: 'Отдельный автосервис с малярно-кузовным центром.',
+    facts: ['—', 'Кузовной ремонт', '—'],
     story: [{ title: 'Назначение', text: 'В здании работают посты диагностики, обслуживания и кузовного ремонта автомобилей.' }],
   },
 ];
@@ -85,9 +103,12 @@ const objects = [
     Как работает недвижимость <span class="text-gold-plate">под нашим управлением</span>
     <Fragment slot="lead">
       Автосервис на Васильевском острове, швейный цех и ЧПУ-мастерская в Кудрово, современный склад. Что делает помещение подходящим для одного бизнеса и неудобным для другого?
-      <span class="mt-3 block">Для автосервиса важны удобный заезд с улицы и автомобильный трафик, для производства — запас электрической мощности, для склада — площадь и расположение. Такие детали мы учитываем, когда подбираем арендаторов и обсуждаем с собственником стратегию развития объекта.</span>
+      <span class="mt-3 block portfolio-details" id="portfolio-details">Для автосервиса важны удобный заезд с улицы и автомобильный трафик, для производства — запас электрической мощности, для склада — площадь и расположение. Такие детали мы учитываем, когда подбираем арендаторов и обсуждаем с собственником стратегию развития объекта.</span>
     </Fragment>
   </SectionHeading>
+  <button class="portfolio-read" type="button" data-portfolio-read aria-expanded="false" aria-controls="portfolio-details">
+    <span class="text-gold-plate">читать далее</span>
+  </button>
 
   <div class="object-grid mt-8 grid gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-8">
     {objects.slice(0, 6).map((object) => <ObjectCard {...object} />)}
@@ -109,12 +130,15 @@ const objects = [
       {objects.slice(2).map((object, index) => (
         <ObjectCard {...object} id={`${object.id}-slider`} class={index < 4 ? 'track-mobile' : undefined} />
       ))}
-      <article class="project-card relative flex min-h-80 flex-col items-start justify-center gap-5 overflow-hidden rounded-[9px] border border-cream/50 p-6 font-accent sm:p-8">
-        <h4 class="text-gold-plate text-3xl">Ваш проект</h4>
-        <p class="max-w-[26ch] text-lg text-fg">Расскажите о вашем объекте. Обсудим его потенциал и стратегию развития.</p>
-        <a href="#contacts" class="rounded-md border border-cream/50 px-5 py-3 text-cream hover:bg-cream/10">Обсудить объект</a>
+      <article class="project-card relative isolate flex min-h-[430px] flex-col items-start justify-end gap-4 overflow-hidden rounded-[9px] border border-cream/60 p-6 font-accent sm:p-7">
+        <img class="project-photo" src={`${base}images/process-bridge.webp`} alt="" width="1024" height="342" loading="lazy" decoding="async" />
+        <p class="text-eyebrow text-gold-plate">Следующая история</p>
+        <h4 class="max-w-[13ch] text-[clamp(34px,4vw,40px)] leading-[1.02] text-fg">Здесь может начаться ваш проект</h4>
+        <p class="max-w-[29ch] text-lg leading-snug text-fg">Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу.</p>
+        <a href="#cta" class="mt-2 inline-flex min-h-11 items-center gap-2 border-t border-cream/30 pt-2 text-xl text-cream hover:underline">Обсудить проект <span aria-hidden="true">→</span></a>
       </article>
     </div>
+    <input class="object-position" type="range" min="0" max="1" value="0" aria-label="Позиция в галерее объектов" data-track-position />
   </div>
 </Section>
 
@@ -137,8 +161,96 @@ const objects = [
     gap: 20px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scrollbar-width: thin;
-    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+
+  .object-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .object-position {
+    --position-track: linear-gradient(176deg, rgb(255 241 217 / 50%) 25.714%, rgb(168 133 72 / 50%) 120.56%);
+    --position-thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12'%3E%3Cpath d='m5 3-3 3 3 3m4-6 3 3-3 3' fill='none' stroke='%23fff1d9' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 12px no-repeat, linear-gradient(176deg, rgb(162 137 96 / 75%), rgb(87 72 50 / 75%));
+    display: block;
+    width: 100%;
+    height: 32px;
+    margin-top: 6px;
+    appearance: none;
+    background: transparent;
+    cursor: ew-resize;
+  }
+
+  .object-position::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 3px;
+    background: var(--position-track);
+  }
+
+  .object-position::-moz-range-track {
+    height: 4px;
+    border-radius: 3px;
+    background: var(--position-track);
+  }
+
+  .object-position::-webkit-slider-thumb {
+    appearance: none;
+    width: 38px;
+    height: 18px;
+    margin-top: -7px;
+    border: 1px solid rgb(255 241 217 / 38%);
+    border-radius: 9px;
+    background: var(--position-thumb);
+  }
+
+  .object-position::-moz-range-thumb {
+    width: 38px;
+    height: 18px;
+    border: 1px solid rgb(255 241 217 / 38%);
+    border-radius: 9px;
+    background: var(--position-thumb);
+  }
+
+  .portfolio-read {
+    display: none;
+  }
+
+  @media (width < 1024px) {
+    [data-portfolio-ready] .portfolio-read {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      gap: 8px;
+      padding-right: 8px;
+      color: #d9bc83;
+      font-family: var(--font-accent);
+      cursor: pointer;
+    }
+
+    [data-portfolio-ready]:not([data-portfolio-expanded]) .portfolio-details {
+      display: none;
+    }
+
+    .portfolio-read::after {
+      width: 7px;
+      height: 7px;
+      border: solid currentColor;
+      border-width: 0 1px 1px 0;
+      transform: translateY(-2px) rotate(45deg);
+      content: '';
+    }
+
+    .portfolio-read[aria-expanded='true']::after {
+      transform: translateY(2px) rotate(225deg);
+    }
+
+    .portfolio-read:is(:hover, :focus-visible) span {
+      text-decoration: underline #b9a274;
+      text-underline-offset: 3px;
+    }
+
+    .portfolio-details {
+      scroll-margin-top: 98px;
+    }
   }
 
   .object-track > :global(article) {
@@ -179,6 +291,27 @@ const objects = [
   }
 
   .project-card {
-    background: radial-gradient(ellipse at 100% 0%, #15364a, transparent 70%), #091c17;
+    background: radial-gradient(ellipse at 82% 9%, #173d53, transparent 70%), #091c17;
+  }
+
+  .project-photo,
+  .project-card::before {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-photo {
+    z-index: -2;
+    height: 49%;
+    object-fit: cover;
+    object-position: 76% top;
+  }
+
+  .project-card::before {
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(7 21 52 / 10%) 8%, rgb(9 28 23 / 76%) 43%, #091c17 62%);
+    content: '';
   }
 </style>
