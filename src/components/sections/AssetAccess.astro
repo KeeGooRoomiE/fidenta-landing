@@ -358,7 +358,6 @@ const occlusion = (index: number) => index === 2
     background: #081a14;
     color: #ebd6b0;
     font-size: clamp(9px, 2.8vw, 11px);
-    text-transform: uppercase;
   }
 
   .investment-directions::before {
@@ -377,8 +376,9 @@ const occlusion = (index: number) => index === 2
 
   .investment-directions picture {
     grid-area: logo;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 50px;
     min-height: 45px;
     border: 1px solid var(--puzzle-edge);
@@ -572,7 +572,6 @@ const occlusion = (index: number) => index === 2
       padding: 7px clamp(10px, 1.87vw, 27px);
       gap: clamp(4px, 0.69vw, 10px);
       font-size: clamp(11px, 1.12vw, 16px);
-      text-transform: none;
     }
 
     .investment-directions::before {
