@@ -21,7 +21,7 @@ const roles = [
           </SectionHeading>
         </div>
       ))}
-      <div class="role-switch mt-6 grid grid-cols-2 gap-1 rounded-[9px] bg-[#303a28]/70 p-1 font-accent" role="group" aria-label="Роль в сотрудничестве">
+      <div class="role-switch mt-6 grid grid-cols-2 gap-1 rounded-[9px] bg-interface/60 p-1 font-accent" role="group" aria-label="Роль в сотрудничестве">
         {roles.map(({ key, label }, index) => (
           <button type="button" class="role-step rounded-md px-2 py-2 text-lg" data-cooperation-role={key} aria-controls={`cooperation-${key}`} aria-pressed={index === 0 ? 'true' : 'false'}>{label}</button>
         ))}
@@ -123,8 +123,8 @@ const roles = [
   .role-switch { width: min(100%, 346px); margin-top: 14px; }
   .role-step { color: #e8d4ae; }
   .role-step[aria-pressed='true'] { color: #0a2019; background: var(--gradient-gold); }
-  .bridge-visual img { display: block; width: 100%; height: auto; }
-  .cooperation-panel { min-width: 0; background: #0b241c; border-radius: 10px; overflow: hidden; }
+  .bridge-visual img { display: block; width: 100%; height: auto; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent), linear-gradient(transparent, black 5%, black 95%, transparent); mask-composite: intersect; }
+  .cooperation-panel { min-width: 0; background: var(--surface-40); border-radius: 10px; overflow: hidden; }
   .bridge-progress { height: 2px; background: rgb(209 184 135 / 20%); }
   .bridge-progress span { display: block; height: 100%; width: calc(var(--stage-progress) * 1%); background: var(--gradient-gold); }
   .stage-track { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; margin: 0; }

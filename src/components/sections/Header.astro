@@ -109,7 +109,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
     padding-inline: 9px 7px;
     border: 0.68px solid rgba(255, 241, 217, 0.58);
     border-radius: 9px;
-    background: rgba(11, 24, 19, 0.8);
+    background: var(--surface-90);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     font-family: var(--font-accent);
@@ -177,7 +177,8 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
     padding: 6px;
     border: 1px solid #766e5c;
     border-radius: 9px;
-    background: var(--color-tile);
+    background: var(--surface-60);
+    backdrop-filter: blur(12px);
     color: #fff1d9;
   }
 
@@ -187,7 +188,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   }
 
   #contact-options a:is(:hover, :focus-visible) {
-    background: #243a32;
+    background: var(--surface-90);
   }
 
   .header-cta {
@@ -220,7 +221,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
     overflow-y: auto;
     border: 1px solid rgba(255, 241, 217, 0.22);
     border-radius: 14px;
-    background: rgba(11, 24, 19, 0.94);
+    background: var(--surface-90);
     box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -262,11 +263,11 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       padding-inline: calc((var(--panel-width) - var(--content-width)) / 2 - 1px);
       border-width: 1px;
       /* Подложка сохраняет контраст и поверх светлого фото первого экрана. */
-      background: rgba(11, 24, 19, 0.9);
+      background: var(--surface-90);
     }
 
     .site-header[data-scrolled="true"] .header-bar {
-      background: rgba(11, 24, 19, 0.94);
+      background: var(--surface-90);
     }
 
     .header-brand {
@@ -306,7 +307,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       top: calc(100% + 10px);
       width: 100%;
       padding: 4px;
-      background: linear-gradient(var(--hero-card-surface), var(--hero-card-surface)), var(--color-canvas);
+      background: var(--surface-60);
     }
 
     #contact-options a {

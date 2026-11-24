@@ -25,7 +25,7 @@ const legal = [
 <footer class="footer-preview font-accent text-sand">
   <div class="container-page footer-inner pb-8 pt-16 lg:pt-[107px]">
     <div class="footer-top grid gap-8 lg:items-start lg:gap-10">
-      <a href="#top" class="footer-top-link plat-outline rounded-[9px] px-6 py-2.5 uppercase hover:bg-white/5"><span class="text-gold-plate">К началу страницы <span class="inline" aria-hidden="true">↑</span></span></a>
+      <a href="#top" class="footer-top-link plat-outline rounded-[9px] px-6 py-2.5 hover:bg-white/5"><span class="text-gold-plate">К началу страниц <span class="footer-top-chevron" aria-hidden="true"></span></span></a>
       <nav class="footer-navigation grid grid-cols-2 gap-3.5 text-xl lg:flex lg:flex-col" aria-label="Навигация в подвале">
         {footerNav.map(({href, label}) => <a href={href} class="text-gold-plate w-fit hover:underline">{label}</a>)}
       </nav>
@@ -38,7 +38,7 @@ const legal = [
 
       <div class="footer-office hidden flex-col items-end text-right text-xl lg:flex">
         <div>
-          <p class="text-gold-plate"><span class="lg:hidden">офис продаж</span><span class="hidden lg:inline">Офис компании Фидента</span></p>
+          <p class="text-fg"><span class="lg:hidden">офис продаж</span><span class="hidden lg:inline">Офис компании Фидента</span></p>
           <p class="mt-3 text-fg">{officeCity},<br class="lg:hidden" /> {officeStreet}</p>
         </div>
       </div>
@@ -100,6 +100,7 @@ const legal = [
 <style>
   .footer-preview { background: linear-gradient(to bottom, #0a2019, #0d1b16 47.294%, #101612) top / 100% clamp(72px, 15vw, 156px) no-repeat, #101612; }
   .footer-top { grid-template-areas: 'top' 'navigation' 'brand' 'office'; }
+  .footer-top-chevron { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border: solid #c7b590; border-width: 1px 0 0 1px; rotate: 45deg; }
   .footer-top-link { grid-area: top; justify-self: center; min-width: 200px; text-align: center; }
   .footer-brand { grid-area: brand; }
   .footer-navigation { grid-area: navigation; }
@@ -129,7 +130,7 @@ const legal = [
   }
   @media (min-width: 1024px) {
     .footer-top { grid-template-areas: 'navigation brand office'; grid-template-columns: minmax(0, 1fr) 341px minmax(0, 1fr); }
-    .footer-top-link { grid-area: office; justify-self: end; align-self: start; }
+  .footer-top-link { grid-area: office; justify-self: end; align-self: start; }
     .footer-office { padding-top: 128px; }
   }
 </style>

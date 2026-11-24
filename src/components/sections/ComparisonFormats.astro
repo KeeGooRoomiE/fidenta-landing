@@ -16,13 +16,13 @@ const base = import.meta.env.BASE_URL;
     <div class="compare-options">
       <div class="compare-criteria grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
         {comparisonCriteria.map(([title], index) => (
-          <button type="button" class="compare-trigger plat-outline flex items-center gap-3 rounded-[9px] bg-[#0c231c] px-3 text-left font-accent text-fg md:px-4 md:text-xl" aria-controls={`comparison-${index}`} aria-expanded="false" data-compare-open>
+          <button type="button" class="compare-trigger plat-outline flex items-center gap-3 rounded-[9px] bg-interface/40 px-3 text-left font-accent text-fg md:px-4 md:text-xl" aria-controls={`comparison-${index}`} aria-expanded="false" data-compare-open>
             {title}<span class="text-gold-plate" aria-hidden="true">+</span>
           </button>
         ))}
       </div>
     {comparisonCriteria.map(([title, alone, withTeam], index) => (
-      <div id={`comparison-${index}`} class="compare-panel plat-outline rounded-[9px] bg-[#142722] p-5 sm:p-6" data-compare-panel hidden>
+      <div id={`comparison-${index}`} class="compare-panel plat-outline rounded-[9px] bg-interface/50 p-5 sm:p-6" data-compare-panel hidden>
         <button class="compare-title flex w-full items-center justify-between gap-4 border-b border-cream/20 pb-4 text-left font-accent text-2xl text-fg" type="button" data-compare-close aria-label={`Свернуть критерий «${title}»`}>
           {title}<span class="text-gold-plate" aria-hidden="true">−</span>
         </button>

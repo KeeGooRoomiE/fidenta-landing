@@ -40,7 +40,7 @@ const info = [
   },
   {
     label: 'Личная встреча',
-    lines: ['Встречи проводятся по предварительной договорённости. Свяжитесь с нами, чтобы согласовать удобное время.'],
+    lines: ['Встречи проводятся по предварительной договорённости. Свяжитесь с нами, чтобы согласовать удобное время'],
   },
 ];
 ---
@@ -60,7 +60,7 @@ const info = [
       <div class="flex min-w-0 flex-col gap-3 lg:col-start-2 lg:row-span-2 lg:row-start-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
         {/* Карта. isolate + z-0: у Leaflet свои z-index (до 1000) — не даём им
              перекрыть шапку сайта и cookie-плашку */}
-        <div class="map-frame plat-outline isolate z-0 h-[280px] overflow-hidden rounded-[9px] bg-[#0d291f] p-[3px] md:h-[433px] lg:h-auto lg:flex-1">
+        <div class="map-frame plat-outline isolate z-0 h-[280px] overflow-hidden rounded-[9px] bg-interface/60 p-[3px] md:h-[433px] lg:h-auto lg:flex-1">
           <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
         </div>
 
@@ -74,18 +74,13 @@ const info = [
               data-route-btn
               aria-haspopup="true"
               aria-expanded="false"
-              class="gap-3"
             >
               <span class="text-gold-plate">Построить маршрут</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <defs><linearGradient id="route-plat" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#fff1d9" stop-opacity=".87" /><stop offset="1" stop-color="#a88548" stop-opacity=".87" /></linearGradient></defs>
-                <path d="m13.5 2.5-4 11-2-5-5-2 11-4Z" stroke="url(#route-plat)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
             </Button>
             <div
               data-route-menu
               hidden
-              class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-cream bg-plaque p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
+              class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-cream bg-interface/60 backdrop-blur-md p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
             >
               <p data-route-target class="px-3 pb-1 pt-1.5 font-accent text-sm leading-5 text-copy"></p>
               <a data-route="yandex" target="_blank" rel="noopener noreferrer" class="route-link">Яндекс Карты</a>
@@ -146,17 +141,21 @@ const info = [
 
 <style is:global>
   /* Метка: плашка как в макете (тёмный фон + кремовая рамка + иконка моста) */
-  .fidenta-pin {
+  .leaflet-marker-icon.fidenta-pin {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-plaque);
-    border: 1px solid var(--color-cream);
-    border-radius: 14px;
+    background: var(--surface-90);
+    border: 0.7px solid #9e9277;
+    border-radius: 9px;
+    box-sizing: border-box;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
-  .fidenta-pin img {
+  .leaflet-container .fidenta-pin img {
     display: block;
+    width: 26px;
+    height: 14px;
+    object-fit: contain;
   }
   /* Подсказка (popup) в цветах сайта */
   .leaflet-popup-content-wrapper {
