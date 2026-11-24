@@ -36,10 +36,6 @@ const roles = [
       <div class="cooperation-panel relative" id={`cooperation-${key}`} data-cooperation-panel={key} hidden={roleIndex > 0}>
         <div class="bridge-progress" data-cooperation-progress style={`--stage-progress: ${100 / stages.length}`} aria-hidden="true">
           <span></span>
-          <svg viewBox="0 0 280 30" width="280" height="30" aria-hidden="true">
-            <ellipse cx="140" cy="15" rx="138" ry="13" pathLength="100" />
-            <ellipse class="bridge-oval-fill" cx="140" cy="15" rx="138" ry="13" pathLength="100" transform="rotate(180 140 15)" />
-          </svg>
         </div>
         <div id={`cooperation-track-${key}`} class="stage-track mt-6" data-cooperation-track role="region" aria-label="Карусель этапов сотрудничества" tabindex="0">
           {stages.map(([, title, description], index) => (
@@ -52,9 +48,9 @@ const roles = [
             </article>
           ))}
         </div>
-        <div class="stage-nav plat-outline mx-auto mt-4 grid w-fit grid-cols-[44px_auto_44px] items-center rounded-full bg-[#172c21] font-accent" role="group" aria-label="Переключение этапов">
+        <div class="stage-nav font-accent" role="group" aria-label="Переключение этапов">
           <button type="button" data-cooperation-back aria-label="Предыдущий этап" aria-controls={`cooperation-track-${key}`} disabled><span class="text-gold-plate" aria-hidden="true">←</span></button>
-          <span data-cooperation-count class="text-gold-plate min-w-14 select-none text-center text-sm tabular-nums" aria-live="polite">01 / {String(stages.length).padStart(2, '0')}</span>
+          <span data-cooperation-count class="sr-only" aria-live="polite">01 / {String(stages.length).padStart(2, '0')}</span>
           <button type="button" data-cooperation-next aria-label="Следующий этап" aria-controls={`cooperation-track-${key}`}><span class="text-gold-plate" aria-hidden="true">→</span></button>
         </div>
       </div>
@@ -85,23 +81,24 @@ const roles = [
       const next = panel.querySelector<HTMLButtonElement>('[data-cooperation-next]')!;
       const count = panel.querySelector<HTMLElement>('[data-cooperation-count]')!;
       const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-      const wide = matchMedia('(min-width: 1024px)');
+
       let current = 0;
 
       const position = (index: number) => details[index].offsetLeft - details[0].offsetLeft;
       function update() {
         if (panel.hidden) return;
-        if (wide.matches && !reduced.matches) {
+        if (!reduced.matches) {
           details.forEach((detail, index) => {
             const distance = Math.min(1, Math.abs(position(index) - track.scrollLeft) / track.clientWidth);
-            const lift = 32 * Math.sqrt(1 - (2 * distance - 1) ** 2);
+            const lift = 12 * Math.sqrt(1 - (2 * distance - 1) ** 2);
             detail.style.setProperty('--stage-arc', `${-lift}px`);
           });
         }
         const closest = details.reduce((best, _, index) =>
           Math.abs(position(index) - track.scrollLeft) < Math.abs(position(best) - track.scrollLeft) ? index : best, 0);
-        if (closest === current) return;
-        current = closest;
+        if (track.scrollWidth - track.clientWidth - track.scrollLeft <= 1) current = details.length - 1;
+        else current = closest;
+
         count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(details.length).padStart(2, '0')}`;
         back.disabled = current === 0;
         next.disabled = current === details.length - 1;
@@ -127,57 +124,41 @@ const roles = [
 </script>
 
 <style>
-  .cooperation { background: #061e16; }
-  .cooperation-layout { position: relative; isolation: isolate; overflow: hidden; }
-  .bridge-visual {
-    position: relative;
-    background: radial-gradient(ellipse at 60% 42%, #1c3b33, transparent 68%);
-    mask-image: linear-gradient(#000 74%, transparent);
-  }
-  .bridge-visual img { width: 100%; height: auto; }
-  .cooperation-intro { max-width: 550px; }
-  .role-switch { width: min(100%, 346px); }
+  .cooperation { background: #061e16; padding-block: clamp(20px, 4vh, 44px); }
+  .cooperation-layout { position: relative; isolation: isolate; }
+  .bridge-visual img { width: 100%; height: clamp(68px, 14svh, 140px); object-fit: contain; }
+  .cooperation-intro { max-width: 550px; margin-top: 14px; }
+  .role-switch { width: min(100%, 346px); margin-top: 14px; }
   .role-step { color: #e8d4ae; }
   .role-step[aria-pressed='true'] { color: #0a2019; background: var(--gradient-gold); }
-  .cooperation-panel { margin-top: 42px; }
-  .bridge-progress { height: 1px; background: rgb(209 184 135 / 25%); }
-  .bridge-progress span { position: relative; display: block; top: -1px; width: calc(var(--stage-progress) * 1%); height: 3px; border-radius: 4px; background: #d1b887; }
-  .bridge-progress svg { display: none; }
-  .stage-track {
-    position: relative;
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 100%;
-    gap: 12px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-  .stage-track::-webkit-scrollbar { display: none; }
-  .stage-detail { scroll-snap-align: start; }
-  .stage-nav button { min-height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px; }
-  .stage-nav button:disabled { opacity: 0.35; cursor: default; }
-  .stage-nav button:hover:not(:disabled) { background: rgb(255 241 217 / 7%); }
-  .stage-detail { min-height: 133px; }
-  @media (min-width: 768px) {
-    .stage-detail { grid-template-columns: minmax(0, 2fr) minmax(0, 3.5fr); }
+  .cooperation-panel { margin-top: 18px; padding-inline: 36px; }
+  .bridge-progress { height: 2px; background: rgb(209 184 135 / 25%); }
+  .bridge-progress span { display: block; width: calc(var(--stage-progress) * 1%); height: 100%; background: #d1b887; }
+  .stage-track { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 18px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x mandatory; scrollbar-width: none; margin-top: 0; padding-block: 16px 4px; }
+  .stage-detail { scroll-snap-align: start; align-content: center; padding: 16px; }
+  .stage-nav button { position: absolute; top: 50%; translate: 0 -50%; width: 44px; height: 44px; cursor: pointer; font-size: 22px; }
+  .stage-nav button:first-child { left: -7px; }
+  .stage-nav button:last-child { right: -7px; }
+  .stage-nav button:disabled { opacity: .3; }
+  @media (width < 768px) {
+    .cooperation { padding-block: 16px; }
+    .bridge-visual img { height: clamp(62px, 10svh, 88px); }
+    .cooperation-panel { padding-inline: 24px; margin-top: 12px; }
+    .stage-detail { gap: 6px; padding: 12px; }
+    .stage-detail > p { font-size: 16px; line-height: 1.25; }
+    .stage-nav button:first-child { left: -20px; }
+    .stage-nav button:last-child { right: -20px; }
+    .cooperation-layout > .text-legal { margin-top: 14px; }
   }
   @media (min-width: 1024px) {
-    .bridge-visual { position: absolute; z-index: -1; top: -12px; right: -12px; width: 70%; height: 420px; mask-image: linear-gradient(#000 73%, transparent), linear-gradient(to right, transparent, #000 27%, #000 84%, transparent); mask-composite: intersect; }
-    .bridge-visual img { height: 100%; object-fit: contain; object-position: right center; }
-    .cooperation-intro { min-height: 315px; }
-    .bridge-progress { height: auto; background: none; }
-    .bridge-progress span { display: none; }
-    .bridge-progress svg { display: block; margin-inline: auto; fill: none; stroke: rgb(209 184 135 / 25%); }
-    .bridge-oval-fill { stroke: #d1b887; stroke-width: 1.5; stroke-dasharray: var(--stage-progress) 100; }
-    .stage-track { margin-top: 0; padding-top: 34px; }
+    .bridge-visual { position: absolute; inset: 0 0 auto 55%; }
+    .bridge-visual img { height: clamp(180px, 30vh, 310px); }
+    .cooperation-intro { width: 52%; }
+    .cooperation-panel { margin: 30px auto 0; max-width: 920px; padding-inline: 56px; }
+    .stage-detail { grid-template-columns: 2fr 3fr; min-height: 112px; padding: 20px; }
   }
   @media (prefers-reduced-motion: no-preference) {
-    .bridge-progress span { transition: width 250ms ease; }
-    .bridge-oval-fill { transition: stroke-dasharray 300ms ease; }
-  }
-  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     .stage-detail { translate: 0 var(--stage-arc, 0px); }
+    .bridge-progress span { transition: width 200ms ease; }
   }
 </style>

@@ -216,7 +216,10 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
     opacity: 0.6;
   }
 
-  .story-card:not([hidden]) {
+  .object-card { display: grid; min-height: var(--object-height, 0px); }
+  .object-card > [data-object-front], .object-card > [data-object-back] { grid-area: 1 / 1; display: flex; flex-direction: column; }
+  .object-card > [hidden] { visibility: hidden; pointer-events: none; }
+  .story-card {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -239,7 +242,7 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
   }
 
   .story li:not(:last-child) {
-    min-height: 79px;
+    min-height: 55px;
   }
 
   .story li:not(:last-child)::after {

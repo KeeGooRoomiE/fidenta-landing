@@ -19,7 +19,7 @@ export function initPortfolio(root: HTMLElement) {
     const close = back.querySelector<HTMLButtonElement>('[data-object-close]')!;
     const heading = back.querySelector('h3')!;
     open.addEventListener('click', () => {
-      back.style.minHeight = `${front.offsetHeight}px`;
+
       front.hidden = true;
       back.hidden = false;
       open.setAttribute('aria-expanded', 'true');
@@ -94,8 +94,24 @@ export function initPortfolio(root: HTMLElement) {
     });
   }
 
+  const cards = Array.from(root.querySelectorAll<HTMLElement>('.object-card'));
+  function equalizeCards() {
+    root.style.removeProperty('--object-height');
+    const height = Math.max(...cards.map(item => item.offsetHeight));
+    root.style.setProperty('--object-height', height + 'px');
+  }
+  let measuredWidth = 0;
+  new ResizeObserver(([entry]) => {
+    if (entry.contentRect.width !== measuredWidth) {
+      measuredWidth = entry.contentRect.width;
+      equalizeCards();
+    }
+  }).observe(root);
+  document.fonts.ready.then(equalizeCards);
+
   more.addEventListener('click', () => {
     panel.hidden = false;
+    equalizeCards();
     more.setAttribute('aria-expanded', 'true');
     more.hidden = true;
     updateNavigation();
