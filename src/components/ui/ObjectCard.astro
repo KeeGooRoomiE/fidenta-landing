@@ -15,7 +15,7 @@ const { type, title, lead, photos, facts, story = [], storyTitle = title, id, cl
 const factLabels = ['В управлении', 'Профиль', 'Заполняемость'];
 ---
 
-<article class:list={['flex flex-col overflow-hidden rounded-[9px] border border-border bg-canvas font-accent text-fg', className]} data-object-card>
+<article class:list={['object-card relative flex flex-col overflow-hidden rounded-[9px] bg-canvas font-accent text-fg', className]} data-object-card>
   <div class="flex grow flex-col" data-object-front>
     <div class="relative isolate aspect-[402/225] touch-pan-y select-none overflow-hidden" data-gallery role="group" aria-label={`Фото объекта «${title}»`}>
       {photos.map((src, index) => (
@@ -91,6 +91,20 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
 </article>
 
 <style>
+  .object-card::after {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    padding: 0.7px;
+    border-radius: inherit;
+    background: var(--gradient-gold);
+    opacity: 0.5;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    content: '';
+  }
+
   [data-gallery] {
     --photo-control-bg: #071814;
   }
@@ -157,8 +171,6 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     flex: 1;
     flex-direction: column;
     background: #0a2019;
-    box-shadow: inset 0 0 0 1px #fff1d9;
-    border-radius: 8px;
   }
 
   .story {
