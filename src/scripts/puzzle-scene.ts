@@ -117,6 +117,15 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   }
 
   function measure() {
+    // Выше последней ступени масштаба сайта сохраняем пропорции сцены
+    // относительно окна. На сверхшироких экранах учитываем доступную высоту.
+    if (innerWidth > 2560) {
+      const pageZoom = Number(getComputedStyle(document.documentElement).zoom) || 1;
+      const viewportScale = Math.min(innerWidth / 2560, Math.max(1, innerHeight / 1320));
+      root.style.zoom = String((1.75 / 1.08) * viewportScale / pageZoom);
+    } else {
+      root.style.removeProperty('zoom');
+    }
     root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;
     const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
