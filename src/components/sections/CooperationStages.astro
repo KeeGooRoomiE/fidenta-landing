@@ -1,60 +1,45 @@
 ---
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
-import { cooperation } from '../../data/cooperation';
+import { cooperationStages as stages } from '../../data/cooperation';
 
 const base = import.meta.env.BASE_URL;
-const roles = [
-  { key: 'investor', label: 'Я инвестор', ...cooperation.investor },
-  { key: 'owner', label: 'Я собственник', ...cooperation.owner },
-];
 ---
 
 <Section id="cooperation" class="cooperation" data-cooperation>
   <div class="cooperation-layout">
     <div class="cooperation-intro relative">
-      {roles.map(({ key, title, accent, lead }, index) => (
-        <div data-cooperation-intro={key} hidden={index > 0}>
-          <SectionHeading eyebrow="Этапы сотрудничества">
-            {title}<br /><span class="text-gold-plate">{accent}</span>
-            <Fragment slot="lead">{lead}</Fragment>
-          </SectionHeading>
-        </div>
-      ))}
-      <div class="role-switch mt-6 grid grid-cols-2 gap-1 rounded-[9px] bg-interface/60 p-1 font-accent" role="group" aria-label="Роль в сотрудничестве">
-        {roles.map(({ key, label }, index) => (
-          <button type="button" class="role-step rounded-md px-2 py-2 text-lg" data-cooperation-role={key} aria-controls={`cooperation-${key}`} aria-pressed={index === 0 ? 'true' : 'false'}><span class:list={{ "text-gold-plate": key === "owner" }}>{label}</span></button>
-        ))}
-      </div>
+      <SectionHeading eyebrow="Этапы сотрудничества">
+        От поиска объекта<br /><span class="text-gold-plate">до управления</span>
+        <Fragment slot="lead">Как мы выбираем объект, собираем капитал на покупку и организуем работу после сделки</Fragment>
+      </SectionHeading>
     </div>
 
     <div class="bridge-visual" aria-hidden="true">
       <img src={`${base}images/cooperation-bridge.webp`} width="1100" height="620" alt="" loading="lazy" decoding="async" />
     </div>
 
-    {roles.map(({ key, stages }, roleIndex) => (
-      <div class="cooperation-panel relative" id={`cooperation-${key}`} data-cooperation-panel={key} hidden={roleIndex > 0}>
-        <div class="bridge-progress" data-cooperation-progress style={`--stage-progress: ${100 / stages.length}`} aria-hidden="true">
-          <span></span>
-        </div>
-        <div id={`cooperation-track-${key}`} class="stage-track" data-cooperation-track role="region" aria-label="Карусель этапов сотрудничества" tabindex="0">
-          {stages.map(([phase, title, description]) => (
-            <article class="stage-detail font-accent" data-cooperation-detail>
-              <div class="stage-card">
-                <p class="text-xs uppercase tracking-wider text-sand">{phase}</p>
-                <h3 class="mt-1.5 text-2xl text-fg md:text-3xl">{title}</h3>
-                <p class="stage-description text-lg leading-snug text-copy">{description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-        <div class="stage-nav font-accent" role="group" aria-label="Переключение этапов">
-          <button type="button" data-cooperation-back aria-label="Предыдущий этап" aria-controls={`cooperation-track-${key}`} disabled><span class="text-gold-plate" aria-hidden="true">←</span></button>
-          <span data-cooperation-count class="sr-only" aria-live="polite">01 / {String(stages.length).padStart(2, '0')}</span>
-          <button type="button" data-cooperation-next aria-label="Следующий этап" aria-controls={`cooperation-track-${key}`}><span class="text-gold-plate" aria-hidden="true">→</span></button>
-        </div>
+    <div class="cooperation-panel relative" data-cooperation-panel>
+      <div class="bridge-progress" data-cooperation-progress style={`--stage-progress: ${100 / stages.length}`} aria-hidden="true">
+        <span></span>
       </div>
-    ))}
+      <div id="cooperation-track" class="stage-track" data-cooperation-track role="region" aria-label="Карусель этапов сотрудничества" tabindex="0">
+        {stages.map(([phase, title, description]) => (
+          <article class="stage-detail font-accent" data-cooperation-detail>
+            <div class="stage-card">
+              <p class="text-xs uppercase tracking-wider text-sand">{phase}</p>
+              <h3 class="mt-1.5 text-2xl text-fg md:text-3xl">{title}</h3>
+              <p class="stage-description text-lg leading-snug text-copy">{description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="stage-nav font-accent" role="group" aria-label="Переключение этапов">
+        <button type="button" data-cooperation-back aria-label="Предыдущий этап" aria-controls="cooperation-track" disabled><span class="text-gold-plate" aria-hidden="true">←</span></button>
+        <span data-cooperation-count class="sr-only" aria-live="polite">01 / {String(stages.length).padStart(2, '0')}</span>
+        <button type="button" data-cooperation-next aria-label="Следующий этап" aria-controls="cooperation-track"><span class="text-gold-plate" aria-hidden="true">→</span></button>
+      </div>
+    </div>
     <p class="relative mt-7 font-accent text-sm text-legal">Состав работ, полномочия команды и порядок отчётности фиксируем в договоре по конкретному объекту</p>
   </div>
 </Section>
@@ -62,94 +47,80 @@ const roles = [
 <script>
   const root = document.querySelector<HTMLElement>('[data-cooperation]');
   if (root) {
-    const roles = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-cooperation-role]'));
-    const intros = Array.from(root.querySelectorAll<HTMLElement>('[data-cooperation-intro]'));
-    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-cooperation-panel]'));
-    roles.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        roles.forEach((role, i) => role.setAttribute('aria-pressed', String(i === index)));
-        intros.forEach((intro, i) => { intro.hidden = i !== index; });
-        panels.forEach((panel, i) => { panel.hidden = i !== index; });
+    const track = root.querySelector<HTMLElement>('[data-cooperation-track]')!;
+    const details = Array.from(root.querySelectorAll<HTMLElement>('[data-cooperation-detail]'));
+    const progress = root.querySelector<HTMLElement>('[data-cooperation-progress]')!;
+    const back = root.querySelector<HTMLButtonElement>('[data-cooperation-back]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-cooperation-next]')!;
+    const count = root.querySelector<HTMLElement>('[data-cooperation-count]')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
+    let current = 0;
+
+    const position = (index: number) => details[index].offsetLeft - details[0].offsetLeft;
+    function update() {
+      const closest = details.reduce((best, _, index) =>
+        Math.abs(position(index) - track.scrollLeft) < Math.abs(position(best) - track.scrollLeft) ? index : best, 0);
+      const limit = track.scrollWidth - track.clientWidth;
+      current = closest;
+      const journey = limit - track.scrollLeft > 1 ? Math.max(0, track.scrollLeft / limit) : 1;
+      progress.style.setProperty('--stage-progress', String((1 + journey * (details.length - 1)) / details.length * 100));
+      const step = position(1) || track.clientWidth;
+      details.forEach((card, index) => {
+        const distance = Math.max(-1, Math.min(1, (position(index) - track.scrollLeft) / step));
+        card.style.setProperty('--stage-depth', String(Math.abs(distance)));
+        card.style.setProperty('--stage-side', String(distance));
+        card.style.setProperty('--stage-turn', `${distance * -42}deg`);
+        const lift = Math.sqrt(Math.max(0, 1 - distance * distance));
+        card.style.setProperty('--stage-lift', String(1 - lift));
+        card.toggleAttribute('data-stage-current', index === current);
+        if (index === current) card.setAttribute('aria-current', 'step');
+        else card.removeAttribute('aria-current');
       });
+
+      count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(details.length).padStart(2, '0')}`;
+      back.disabled = current === 0;
+      next.disabled = current === details.length - 1;
+    }
+
+    function move(index: number) {
+      if (index < 0 || index >= details.length) return;
+      track.scrollTo({ left: position(index), behavior: reduced.matches ? 'instant' : 'smooth' });
+    }
+
+    let drag: { id: number; x: number; left: number } | undefined;
+    track.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'mouse' || event.button !== 0) return;
+      drag = { id: event.pointerId, x: event.clientX, left: track.scrollLeft };
+    });
+    track.addEventListener('pointermove', event => {
+      if (!drag || drag.id !== event.pointerId || Math.abs(event.clientX - drag.x) < 5) return;
+      if (!track.hasPointerCapture(event.pointerId)) track.setPointerCapture(event.pointerId);
+      track.toggleAttribute('data-dragging', true);
+      track.scrollLeft = drag.left - (event.clientX - drag.x);
+    });
+    function finishDrag() {
+      drag = undefined;
+      if (!track.hasAttribute('data-dragging')) return;
+      update();
+      track.removeAttribute('data-dragging');
+      move(current);
+    }
+    track.addEventListener('pointerup', finishDrag);
+    track.addEventListener('pointercancel', finishDrag);
+    track.addEventListener('lostpointercapture', finishDrag);
+    track.addEventListener('pointerleave', () => {
+      if (!track.hasAttribute('data-dragging')) drag = undefined;
     });
 
-    panels.forEach((panel) => {
-      const track = panel.querySelector<HTMLElement>('[data-cooperation-track]')!;
-      const details = Array.from(panel.querySelectorAll<HTMLElement>('[data-cooperation-detail]'));
-      const progress = panel.querySelector<HTMLElement>('[data-cooperation-progress]')!;
-      const back = panel.querySelector<HTMLButtonElement>('[data-cooperation-back]')!;
-      const next = panel.querySelector<HTMLButtonElement>('[data-cooperation-next]')!;
-      const count = panel.querySelector<HTMLElement>('[data-cooperation-count]')!;
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-
-      let current = 0;
-
-      const position = (index: number) => details[index].offsetLeft - details[0].offsetLeft;
-      function update() {
-        if (panel.hidden) return;
-        const closest = details.reduce((best, _, index) =>
-          Math.abs(position(index) - track.scrollLeft) < Math.abs(position(best) - track.scrollLeft) ? index : best, 0);
-        const limit = position(details.length - 1);
-        current = closest;
-        const journey = limit > 0 ? Math.min(1, Math.max(0, track.scrollLeft / limit)) : 1;
-        progress.style.setProperty('--stage-progress', String((1 + journey * (details.length - 1)) / details.length * 100));
-        const step = position(1) || track.clientWidth;
-        details.forEach((card, index) => {
-          const distance = Math.max(-1, Math.min(1, (position(index) - track.scrollLeft) / step));
-          card.style.setProperty('--stage-depth', String(Math.abs(distance)));
-          card.style.setProperty('--stage-side', String(distance));
-          card.style.setProperty('--stage-turn', `${distance * -42}deg`);
-          const lift = Math.sqrt(Math.max(0, 1 - distance * distance));
-          card.style.setProperty('--stage-lift', String(1 - lift));
-          card.toggleAttribute('data-stage-current', index === current);
-          if (index === current) card.setAttribute('aria-current', 'step');
-          else card.removeAttribute('aria-current');
-        });
-
-        count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(details.length).padStart(2, '0')}`;
-        back.disabled = current === 0;
-        next.disabled = current === details.length - 1;
-      }
-
-      function move(index: number) {
-        if (index < 0 || index >= details.length) return;
-        track.scrollTo({ left: position(index), behavior: reduced.matches ? 'instant' : 'smooth' });
-      }
-
-      let drag: { id: number; x: number; left: number } | undefined;
-      track.addEventListener('pointerdown', event => {
-        if (event.pointerType !== 'mouse' || event.button !== 0) return;
-        drag = { id: event.pointerId, x: event.clientX, left: track.scrollLeft };
-      });
-      track.addEventListener('pointermove', event => {
-        if (!drag || drag.id !== event.pointerId || Math.abs(event.clientX - drag.x) < 5) return;
-        if (!track.hasPointerCapture(event.pointerId)) track.setPointerCapture(event.pointerId);
-        track.toggleAttribute('data-dragging', true);
-        track.scrollLeft = drag.left - (event.clientX - drag.x);
-      });
-      function finishDrag() {
-        drag = undefined;
-        if (!track.hasAttribute('data-dragging')) return;
-        update();
-        track.removeAttribute('data-dragging');
-        move(current);
-      }
-      track.addEventListener('pointerup', finishDrag);
-      track.addEventListener('pointercancel', finishDrag);
-      track.addEventListener('lostpointercapture', finishDrag);
-      track.addEventListener('pointerleave', () => {
-        if (!track.hasAttribute('data-dragging')) drag = undefined;
-      });
-
-      back.addEventListener('click', () => move(current - 1));
-      next.addEventListener('click', () => move(current + 1));
-      track.addEventListener('scroll', update, { passive: true });
-      new ResizeObserver(update).observe(track);
-      track.addEventListener('keydown', (event) => {
-        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-        event.preventDefault();
-        move(current + (event.key === 'ArrowLeft' ? -1 : 1));
-      });
+    back.addEventListener('click', () => move(current - 1));
+    next.addEventListener('click', () => move(current + 1));
+    track.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(track);
+    track.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault();
+      move(current + (event.key === 'ArrowLeft' ? -1 : 1));
     });
   }
 </script>
@@ -158,10 +129,6 @@ const roles = [
   .cooperation { background: #061e16; padding-block: clamp(20px, 4vh, 44px); }
   .cooperation-layout { display: grid; align-items: center; }
   .cooperation-intro { min-width: 0; }
-  .role-switch { width: min(100%, 346px); margin-top: 14px; }
-  .role-step { color: #e8d4ae; }
-  .role-step[aria-pressed='true'] { color: #0a2019; background: var(--gradient-gold); }
-  .role-step[aria-pressed='true']:has(.text-gold-plate) { background: var(--surface-90); box-shadow: inset 0 0 0 0.7px #998563; }
   .bridge-visual { isolation: isolate; position: relative; }
   .bridge-visual::before {
     content: '';
