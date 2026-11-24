@@ -23,7 +23,7 @@ const roles = [
       ))}
       <div class="role-switch mt-6 grid grid-cols-2 gap-1 rounded-[9px] bg-interface/60 p-1 font-accent" role="group" aria-label="Роль в сотрудничестве">
         {roles.map(({ key, label }, index) => (
-          <button type="button" class="role-step rounded-md px-2 py-2 text-lg" data-cooperation-role={key} aria-controls={`cooperation-${key}`} aria-pressed={index === 0 ? 'true' : 'false'}>{label}</button>
+          <button type="button" class="role-step rounded-md px-2 py-2 text-lg" data-cooperation-role={key} aria-controls={`cooperation-${key}`} aria-pressed={index === 0 ? 'true' : 'false'}><span class:list={{ "text-gold-plate": key === "owner" }}>{label}</span></button>
         ))}
       </div>
     </div>
@@ -38,10 +38,10 @@ const roles = [
           <span></span>
         </div>
         <div id={`cooperation-track-${key}`} class="stage-track" data-cooperation-track role="region" aria-label="Карусель этапов сотрудничества" tabindex="0">
-          {stages.map(([, title, description], index) => (
+          {stages.map(([phase, title, description]) => (
             <article class="stage-detail font-accent" data-cooperation-detail>
               <div class="stage-card">
-                <p class="text-xs uppercase tracking-wider text-sand">Этап {String(index + 1).padStart(2, '0')} из {String(stages.length).padStart(2, '0')}</p>
+                <p class="text-xs uppercase tracking-wider text-sand">{phase}</p>
                 <h3 class="mt-1.5 text-2xl text-fg md:text-3xl">{title}</h3>
                 <p class="stage-description text-lg leading-snug text-copy">{description}</p>
               </div>
@@ -50,7 +50,7 @@ const roles = [
         </div>
         <div class="stage-nav font-accent" role="group" aria-label="Переключение этапов">
           <button type="button" data-cooperation-back aria-label="Предыдущий этап" aria-controls={`cooperation-track-${key}`} disabled><span class="text-gold-plate" aria-hidden="true">←</span></button>
-          <span data-cooperation-count class="stage-count text-gold-plate" aria-live="polite">01 / {String(stages.length).padStart(2, '0')}</span>
+          <span data-cooperation-count class="sr-only" aria-live="polite">01 / {String(stages.length).padStart(2, '0')}</span>
           <button type="button" data-cooperation-next aria-label="Следующий этап" aria-controls={`cooperation-track-${key}`}><span class="text-gold-plate" aria-hidden="true">→</span></button>
         </div>
       </div>
@@ -98,7 +98,9 @@ const roles = [
           const distance = Math.max(-1, Math.min(1, (position(index) - track.scrollLeft) / step));
           card.style.setProperty('--stage-depth', String(Math.abs(distance)));
           card.style.setProperty('--stage-side', String(distance));
-          card.style.setProperty('--stage-turn', `${distance * -38}deg`);
+          card.style.setProperty('--stage-turn', `${distance * -42}deg`);
+          const lift = Math.sqrt(Math.max(0, 1 - distance * distance));
+          card.style.setProperty('--stage-lift', String(1 - lift));
           card.toggleAttribute('data-stage-current', index === current);
           if (index === current) card.setAttribute('aria-current', 'step');
           else card.removeAttribute('aria-current');
@@ -107,7 +109,6 @@ const roles = [
         count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(details.length).padStart(2, '0')}`;
         back.disabled = current === 0;
         next.disabled = current === details.length - 1;
-
       }
 
       function move(index: number) {
@@ -160,18 +161,28 @@ const roles = [
   .role-switch { width: min(100%, 346px); margin-top: 14px; }
   .role-step { color: #e8d4ae; }
   .role-step[aria-pressed='true'] { color: #0a2019; background: var(--gradient-gold); }
+  .role-step[aria-pressed='true']:has(.text-gold-plate) { background: var(--surface-90); box-shadow: inset 0 0 0 0.7px #998563; }
+  .bridge-visual { isolation: isolate; position: relative; }
+  .bridge-visual::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 9% 4% 2%;
+    background: radial-gradient(ellipse at 58% 50%, rgb(112 130 135 / 19%), transparent 65%),
+      radial-gradient(ellipse at 50% 92%, rgb(190 152 96 / 14%), transparent 58%);
+  }
   .bridge-visual img { display: block; width: 100%; height: auto; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent), linear-gradient(transparent, black 5%, black 95%, transparent); mask-composite: intersect; }
   .cooperation-panel { min-width: 0; }
   .bridge-progress { height: 2px; margin-inline: 8px; background: rgb(209 184 135 / 20%); }
   .bridge-progress span { display: block; height: 100%; width: calc(var(--stage-progress) * 1%); background: var(--gradient-gold); }
   .stage-track {
-    --stage-inset: clamp(20px, 7%, 48px);
+    --stage-inset: clamp(28px, 11%, 62px);
     position: relative;
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 100%;
     gap: 10px;
-    padding: 15px var(--stage-inset);
+    padding: 18px var(--stage-inset) 30px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     overscroll-behavior-inline: contain;
@@ -183,14 +194,17 @@ const roles = [
     height: 100%;
     padding: 18px;
     border-radius: 12px;
-    background: linear-gradient(150deg, #132e26, #0b211a 62%, #0c1c17);
-    box-shadow: inset 0 0 0 0.7px rgb(216 200 158 / 52%);
+    background: radial-gradient(ellipse at 15% 0%, rgb(158 175 158 / 15%), transparent 62%),
+      linear-gradient(154deg, #153229, #0b211a 62%, #091914);
+    box-shadow: inset 0 0 0 0.7px rgb(216 200 158 / 52%), inset 0 1px rgb(243 229 197 / 13%), 0 12px 22px rgb(2 10 7 / 38%);
   }
   .stage-description { margin-top: 8px; font-size: 16px; line-height: 1.35; }
-  .stage-nav { display: grid; grid-template-columns: 44px minmax(52px, auto) 44px; justify-content: center; align-items: center; gap: 10px; text-align: center; }
+  .stage-nav { display: grid; grid-template-columns: repeat(2, 44px); justify-content: center; align-items: center; gap: 10px; text-align: center; }
   .stage-nav button { width: 44px; height: 44px; border-radius: 9px; background: var(--surface-60); cursor: pointer; font-size: 22px; }
   .stage-nav button:disabled { opacity: .35; cursor: default; }
-  .stage-count { font-variant-numeric: tabular-nums; }
+  @media (width < 1024px) {
+    .stage-nav:not(:focus-within) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  }
   @media (hover: hover) and (pointer: fine) {
     .stage-track { cursor: grab; }
   }
@@ -203,15 +217,17 @@ const roles = [
   }
   @media (min-width: 1024px) {
     .cooperation-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 0 4%; }
-    .cooperation-intro { grid-row: 1 / 3; }
-    .bridge-visual, .cooperation-panel { grid-column: 2; }
+    .bridge-visual { grid-column: 2; }
+    .cooperation-panel { grid-column: 1 / -1; }
+    .stage-track { --stage-inset: 27%; gap: 22px; }
+    .bridge-progress { margin-inline: 27%; }
     .cooperation-layout > .text-legal { grid-column: 1 / -1; }
     .stage-card { padding: 18px 24px 24px; }
     .stage-description { font-size: 18px; }
   }
   @media (prefers-reduced-motion: no-preference) {
     .stage-card {
-      transform: translateX(calc(var(--stage-side, 0) * -16%)) perspective(580px) rotateY(var(--stage-turn, 0deg)) scale(calc(1 - var(--stage-depth, 0) * .12));
+      transform: translate(calc(var(--stage-side, 0) * -20%), calc(var(--stage-lift, 0) * 15px)) perspective(580px) rotateY(var(--stage-turn, 0deg)) scale(calc(1 - var(--stage-depth, 0) * .12));
       opacity: calc(1 - var(--stage-depth, 0) * .32);
     }
   }
