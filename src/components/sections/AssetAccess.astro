@@ -134,7 +134,6 @@ const occlusion = (index: number) => index === 2
   .asset-puzzle {
     --puzzle-background: #061e17;
     --puzzle-edge: rgba(255, 241, 217, 0.6);
-    --puzzle-muted: #aabdb1;
     --investment-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
     padding-block: 20px 56px;
     color: #f6f3e8;
@@ -239,7 +238,7 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-copy {
-    color: #b8c2b8;
+    color: var(--color-copy);
     font-size: 16px;
     line-height: 1.23;
   }
@@ -318,14 +317,14 @@ const occlusion = (index: number) => index === 2
 
   .investment-amount > :last-child {
     font-size: 18px;
-    color: var(--puzzle-muted);
+    color: var(--color-copy);
   }
 
   .investment-count {
     display: flex;
     justify-content: space-between;
     margin-top: 9px;
-    color: var(--puzzle-muted);
+    color: var(--color-copy);
     font-size: 12px;
   }
 
@@ -347,13 +346,13 @@ const occlusion = (index: number) => index === 2
 
   .investment-phase {
     margin-top: 4px;
-    color: var(--puzzle-muted);
+    color: var(--color-copy);
     font-size: 11px;
   }
 
   .investment-board figcaption {
     margin-bottom: 7px;
-    color: #dedede;
+    color: var(--color-copy);
     font-size: clamp(9px, 2.55vw, 10px);
     text-transform: uppercase;
   }
@@ -422,7 +421,7 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-disclaimer {
-    color: var(--puzzle-muted);
+    color: var(--color-legal);
     font-size: 10px;
     line-height: 1.3;
   }

@@ -4,6 +4,8 @@ import { nav, office, phones } from '../../data/site';
 const base = import.meta.env.BASE_URL;
 const year = new Date().getFullYear();
 const [officeCity, officeStreet] = office.full.split(', ');
+const footerNav = [...nav];
+footerNav.splice(3, 0, { label: 'Услуги', href: '#comparison' });
 const disclaimer = 'Вся информация, представленная на сайте, включая характеристики объектов, цены, сроки окупаемости и ориентировочные показатели доходности, носит исключительно справочный характер и не является публичной офертой в соответствии со ст. 437 ГК РФ. Приведённые расчёты окупаемости являются прогнозными, основаны на допущениях и рыночной конъюнктуре на момент публикации, не гарантируются и могут изменяться. Инвестиции в коммерческую недвижимость связаны с рисками, в том числе риском снижения стоимости актива, простоя помещений, изменения арендных ставок и законодательства. Решение об инвестировании принимается самостоятельно, инвестор несёт все связанные с ним риски. Точные условия сделки и параметры объектов уточняйте у наших специалистов.';
 const media = [
   { label: 'YouTube', file: 'footer-component19.svg', size: 50 },
@@ -25,7 +27,7 @@ const legal = [
     <div class="footer-top grid gap-8 lg:items-start lg:gap-10">
       <a href="#top" class="footer-top-link plat-outline rounded-[9px] px-6 py-2.5 uppercase hover:bg-white/5"><span class="text-gold-plate">Наверх <span class="hidden lg:inline" aria-hidden="true">↑</span></span></a>
       <nav class="footer-navigation grid grid-cols-2 gap-3.5 text-xl lg:flex lg:flex-col" aria-label="Навигация в подвале">
-        {nav.map(({href, label}) => <a href={href} class="text-gold-plate w-fit hover:underline">{label}</a>)}
+        {footerNav.map(({href, label}) => <a href={href} class="text-gold-plate w-fit hover:underline">{label}</a>)}
       </nav>
 
       <div class="footer-brand mx-auto flex min-w-0 max-w-full flex-col items-center gap-3">
@@ -42,7 +44,7 @@ const legal = [
       </div>
     </div>
 
-    <p class="footer-description mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-gold-plate lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда<span class="lg:hidden"> и управление.</span><span class="hidden lg:inline">, управление и развитие объектов.</span></p>
+    <p class="footer-description mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-copy lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда<span class="lg:hidden"> и управление.</span><span class="hidden lg:inline">, управление и развитие объектов.</span></p>
 
     <div class="footer-documents mt-9 flex flex-col items-center text-xl">
       <span>Проектная документация</span>
@@ -71,18 +73,18 @@ const legal = [
       </div>
     </div>
 
-    <div class="footer-legal mt-3 flex flex-col gap-3 border-t border-canvas pt-4 text-sm lg:flex-row lg:items-center lg:justify-between">
+    <div class="footer-legal mt-3 flex flex-col gap-3 border-t border-canvas pt-4 text-sm text-legal lg:flex-row lg:items-center lg:justify-between">
       <p>© 2013–{year} ООО «УК Фидента». Все права защищены.</p>
       <div class="footer-legal-links flex flex-wrap gap-x-7 gap-y-2">
         {legal.map(label => <span>{label}</span>)}
       </div>
     </div>
 
-    <div class="mt-4 hidden text-[15px] leading-snug text-fg lg:block">
+    <div class="mt-4 hidden text-[15px] leading-snug text-legal lg:block">
       <p>Дисклеймер</p>
       <p>{disclaimer}</p>
     </div>
-    <div class="footer-disclaimer text-sm leading-snug lg:hidden">
+    <div class="footer-disclaimer text-sm leading-snug text-legal lg:hidden">
       <p>Инвестиции в коммерческую недвижимость связаны с рисками. Прогнозы и расчёты не гарантируют результат. Информация не является публичной офертой.</p>
       <details>
         <summary class="plat-outline mt-5 cursor-pointer rounded-[9px] bg-[#0b1b16] px-3 py-3 text-center text-lg">
@@ -115,10 +117,6 @@ const legal = [
     .footer-top { grid-template-areas: 'top' 'navigation' 'brand'; gap: 24px; padding-top: 22px; border-top: 1px solid rgb(87 92 79 / 80%); }
     .footer-top-link { padding: 7px 18px; font-size: 16px; }
     .footer-navigation { grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 8px 18px; grid-template-columns: 1fr auto; }
-    .footer-navigation a:nth-child(n + 3) { grid-column: 2; }
-    .footer-navigation a:nth-child(3) { grid-row: 1; }
-    .footer-navigation a:nth-child(4) { grid-row: 2; }
-    .footer-navigation a:nth-child(5) { grid-row: 3; }
     .footer-brand { width: 100%; gap: 21px; }
     .footer-brand a { font-size: 28px; }
     .footer-mobile-address { margin-top: -7px; }

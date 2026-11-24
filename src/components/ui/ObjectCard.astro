@@ -54,13 +54,13 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
     <div class="card-content flex grow flex-col gap-4 p-5 sm:p-6">
       <div class="object-summary grow">
         <h3 class:list={['text-[28px] leading-tight', projectHref && 'project-title']}><slot name="title">{title}</slot></h3>
-        <p class="mt-2 text-base leading-snug text-fg-dim">{lead}</p>
+        <p class="mt-2 text-base leading-snug text-copy">{lead}</p>
       </div>
       {!projectHref && <dl class="object-facts grid grid-cols-3 gap-2 border-t border-cream/20 pt-3">
         {factLabels.map((label, index) => (
           <div>
-            <dt class="text-[11px] leading-tight text-muted">{label}</dt>
-            <dd class="mt-1 text-base leading-tight">{facts[index]}</dd>
+            <dt class="text-[11px] leading-tight text-copy">{label}</dt>
+            <dd class="mt-1 text-base leading-tight text-copy">{facts[index]}</dd>
           </div>
         ))}
       </dl>}
@@ -85,10 +85,10 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
             {result ? (
               <div class="mt-2.5 rounded-[9px] border border-cream bg-[#071814] px-4 py-3">
                 <p class="text-xl leading-[1.16] text-[#d4b981]">{summary}</p>
-                {description.length > 0 && <p class="mt-1.5 whitespace-pre-line text-[15px] leading-[1.22] text-[#dedede]">{description.join('\n')}</p>}
+                {description.length > 0 && <p class="mt-1.5 whitespace-pre-line text-[15px] leading-[1.22] text-copy">{description.join('\n')}</p>}
               </div>
             ) : (
-              <p class="mt-2 whitespace-pre-line text-sm leading-[1.27] text-[#dedede]">{text}</p>
+              <p class="mt-2 whitespace-pre-line text-sm leading-[1.27] text-copy">{text}</p>
             )}
           </li>
         );

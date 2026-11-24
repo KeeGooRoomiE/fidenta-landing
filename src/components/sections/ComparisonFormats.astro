@@ -12,7 +12,7 @@ const base = import.meta.env.BASE_URL;
       <Fragment slot="lead">Самостоятельная работа с недвижимостью требует времени: от просмотров до аренды и ремонта. С командой Фиденты вы выбираете, какие задачи передать и какие решения оставить за собой.</Fragment>
     </SectionHeading>
 
-    <p class="mb-4 mt-6 font-accent text-lg text-sand">Выберите критерий, чтобы сопоставить подходы.</p>
+    <p class="mb-4 mt-6 font-accent text-lg text-copy">Выберите критерий, чтобы сопоставить подходы.</p>
     <div class="compare-options">
       <div class="compare-criteria grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
         {comparisonCriteria.map(([title], index) => (
@@ -26,7 +26,7 @@ const base = import.meta.env.BASE_URL;
         <button class="compare-title flex w-full items-center justify-between gap-4 border-b border-cream/20 pb-4 text-left font-accent text-2xl text-fg" type="button" data-compare-close aria-label={`Свернуть критерий «${title}»`}>
           {title}<span class="text-gold-plate" aria-hidden="true">−</span>
         </button>
-        <div class="compare-pair mt-5 grid gap-5 font-accent text-lg leading-snug text-fg md:items-center">
+        <div class="compare-pair mt-5 grid gap-5 font-accent text-lg leading-snug text-copy md:items-center">
           <div>
             <h3 class="mb-2 text-xs uppercase tracking-wider text-sand">Самостоятельно</h3>
             <p>{alone}</p>
@@ -48,7 +48,7 @@ const base = import.meta.env.BASE_URL;
     ))}
 
     </div>
-    <p class="mt-6 font-accent text-sm text-muted">Состав работ, полномочия команды и условия участия определяются договором по конкретному объекту.</p>
+    <p class="mt-6 font-accent text-sm text-legal">Состав работ, полномочия команды и условия участия определяются договором по конкретному объекту.</p>
   </div>
 </Section>
 

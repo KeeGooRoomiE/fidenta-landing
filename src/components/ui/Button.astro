@@ -2,9 +2,10 @@
 /*
   УРОВЕНЬ 4 — UI-ЭЛЕМЕНТ «Кнопка»: все кнопки-призывы сайта в одном месте.
 
-  Раньше у каждой кнопки были свои классы (6+ разных наборов). Теперь — пять вариантов:
+  Варианты:
     plat        — золотая заливка («Передать объект под управление»);
     plat-form   — золотая кнопка отправки формы (выше и шире, во всю ширину);
+    outline-form — тёмная кнопка в размерах кнопки формы («Построить маршрут»);
     outline     — кремовая рамка + золотой текст («Разобрать условия по объекту →»);
     outline-lg  — крупная кнопка с рамкой и приглушённым золотым текстом («Узнать больше…»);
     more        — «Показать ещё / Ещё вопросы»: рамка с радиусом 4px, по центру под списком.
@@ -18,7 +19,7 @@
   Слот — подпись кнопки.
 */
 interface Props {
-  variant?: 'plat' | 'plat-form' | 'outline' | 'outline-lg' | 'more';
+  variant?: 'plat' | 'plat-form' | 'outline-form' | 'outline' | 'outline-lg' | 'more';
   block?: boolean;
   tone?: 'gold' | 'fg';
   class?: string;
@@ -27,10 +28,11 @@ interface Props {
 }
 const { variant = 'plat', block = false, tone = 'gold', class: className = '', href, ...rest } = Astro.props;
 
+const formButton = 'inline-flex h-12 w-full items-center justify-center rounded-[9px] border border-transparent px-[29px] text-center font-accent text-lg tracking-[0.008em] md:h-[52px] md:text-xl';
 const base: Record<string, string> = {
   plat: 'btn-hero btn-plat',
-  'plat-form':
-    'btn-plat inline-flex h-12 w-full items-center justify-center rounded-[9px] border border-transparent px-[29px] text-center font-accent text-lg md:h-[52px] md:text-xl tracking-[0.008em] transition-[filter] hover:brightness-110',
+  'plat-form': `${formButton} btn-plat transition-[filter] hover:brightness-110`,
+  'outline-form': `${formButton} plat-outline bg-[#0d291f] text-sand transition-colors hover:bg-[rgba(255,241,217,0.08)]`,
   outline: 'btn-hero btn-outline justify-center text-center',
   'outline-lg':
     'inline-flex items-center justify-center rounded-[9px] border border-plate-line px-6 py-3 text-shadow-[0_4px_4px_rgba(0,0,0,0.11)] transition-opacity hover:opacity-90 md:py-[14px]',

@@ -55,7 +55,7 @@ const info = [
       Большие проекты начинаются <span class="text-gold-plate">с малого</span>
     </SectionHeading>
     <div class="mt-5 grid gap-y-6 md:mt-8 lg:grid-cols-[minmax(0,0.63fr)_minmax(0,1fr)] lg:gap-x-16">
-      <p class="max-w-[460px] text-lead text-fg lg:col-start-1 lg:row-start-1">
+      <p class="max-w-[460px] text-lead text-copy lg:col-start-1 lg:row-start-1">
         Приглашаем в офис Фиденты в Санкт-Петербурге. Познакомимся, обсудим ваши задачи и возможные направления сотрудничества.
       </p>
 
@@ -71,7 +71,7 @@ const info = [
           {/* Кнопка + выпадающий выбор сервиса */}
           <div class="relative">
             <Button
-              variant="plat-form"
+              variant="outline-form"
               type="button"
               data-route-btn
               aria-haspopup="true"
@@ -88,7 +88,7 @@ const info = [
               hidden
               class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-cream bg-plaque p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
             >
-              <p data-route-target class="px-3 pb-1 pt-1.5 font-accent text-sm leading-5 text-muted"></p>
+              <p data-route-target class="px-3 pb-1 pt-1.5 font-accent text-sm leading-5 text-copy"></p>
               <a data-route="yandex" target="_blank" rel="noopener noreferrer" class="route-link">Яндекс Карты</a>
               <a data-route="2gis" target="_blank" rel="noopener noreferrer" class="route-link">2ГИС</a>
               <a data-route="google" target="_blank" rel="noopener noreferrer" class="route-link">Google Карты</a>
@@ -102,7 +102,7 @@ const info = [
           <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
             <span class="h-px w-full bg-gold-line"></span>
             <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
-            <div class="font-accent text-sm leading-snug text-fg lg:text-lg lg:leading-7">
+            <div class="font-accent text-sm leading-snug text-copy lg:text-lg lg:leading-7">
               {block.lines.map((line) => block.href ? <a href={block.href} class="hover:underline">{line}</a> : <p>{line}</p>)}
             </div>
           </div>
