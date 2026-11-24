@@ -16,34 +16,25 @@ import AboutAsset from '../components/sections/AboutAsset.astro';
 import AssetAccess from '../components/sections/AssetAccess.astro';
 import Portfolio from '../components/sections/Portfolio.astro';
 import ManagementBanner from '../components/sections/ManagementBanner.astro';
-import FullSpectrum from '../components/sections/FullSpectrum.astro';
+import CooperationStages from '../components/sections/CooperationStages.astro';
+import ComparisonFormats from '../components/sections/ComparisonFormats.astro';
 import Faq from '../components/sections/Faq.astro';
 import CtaForm from '../components/sections/CtaForm.astro';
 import ContactsMap from '../components/sections/ContactsMap.astro';
-import DealStructure from '../components/sections/DealStructure.astro';
 import Footer from '../components/sections/Footer.astro';
 
-/*
-  СКРЫТЫЕ БЛОКИ. Блок готов и лежит в src/components/sections/, но на сайте пока
-  не показывается (по решению дизайнера: недоработан). Чтобы показать
-  блок — поставить true. Больше ничего менять не нужно.
-    dealStructure — «Что именно вы покупаете» (шаги сделки + документы)
-*/
-const show = {
-  dealStructure: false,
-};
 ---
 
 <Layout title="Фидента — инвестиции в коммерческую недвижимость">
   <Header />
-  <main>
+  <main id="top">
     <Hero />
     <AboutAsset />
     <AssetAccess />
     <Portfolio />
     <ManagementBanner />
-    {show.dealStructure && <DealStructure />}
-    <FullSpectrum />
+    <CooperationStages />
+    <ComparisonFormats />
     <Faq />
     <CtaForm />
     <ContactsMap />

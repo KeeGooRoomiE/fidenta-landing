@@ -27,47 +27,47 @@
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
 import { locations } from '../../data/locations';
-import { phones } from '../../data/site';
+import { office, phones } from '../../data/site';
 
 const base = import.meta.env.BASE_URL;
 
 // Блоки реквизитов слева: заголовок + строки
 const info = [
-  { label: 'Офис', lines: ['Санкт-Петербург, [ДАННЫЕ: адрес офиса]', 'Пн–Пт, [ДАННЫЕ: часы работы]'] },
-  { label: 'Связь', lines: [phones.contacts, '[ДАННЫЕ: почта]'] },
+  { label: 'Офис', lines: [office.full] },
+  { label: 'Связь', lines: [phones.header.text], href: phones.header.href },
   {
     label: 'Реквизиты',
     lines: ['[ДАННЫЕ: полное наименование юрлица]', 'ИНН [ДАННЫЕ] · ОГРН [ДАННЫЕ]', 'Юридический адрес: [ДАННЫЕ]'],
   },
   {
-    label: 'Поддержка',
-    lines: ['Круглосуточная служба поддержки клиентов', `Телефон: ${phones.support}`, 'Email: support@[ДАННЫЕ]'],
+    label: 'Личная встреча',
+    lines: ['Встречи проводятся по предварительной договорённости. Свяжитесь с нами, чтобы согласовать удобное время.'],
   },
 ];
 ---
 
-<Section id="contacts">
+<Section id="contacts" class="contact-map-section">
    {/* Нижняя линия блока из Figma (кремовая 1px) — на внутренней обёртке, чтобы не залезала под боковые поля */}
-   <div class="border-b pb-8 md:pb-12" style="border-color: var(--color-cream);">
+   <div class="border-t border-cream/25 pt-8 md:pt-10">
     {/* Заголовок блока */}
-    <SectionHeading eyebrow="Контакты" line="sage" leadMax="max-w-none">
-      Приехать можно <span class="text-gold-plate">на любой объект</span>
-      <Fragment slot="lead">
-        Офис в Петербурге и все объекты под управлением — на одной карте. Адреса открыты, приезжайте и смотрите.
-      </Fragment>
+    <SectionHeading eyebrow="Контакты">
+      Большие проекты начинаются <span class="text-gold-plate">с малого</span>
     </SectionHeading>
+    <p class="mt-5 max-w-[460px] text-lead text-fg md:mt-8">
+      Приглашаем в офис Фиденты в Санкт-Петербурге. Познакомимся, обсудим ваши задачи и возможные направления сотрудничества.
+    </p>
 
     {/* Реквизиты | карта */}
     {/* Мобильный порядок (правка дизайнера: контактов слишком много перед картой): карта ПЕРВОЙ
          (max-lg:order-1), реквизиты после неё компактно: Офис и Связь в 2 колонки, мелкий шрифт */}
-    <div class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-[60px] lg:pt-10">
-      <div class="grid grid-cols-2 gap-x-4 gap-y-5 max-lg:order-2 lg:flex lg:w-[460px] lg:shrink-0 lg:flex-col lg:gap-7">
+    <div class="mt-5 grid gap-6 lg:grid-cols-[minmax(0,0.63fr)_minmax(0,1fr)] lg:gap-16">
+      <div class="grid grid-cols-2 gap-x-4 gap-y-5 max-lg:order-2 lg:flex lg:flex-col lg:gap-6">
         {info.map((block, bi) => (
           <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
             <span class="h-px w-full bg-gold-line"></span>
             <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
             <div class="font-accent text-sm leading-snug text-fg lg:text-lg lg:leading-7">
-              {block.lines.map((line) => <p>{line}</p>)}
+              {block.lines.map((line) => block.href ? <a href={block.href} class="hover:underline">{line}</a> : <p>{line}</p>)}
             </div>
           </div>
         ))}
@@ -76,14 +76,11 @@ const info = [
       <div class="flex min-w-0 flex-1 flex-col gap-3 max-lg:order-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
         {/* Карта. isolate + z-0: у Leaflet свои z-index (до 1000) — не даём им
              перекрыть шапку сайта и cookie-плашку */}
-        <div class="isolate z-0 h-[280px] overflow-hidden rounded-[9px] border-[5px] border-[#525252] md:h-[433px]">
+        <div class="map-frame plat-outline isolate z-0 h-[280px] overflow-hidden rounded-[9px] bg-[#0d291f] p-[3px] md:h-[433px]">
           <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
         </div>
 
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <p class="font-accent text-sm leading-5 text-gold-plate">
-            Метки — объекты под управлением. Клик по метке открывает карточку объекта.
-          </p>
+        <div class="flex justify-end">
 
           {/* Кнопка + выпадающий выбор сервиса */}
           <div class="relative shrink-0">
@@ -92,7 +89,7 @@ const info = [
               data-route-btn
               aria-haspopup="true"
               aria-expanded="false"
-              class="w-full rounded-[9px] border border-cream px-[14px] py-2.5 font-accent text-xl text-sand transition-colors hover:bg-[rgba(255,241,217,0.08)] sm:w-[233px]"
+              class="plat-outline w-full rounded-[9px] bg-[#0d291f] px-[14px] py-2.5 font-accent text-xl text-sand transition-colors hover:bg-[rgba(255,241,217,0.08)] sm:w-[233px]"
               style="text-shadow: 0 4px 4px rgba(0,0,0,0.11);"
             >
               Построить маршрут
@@ -113,6 +110,12 @@ const info = [
     </div>
    </div>
 </Section>
+
+<style>
+  .contact-map-section { background: #061e17; }
+  .map-frame::after { z-index: 1; }
+  [data-map] { border-radius: 7px; }
+</style>
 
 <script>
   // Ленивая загрузка: Leaflet и карта подтягиваются, только когда блок подъезжает к экрану

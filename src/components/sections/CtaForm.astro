@@ -32,8 +32,9 @@ import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 const copy = {
   investor: {
-    eyebrow: 'заявка инвестора',
-    title: 'Покажем объекты, открытые для входа, подберем решение',
+    eyebrow: 'Обратная связь',
+    title: 'Покажем объекты, открытые для входа',
+    accent: 'и подберём решение',
     lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода.',
     steps: [
       'Свяжемся в течение одного рабочего дня',
@@ -41,13 +42,14 @@ const copy = {
       'Съездим на объект вместе, если захотите',
     ],
     formTitle: 'Заявка инвестора',
-    placeholder: 'Например, интересуют склады в Ленобласти',
-    submit: 'Получить карточку объекта',
+    placeholder: 'Несколько слов о вашем запросе',
+    submit: 'Отправить обращение →',
   },
   // ЧЕРНОВИК — см. примечание в шапке файла
   owner: {
-    eyebrow: 'заявка собственника',
-    title: 'Передайте объект под управление — расскажем, как повысить доход',
+    eyebrow: 'Обратная связь',
+    title: 'Передайте объект под управление',
+    accent: 'и обсудим его потенциал',
     lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива.',
     steps: [
       'Свяжемся в течение одного рабочего дня',
@@ -56,17 +58,17 @@ const copy = {
     ],
     formTitle: 'Заявка собственника',
     placeholder: 'Например, офисное здание, 3 000 м², Санкт-Петербург',
-    submit: 'Передать объект под управление',
+    submit: 'Отправить обращение →',
   },
 };
 // Поле-подпись «Комментарий» одинаково для обоих вариантов (в Figma — «Комментарий / интересующий формат участия»)
 ---
 
-<Section id="cta" data-cta data-copy={JSON.stringify(copy)}>
+<Section id="cta" class="contact-form-section" data-cta data-copy={JSON.stringify(copy)}>
   {/* МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
          потом короткий призыв, потом форма. Для этого правая колонка на <lg «растворяется»
          (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. */}
-    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-12">
+    <div class="grid gap-6 border-t border-cream/25 pt-8 lg:grid-cols-[minmax(0,0.65fr)_minmax(0,1fr)] lg:gap-12 lg:pt-14">
     {/* Левая колонка: призыв (тексты подменяются скриптом по data-copy) */}
     <div class="flex flex-col gap-3 font-accent max-lg:order-2 lg:gap-[15px]">
       <div class="flex items-center gap-2.5">
@@ -76,10 +78,10 @@ const copy = {
         </span>
       </div>
       <h2
-        data-t="title"
         class="max-w-[437px] text-h2 text-fg"
       >
-        {copy.investor.title}
+        <span data-t="title">{copy.investor.title}</span><br />
+        <span data-t="accent" class="text-gold-plate">{copy.investor.accent}</span>
       </h2>
       <p data-t="lead" class="max-w-[428px] text-lead text-fg">{copy.investor.lead}</p>
       <p class="text-base text-white md:text-xl">Что будет дальше?</p>
@@ -90,7 +92,7 @@ const copy = {
 
     {/* Правая колонка: переключатель + форма */}
     <div class="flex flex-col gap-4 font-accent max-lg:contents">
-      <div class="flex gap-3 max-lg:order-1 md:gap-5" role="group" aria-label="Тип заявки">
+      <div class="grid grid-cols-2 gap-3 max-lg:order-1 md:gap-5" role="group" aria-label="Тип заявки">
         <button type="button" data-audience="investor" aria-pressed="true" class="aud-btn aud-btn--sm-mobile plat-outline">Я инвестор</button>
         <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile plat-outline">Я собственник</button>
       </div>
@@ -105,37 +107,33 @@ const copy = {
         {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
         <input type="hidden" name="audience" value="investor" />
 
-        <div class="grid grid-cols-2 gap-3 md:gap-4">
+        <div class="grid gap-3 sm:grid-cols-2 md:gap-4">
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
             Имя
-            <input name="name" required autocomplete="name" placeholder="Александр" class="cta-input" />
+            <input name="name" required autocomplete="name" placeholder="Как к вам обращаться" class="cta-input" />
           </label>
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
-            Телефон
+            Телефон *
             <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 (812) ..." class="cta-input" />
           </label>
         </div>
 
         <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
-          E-mail
-          <span class="relative block">
-            <input name="client_email" type="email" autocomplete="email" placeholder="example@mail.ru" class="cta-input w-full !pr-[140px]" />
-            <span class="pointer-events-none absolute right-[17px] top-1/2 hidden -translate-y-1/2 font-body text-base text-[rgba(244,241,234,0.5)] sm:block">не обязательно</span>
-          </span>
+          Электронная почта (по желанию)
+          <input name="client_email" type="email" autocomplete="email" placeholder="name@example.ru" class="cta-input" />
+          <span class="text-sm text-muted">Если удобнее получить документы или ответ письменно.</span>
         </label>
 
         <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
-          Комментарий / интересующий формат участия
-          <input name="message" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input" />
+          Кратко о задаче (по желанию)
+          <textarea name="message" rows="3" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input"></textarea>
         </label>
 
         {/* Согласие: ссылка #privacy — страница политики появится позже */}
         <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-fg md:text-xl md:leading-[1.04]">
-          <input type="checkbox" name="consent" required checked class="mt-0.5 size-[18px] shrink-0 accent-link" />
+          <input type="checkbox" name="consent" required class="mt-0.5 size-[18px] shrink-0 accent-link" />
           <span>
-            Даю согласие на
-            <a href="#privacy" class="text-link underline">обработку персональных данных</a>
-            в соответствии с политикой конфиденциальности
+            Согласие на обработку данных для ответа на обращение
           </span>
         </label>
 
@@ -219,18 +217,27 @@ const copy = {
   /* Кнопки-переключатели .aud-btn — общие, лежат в styles/global.css
      (используются и в CtaForm, и в FAQ). */
   /* Поле ввода по спеке Figma: фон #143a30, рамка #1c4a3d, radius 9, высота 52 */
+  .contact-form-section {
+    background: #071f18;
+  }
   .cta-input {
     height: 52px;
     width: 100%;
     border-radius: 9px;
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
+    border: 1px solid #4f5747;
+    background: #0c231c;
     padding: 0 17px;
     font-family: var(--font-body);
     font-size: 16px;
     color: var(--color-fg);
     outline: none;
     transition: border-color 0.15s;
+  }
+  textarea.cta-input {
+    height: auto;
+    min-height: 76px;
+    padding-block: 12px;
+    resize: vertical;
   }
   @media (max-width: 767px) {
     .cta-input {

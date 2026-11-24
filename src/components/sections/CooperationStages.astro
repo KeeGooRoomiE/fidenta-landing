@@ -1,0 +1,119 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
+import { cooperation } from '../../data/cooperation';
+
+const base = import.meta.env.BASE_URL;
+const roles = [
+  { key: 'investor', label: 'Я инвестор', ...cooperation.investor },
+  { key: 'owner', label: 'Я собственник', ...cooperation.owner },
+];
+---
+
+<Section id="cooperation" class="cooperation" data-cooperation>
+  <div class="cooperation-layout">
+    <div class="bridge-visual" aria-hidden="true">
+      <img src={`${base}images/cooperation-bridge.webp`} width="1100" height="620" alt="" loading="lazy" decoding="async" />
+    </div>
+
+    <div class="cooperation-intro relative">
+      {roles.map(({ key, title, accent, lead }, index) => (
+        <div data-cooperation-intro={key} hidden={index > 0}>
+          <SectionHeading eyebrow="Этапы сотрудничества">
+            {title}<br /><span class="text-gold-plate">{accent}</span>
+            <Fragment slot="lead">{lead}</Fragment>
+          </SectionHeading>
+        </div>
+      ))}
+      <div class="role-switch mt-6 grid grid-cols-2 gap-1 rounded-[9px] bg-[#303a28]/70 p-1 font-accent" role="group" aria-label="Роль в сотрудничестве">
+        {roles.map(({ key, label }, index) => (
+          <button type="button" class="role-step rounded-md px-2 py-2 text-lg" data-cooperation-role={key} aria-controls={`cooperation-${key}`} aria-pressed={index === 0 ? 'true' : 'false'}>{label}</button>
+        ))}
+      </div>
+    </div>
+
+    {roles.map(({ key, stages }, roleIndex) => (
+      <div class="cooperation-panel relative" id={`cooperation-${key}`} data-cooperation-panel={key} hidden={roleIndex > 0}>
+        <div class="bridge-progress" data-cooperation-progress style={`--stage-progress: ${50 / stages.length}%`} aria-hidden="true"><span></span></div>
+        <div class="stage-tabs plat-outline mt-6 flex gap-1 overflow-x-auto rounded-[28px] bg-[#303a28]/50 p-1 font-accent" role="group" aria-label="Этапы сотрудничества">
+          {stages.map(([label], index) => (
+            <button type="button" class="role-step min-h-12 flex-1 rounded-full px-3 text-base whitespace-nowrap" aria-controls={`stage-${key}-${index}`} aria-pressed={index === 0 ? 'true' : 'false'} data-cooperation-step={index}>
+              {String(index + 1).padStart(2, '0')} <span>{label}</span>
+            </button>
+          ))}
+        </div>
+        {stages.map(([, title, description], index) => (
+          <div id={`stage-${key}-${index}`} class="stage-detail mt-6 grid gap-3 rounded-xl bg-[#303a28]/45 p-5 font-accent md:items-center md:gap-6 md:p-6" data-cooperation-detail hidden={index > 0} aria-live="polite">
+            <div>
+              <p class="text-xs uppercase tracking-wider text-sand">Этап {String(index + 1).padStart(2, '0')} из {String(stages.length).padStart(2, '0')}</p>
+              <h3 class="mt-1.5 text-2xl text-fg md:text-3xl">{title}</h3>
+            </div>
+            <p class="text-lg leading-snug text-fg">{description}</p>
+          </div>
+        ))}
+      </div>
+    ))}
+    <p class="relative mt-7 font-accent text-sm text-muted">Состав работ, полномочия команды и порядок отчётности фиксируем в договоре по конкретному объекту.</p>
+  </div>
+</Section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-cooperation]');
+  if (root) {
+    const roles = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-cooperation-role]'));
+    const intros = Array.from(root.querySelectorAll<HTMLElement>('[data-cooperation-intro]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-cooperation-panel]'));
+    roles.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        roles.forEach((role, i) => role.setAttribute('aria-pressed', String(i === index)));
+        intros.forEach((intro, i) => { intro.hidden = i !== index; });
+        panels.forEach((panel, i) => { panel.hidden = i !== index; });
+      });
+    });
+
+    panels.forEach((panel) => {
+      const steps = Array.from(panel.querySelectorAll<HTMLButtonElement>('[data-cooperation-step]'));
+      const details = Array.from(panel.querySelectorAll<HTMLElement>('[data-cooperation-detail]'));
+      const progress = panel.querySelector<HTMLElement>('[data-cooperation-progress]')!;
+      steps.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          steps.forEach((step, i) => step.setAttribute('aria-pressed', String(i === index)));
+          details.forEach((detail, i) => { detail.hidden = i !== index; });
+          progress.style.setProperty('--stage-progress', `${(index + 0.5) / steps.length * 100}%`);
+        });
+      });
+    });
+  }
+</script>
+
+<style>
+  .cooperation { background: #061e16; }
+  .cooperation-layout { position: relative; isolation: isolate; overflow: hidden; }
+  .bridge-visual {
+    position: relative;
+    background: radial-gradient(ellipse at 60% 42%, #1c3b33, transparent 68%);
+    mask-image: linear-gradient(#000 74%, transparent);
+  }
+  .bridge-visual img { width: 100%; height: auto; }
+  .cooperation-intro { max-width: 550px; }
+  .role-switch { width: min(100%, 346px); }
+  .role-step { color: #e8d4ae; }
+  .role-step[aria-pressed='true'] { color: #0a2019; background: var(--gradient-gold); }
+  .cooperation-panel { margin-top: 42px; }
+  .bridge-progress { height: 1px; background: rgb(209 184 135 / 25%); }
+  .bridge-progress span { position: relative; display: block; top: -1px; width: var(--stage-progress); height: 3px; border-radius: 4px; background: #d1b887; }
+  .bridge-progress span::after { content: ''; position: absolute; right: -4px; top: -2.5px; width: 8px; height: 8px; border-radius: 50%; background: #d1b887; }
+  .stage-tabs { scrollbar-width: thin; scrollbar-color: #806d49 transparent; }
+  .stage-detail { min-height: 133px; }
+  @media (min-width: 768px) {
+    .stage-detail { grid-template-columns: minmax(0, 2fr) minmax(0, 3.5fr); }
+  }
+  @media (min-width: 1024px) {
+    .bridge-visual { position: absolute; z-index: -1; top: -12px; right: -12px; width: 70%; height: 420px; mask-image: linear-gradient(#000 73%, transparent), linear-gradient(to right, transparent, #000 27%, #000 84%, transparent); mask-composite: intersect; }
+    .bridge-visual img { height: 100%; object-fit: contain; object-position: right center; }
+    .cooperation-intro { min-height: 315px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bridge-progress span { transition: width 250ms ease; }
+  }
+</style>

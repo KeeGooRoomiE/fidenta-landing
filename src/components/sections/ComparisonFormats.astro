@@ -1,0 +1,90 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
+import { comparisonCriteria } from '../../data/cooperation';
+const base = import.meta.env.BASE_URL;
+---
+
+<Section id="comparison" class="comparison" data-comparison>
+  <div class="border-t border-cream/25 pt-8 md:pt-10">
+    <SectionHeading eyebrow="Сравнение форматов">
+      <span class="text-gold-plate">Преимущества</span> работы с управляющей компанией
+      <Fragment slot="lead">Самостоятельная работа с недвижимостью требует времени: от просмотров до аренды и ремонта. С командой Фиденты вы выбираете, какие задачи передать и какие решения оставить за собой.</Fragment>
+    </SectionHeading>
+
+    <p class="mb-4 mt-6 font-accent text-lg text-sand">Раскройте критерий, чтобы сопоставить подходы.</p>
+    {comparisonCriteria.map(([title, alone, withTeam], index) => (
+      <div id={`comparison-${index}`} class="compare-panel plat-outline mb-4 rounded-[9px] bg-[#142722] p-5 sm:p-6" data-compare-panel hidden>
+        <button class="compare-title flex w-full items-center justify-between gap-4 border-b border-cream/20 pb-4 text-left font-accent text-2xl text-fg" type="button" data-compare-close aria-label={`Свернуть критерий «${title}»`}>
+          {title}<span class="text-gold-plate" aria-hidden="true">−</span>
+        </button>
+        <div class="compare-pair mt-5 grid gap-5 font-accent text-lg leading-snug text-fg md:items-center">
+          <div>
+            <h3 class="mb-2 text-xs uppercase tracking-wider text-sand">Самостоятельно</h3>
+            <p>{alone}</p>
+          </div>
+          <span class="hourglass plat-outline mx-auto grid h-12 w-12 place-items-center rounded-[9px] md:h-[58px] md:w-[63px]" aria-hidden="true">
+            <img src={`${base}images/comparison-hourglass.svg`} width="30" height="40" alt="" loading="lazy" />
+          </span>
+          <div>
+            <h3 class="mb-2 text-xs uppercase tracking-wider text-gold-plate">С командой Фиденты</h3>
+            <p>{withTeam}</p>
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {comparisonCriteria.map(([title], index) => (
+        <button type="button" class="compare-trigger plat-outline flex min-h-[66px] items-center justify-between gap-3 rounded-[9px] bg-[#0c231c] px-4 text-left font-accent text-xl text-fg md:min-h-[77px]" aria-controls={`comparison-${index}`} aria-expanded="false" data-compare-open>
+          {title}<span class="text-gold-plate" aria-hidden="true">+</span>
+        </button>
+      ))}
+    </div>
+    <p class="mt-6 font-accent text-sm text-muted">Состав работ, полномочия команды и условия участия определяются договором по конкретному объекту.</p>
+  </div>
+</Section>
+
+<script>
+  const section = document.querySelector('[data-comparison]');
+  if (section) {
+    const buttons = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-compare-open]'));
+    const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-compare-panel]'));
+
+    function select(index: number) {
+      buttons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === index)));
+      panels.forEach((panel, i) => { panel.hidden = i !== index; });
+    }
+
+    buttons.forEach((button, index) => {
+      const panel = panels[index];
+      const close = panel.querySelector<HTMLButtonElement>('[data-compare-close]')!;
+      button.addEventListener('click', () => {
+        const wasOpen = button.getAttribute('aria-expanded') === 'true';
+        select(wasOpen ? -1 : index);
+        if (!wasOpen) {
+          close.focus({ preventScroll: true });
+          if (panel.getBoundingClientRect().top < 120) panel.scrollIntoView({ block: 'start' });
+        }
+      });
+      close.addEventListener('click', () => {
+        select(-1);
+        button.focus();
+      });
+    });
+  }
+</script>
+
+<style>
+  .comparison { background: #071f18; }
+  .compare-panel { scroll-margin-top: 120px; }
+  .compare-trigger[aria-expanded='true'] { background: #26382c; }
+  .compare-trigger[aria-expanded='true'] span { rotate: 45deg; }
+  @media (min-width: 768px) {
+    .compare-pair { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: clamp(16px, 4vw, 64px); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .compare-panel:not([hidden]) .hourglass img { animation: hourglass-turn 0.55s ease both; }
+    @keyframes hourglass-turn { from { rotate: 180deg; } to { rotate: 0deg; } }
+  }
+</style>
