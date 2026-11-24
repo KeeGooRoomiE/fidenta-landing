@@ -130,17 +130,21 @@ const objects = [
       {objects.slice(2).map((object, index) => (
         <ObjectCard {...object} id={`${object.id}-slider`} class={index < 4 ? 'track-mobile' : undefined} />
       ))}
-      <article class="project-card relative isolate flex min-h-[480px] flex-col items-start justify-end gap-3 overflow-hidden rounded-[9px] border border-cream/60 p-6 font-accent sm:p-7">
-        {/* Michael, Pexels: https://www.pexels.com/photo/35577502/ */}
-        <img class="project-photo" src={`${base}images/project-factory.jpg`} alt="" width="900" height="600" loading="lazy" decoding="async" />
-        <p class="text-gold-plate text-base leading-tight tracking-[0.04em] uppercase">Следующая история</p>
-        <h4 class="project-title leading-[1.05] text-fg">
+      {/* Michael, Pexels: https://www.pexels.com/photo/35577502/ */}
+      <ObjectCard
+        id="portfolio-project"
+        class="project-card"
+        type="Следующая история"
+        title="Здесь может начаться ваш проект"
+        photos={[`${base}images/project-factory.jpg`]}
+        lead="Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу."
+        projectHref="#cta"
+      >
+        <Fragment slot="title">
           <span class="block">Здесь может начаться</span>
           <span class="text-gold-plate">ваш проект</span>
-        </h4>
-        <p class="max-w-[29ch] text-lg leading-snug text-fg">Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу.</p>
-        <a href="#cta" class="mt-2 inline-flex min-h-11 items-center gap-2 border-t border-cream/30 pt-2 text-xl hover:underline"><span class="text-gold-plate">Обсудить проект <span aria-hidden="true">→</span></span></a>
-      </article>
+        </Fragment>
+      </ObjectCard>
     </div>
     <input class="object-position" type="range" min="0" max="1" value="0" aria-label="Позиция в галерее объектов" data-track-position />
   </div>
@@ -303,35 +307,4 @@ const objects = [
     background: rgb(255 241 217 / 10%);
   }
 
-  .project-card {
-    container-type: inline-size;
-    background: radial-gradient(ellipse at 82% 9%, #173d53, transparent 70%), #091c17;
-  }
-
-  .project-title {
-    font-size: clamp(20px, 10.5cqi, 40px);
-  }
-
-  .project-photo,
-  .project-card::before {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .project-photo {
-    z-index: -2;
-    height: auto;
-    max-height: 62%;
-    object-fit: contain;
-    object-position: center top;
-    mask-image: linear-gradient(#000 62%, transparent);
-  }
-
-  .project-card::before {
-    z-index: -1;
-    background: linear-gradient(180deg, rgb(7 21 52 / 12%), rgb(9 28 23 / 32%) 29%, #091c17 66%);
-    content: '';
-  }
 </style>

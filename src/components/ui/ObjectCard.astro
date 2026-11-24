@@ -4,65 +4,75 @@ interface Props {
   title: string;
   lead: string;
   photos: string[];
-  facts: string[];
+  facts?: string[];
   story?: { title: string; text: string }[];
   storyTitle?: string;
   id: string;
   class?: string;
+  projectHref?: string;
 }
 
-const { type, title, lead, photos, facts, story = [], storyTitle = title, id, class: className } = Astro.props;
+const { type, title, lead, photos, facts = [], story = [], storyTitle = title, id, class: className, projectHref } = Astro.props;
 const factLabels = ['В управлении', 'Профиль', 'Заполняемость'];
+const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text-xl leading-tight hover:underline';
 ---
 
-<article class:list={['object-card relative flex flex-col overflow-hidden rounded-[9px] bg-canvas font-accent text-fg', className]} data-object-card>
+<article class:list={['object-card relative flex flex-col overflow-hidden rounded-[9px] bg-canvas font-accent text-fg', className]} data-object-card={projectHref ? undefined : ''}>
   <div class="flex grow flex-col" data-object-front>
-    <div class="relative isolate aspect-[402/225] touch-pan-y select-none overflow-hidden" data-gallery role="group" aria-label={`Фото объекта «${title}»`}>
+    <div class="relative isolate aspect-[402/225] touch-pan-y select-none overflow-hidden" data-gallery={projectHref ? undefined : ''} role="group" aria-label={projectHref ? undefined : `Фото объекта «${title}»`}>
       {photos.map((src, index) => (
         <img
           src={src}
-          alt={`${title}, фото ${index + 1}`}
-          width="960"
-          height="640"
+          alt={projectHref ? '' : `${title}, фото ${index + 1}`}
+          width={projectHref ? 900 : 960}
+          height={projectHref ? 600 : 640}
           loading="lazy"
           decoding="async"
           draggable="false"
-          data-slide
+          data-slide={projectHref ? undefined : ''}
           hidden={index > 0}
-          class="absolute inset-0 size-full object-cover"
+          class:list={['absolute inset-0 size-full object-cover', projectHref && 'project-photo']}
         />
       ))}
 
       <div class="photo-tone" aria-hidden="true"></div>
       <span class="photo-control absolute left-3 top-3 rounded-full px-3 py-1 text-xs uppercase tracking-[0.08em]"><span class="text-gold-plate">{type}</span></span>
 
-      <button class="photo-arrow left-1" type="button" data-photo-step="-1" aria-label="Предыдущее фото" disabled={photos.length < 2}>
-        <span class="photo-chevron" aria-hidden="true"></span>
-      </button>
-      <button class="photo-arrow right-1" type="button" data-photo-step="1" aria-label="Следующее фото" disabled={photos.length < 2}>
-        <span class="photo-chevron" aria-hidden="true"></span>
-      </button>
-      <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums"><span class="text-gold-plate" data-photo-count aria-live="polite">1 / {photos.length}</span></span>
+      {!projectHref && (
+        <>
+          <button class="photo-arrow left-1" type="button" data-photo-step="-1" aria-label="Предыдущее фото" disabled={photos.length < 2}>
+            <span class="photo-chevron" aria-hidden="true"></span>
+          </button>
+          <button class="photo-arrow right-1" type="button" data-photo-step="1" aria-label="Следующее фото" disabled={photos.length < 2}>
+            <span class="photo-chevron" aria-hidden="true"></span>
+          </button>
+          <span class="photo-control absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-2.5 py-0.5 text-sm tabular-nums"><span class="text-gold-plate" data-photo-count aria-live="polite">1 / {photos.length}</span></span>
+        </>
+      )}
     </div>
 
-    <div class="flex grow flex-col gap-4 p-5 sm:p-6">
+    <div class="card-content flex grow flex-col gap-4 p-5 sm:p-6">
       <div class="grow">
-        <h3 class="text-[28px] leading-tight">{title}</h3>
+        <h3 class:list={['text-[28px] leading-tight', projectHref && 'project-title']}><slot name="title">{title}</slot></h3>
         <p class="mt-2 text-base leading-snug text-fg-dim">{lead}</p>
       </div>
-      <dl class="grid grid-cols-3 gap-2 border-t border-cream/20 pt-3">
+      {!projectHref && <dl class="grid grid-cols-3 gap-2 border-t border-cream/20 pt-3">
         {factLabels.map((label, index) => (
           <div>
             <dt class="text-[11px] leading-tight text-muted">{label}</dt>
             <dd class="mt-1 text-base leading-tight">{facts[index]}</dd>
           </div>
         ))}
-      </dl>
-      <button type="button" class="min-h-11 border-t border-cream/20 pt-3 text-left hover:underline" data-object-open aria-controls={id} aria-expanded="false"><span class="text-gold-plate">Подробнее об объекте <span aria-hidden="true">→</span></span></button>
+      </dl>}
+      {projectHref ? (
+        <a href={projectHref} class:list={[ctaClass, 'border-cream/20']}><span class="text-gold-plate">Обсудить проект <span aria-hidden="true">→</span></span></a>
+      ) : (
+        <button type="button" class:list={[ctaClass, 'border-cream/20']} data-object-open aria-controls={id} aria-expanded="false"><span class="text-gold-plate">Подробнее об объекте <span aria-hidden="true">→</span></span></button>
+      )}
     </div>
   </div>
 
-  <div id={id} class="story-card px-5 pb-2.5 pt-5 sm:px-6" data-object-back hidden>
+  {!projectHref && <div id={id} class="story-card px-5 pb-2.5 pt-5 sm:px-6" data-object-back hidden>
     <p class="text-gold-plate font-body text-xs uppercase">История объекта</p>
     <h3 class="mt-3 border-b border-[#38604d] pb-4 text-[26px] leading-[1.16] text-[#f4f1e9]" tabindex="-1">{storyTitle}</h3>
     <ol class="story mt-[18px]">
@@ -84,10 +94,10 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
         );
       })}
     </ol>
-    <div class="mt-auto pt-3">
-      <button type="button" class="min-h-9 w-full border-t border-[#38604d] text-left hover:underline" data-object-close><span class="text-gold-plate"><span aria-hidden="true">←</span> Вернуться к объекту</span></button>
+    <div class="story-footer mt-auto pt-6">
+      <button type="button" class:list={[ctaClass, 'border-[#38604d]']} data-object-close><span class="text-gold-plate"><span aria-hidden="true">←</span> Вернуться к объекту</span></button>
     </div>
-  </div>
+  </div>}
 </article>
 
 <style>
@@ -105,7 +115,7 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     content: '';
   }
 
-  [data-gallery] {
+  .object-card {
     --photo-control-bg: #071814;
   }
 
@@ -118,7 +128,19 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(180deg, rgb(7 21 52 / 18%), rgb(12 30 62 / 8%) 60%, rgb(7 21 52 / 17%));
+    background: linear-gradient(180deg, rgb(10 28 70 / 9%), rgb(10 28 70 / 3%) 60%, rgb(10 28 70 / 8%)), rgb(20 55 112 / 5%);
+  }
+
+  .card-content {
+    container-type: inline-size;
+  }
+
+  .project-title {
+    font-size: min(28px, 10.5cqi);
+  }
+
+  .project-photo {
+    object-position: center 45%;
   }
 
   .photo-arrow {
@@ -178,6 +200,10 @@ const factLabels = ['В управлении', 'Профиль', 'Заполня
     gap: 14px;
     margin-inline-start: 6px;
     padding-inline-start: 28px;
+  }
+
+  .story-footer {
+    margin-inline-start: 34px;
   }
 
   .story li {
