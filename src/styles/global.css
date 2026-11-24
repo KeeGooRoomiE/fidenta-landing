@@ -32,7 +32,7 @@
   --color-gold-deep: #9C7E38;    /* gold-700 · тень / active                → text-gold-deep */
 
   /* --- Нейтрали (текст) -------------------------------------------- */
-  --color-fg: #F4F1EA;           /* text: основной текст                    → text-fg       */
+  --color-fg: #F6F3E8;           /* text: основной текст                    → text-fg       */
   --color-copy: #B8C2B8;
   --color-legal: #9CAFA4;
   --color-fg-dim: #D4D4D4;       /* нейтральный (не кремовый) светлый текст — встречается
