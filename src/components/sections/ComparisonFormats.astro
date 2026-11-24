@@ -84,6 +84,9 @@ const base = import.meta.env.BASE_URL;
 </script>
 
 <style>
+  .comparison > :global(.container-page) > div {
+    border-image: linear-gradient(90deg, transparent, rgb(215 201 175 / 45%) 28%, rgb(215 201 175 / 20%) 75%, transparent) 1;
+  }
   .comparison { background: #071f18; }
   .compare-options { display: flex; flex-direction: column; gap: 14px; }
   .compare-panel { scroll-margin-top: 120px; }

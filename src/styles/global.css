@@ -59,6 +59,7 @@
 
   /* --- Металлик-градиент («plate») — для логотипа, золотого текста и кнопок ---
      Точный «Plat» из Figma: светлый блик → тёмное золото (с лёгкой прозрачностью). */
+  --gradient-plat-text: linear-gradient(110deg, #f1ecdf 0%, #dad2be 42%, #c4b698 100%);
   --gradient-gold: linear-gradient(140.35deg, rgba(255, 241, 217, 0.87) -25.71%, rgba(168, 133, 72, 0.87) 120.56%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
@@ -130,7 +131,7 @@
 /* Металлик-золото как заливка ТЕКСТА (обрезка градиента по глифам).
    Пример: <span class="text-gold-plate font-display">ФИДЕНТА</span> */
 @utility text-gold-plate {
-  background-image: var(--gradient-gold);
+  background-image: var(--gradient-plat-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -199,6 +200,7 @@
 
 /* Заголовок секции (H2): Forum обычного начертания, 30 → 48 → 50px. */
 @utility text-h2 {
+  text-wrap: balance;
   font-family: var(--font-accent);
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -242,10 +244,11 @@
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
-  background-image: var(--gradient-gold);
+  background-image: var(--gradient-plat-text);
   transition: filter 0.15s;
 }
 .aud-btn[aria-pressed='true'] {
+  background-image: var(--gradient-gold);
   background-clip: border-box;
   -webkit-background-clip: border-box;
   color: var(--color-canvas);
@@ -324,4 +327,37 @@
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* Edge highlights follow the existing Plat surface. */
+:is(.btn-plat, .hero-btn--primary) {
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px rgb(255 250 234 / 42%), inset 0 -1px rgb(64 53 32 / 35%), 0 3px 8px rgb(0 10 7 / 18%);
+}
+:is(.btn-plat, .hero-btn--primary):active {
+  box-shadow: inset 0 2px 4px rgb(64 53 32 / 28%);
+}
+:where(a, button, summary, [tabindex="0"]):focus-visible {
+  outline: 2px solid #dfd5c0;
+  outline-offset: 3px;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :is(.btn-plat, .hero-btn--primary)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 33%, rgb(255 252 241 / 22%) 50%, transparent 67%);
+    transform: translateX(-110%);
+  }
+  :is(.btn-plat, .hero-btn--primary):hover::before { animation: plat-glint 540ms ease-out; }
+  @keyframes plat-glint { to { transform: translateX(110%); } }
+  .header-cta img { transition: transform 160ms ease-out; }
+  .photo-chevron { transition: scale 160ms ease-out; }
+  .header-cta:hover img { transform: rotate(-5deg); }
+  .photo-arrow:hover:not(:disabled) .photo-chevron { scale: 1.08; }
+}
+@media (forced-colors: active) {
+  .text-gold-plate { background: none; color: CanvasText; }
 }
