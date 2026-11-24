@@ -478,6 +478,7 @@ const occlusion = (index: number) => index === 2
     }
 
     .investment-container {
+      max-width: clamp(1280px, 83vw, 1560px);
       width: calc(100% - 2 * clamp(30px, 5.56%, 80px));
     }
 
@@ -504,23 +505,32 @@ const occlusion = (index: number) => index === 2
 
     .investment-disclaimer-mobile,
     .investment-board figcaption,
-    .investment-copy,
     [data-puzzle-start] .investment-sky-color,
     [data-puzzle-ready] .investment-more {
       display: none;
     }
 
+    .investment-copy {
+      grid-area: 1 / 1;
+      font-size: clamp(16px, 1.05vw, 20px);
+      line-height: 1.3;
+    }
+
+    [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-details {
+      display: block;
+    }
+
     .investment-grid {
       display: grid;
       grid-template-columns: minmax(0, 466fr) minmax(0, 788fr);
-      grid-template-rows: minmax(212px, auto) minmax(212px, auto) auto;
+      grid-template-rows: auto auto auto auto;
       gap: 16px clamp(16px, 2.08vw, 30px);
       align-items: start;
       background: var(--puzzle-background);
     }
 
     .investment-capital {
-      grid-area: 2 / 1;
+      grid-area: 2 / 1 / 4;
       align-content: space-between;
       align-self: end;
       min-height: 212px;
@@ -551,6 +561,7 @@ const occlusion = (index: number) => index === 2
 
     .investment-board {
       grid-area: 1 / 2 / 3;
+      align-self: end;
     }
 
     .investment-scene {
@@ -563,7 +574,7 @@ const occlusion = (index: number) => index === 2
     }
 
     .investment-directions {
-      grid-area: 2 / 2;
+      grid-area: 3 / 2;
       align-self: end;
       grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
       grid-template-areas: 'tenants permits logo contractors infrastructure';
@@ -593,7 +604,7 @@ const occlusion = (index: number) => index === 2
     }
 
     .investment-disclaimer {
-      grid-area: 3 / 1 / 4 / -1;
+      grid-area: 4 / 1 / 5 / -1;
       margin-top: 0;
       font-size: 11px;
     }
@@ -605,7 +616,7 @@ const occlusion = (index: number) => index === 2
     }
 
     [data-puzzle-compact] .investment-grid {
-      grid-template-rows: minmax(166px, auto) minmax(170px, auto) auto;
+      grid-template-rows: auto auto auto auto;
       gap: 10px clamp(16px, 2.08vw, 30px);
     }
 

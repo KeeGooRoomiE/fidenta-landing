@@ -134,14 +134,15 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     const bounds = pin.getBoundingClientRect();
     // getBoundingClientRect учитывает масштаб страницы, а CSS top задаётся в локальных пикселях.
     const scale = pin.offsetWidth ? bounds.width / pin.offsetWidth : 1;
-    const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + 10;
     const viewportHeight = visualViewport?.height ?? innerHeight;
+    const headerGap = wide ? Math.min(64, Math.max(24, viewportHeight * 0.045)) : 10;
+    const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + headerGap;
     const availableHeight = viewportHeight - availableTop - 8;
     const room = availableHeight / scale;
     root.style.setProperty('--investment-room', `${Math.round(room)}px`);
     root.toggleAttribute('data-puzzle-compact', wide && room < 670);
     root.toggleAttribute('data-puzzle-short', !wide && room < 565);
-    if (!wide && pin.getBoundingClientRect().height > availableHeight) {
+    if (pin.getBoundingClientRect().height > availableHeight) {
       root.toggleAttribute('data-puzzle-tight', phone.matches);
       if (pin.getBoundingClientRect().height > availableHeight) {
         // На низких экранах сцена проходит под шапкой вместе со страницей.
@@ -156,7 +157,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     }
     progressAnchor = marker;
     progressStart = availableTop;
-    travel = viewportHeight * (wide ? 1.9 : 1.55);
+    travel = viewportHeight * (wide ? 0.95 : 1.55);
     root.style.setProperty('--investment-pin', `${availableTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
     root.setAttribute('data-puzzle-motion', '');

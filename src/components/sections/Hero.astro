@@ -57,11 +57,12 @@ const cards = [
           <h2 class="text-gold-plate">Смотрите за проектами Фидента</h2>
           <p>Новые объекты | Новости Фидента<br />В нашем канале «Архитектура Капитала»</p>
         </div>
-        {/* Иконка декоративная, пока в проекте нет подтверждённой ссылки на канал. */}
-        <picture>
-          <source media="(min-width: 1024px)" srcset={`${assets}news-telegram.svg`} width="52" height="48" />
-          <img src={`${assets}news-arrow.svg`} width="22" height="22" alt="" />
-        </picture>
+        <a href="https://t.me/fidenta" aria-label="Открыть канал Фидента в Telegram">
+          <picture>
+            <source media="(min-width: 1024px)" srcset={`${assets}news-telegram.svg`} width="52" height="48" />
+            <img src={`${assets}news-arrow.svg`} width="22" height="22" alt="" />
+          </picture>
+        </a>
       </li>
     </ul>
   </div>
@@ -103,9 +104,10 @@ const cards = [
   }
 
   .hero-art::before {
-    opacity: 0.74;
+    z-index: 1;
+    opacity: 0.64;
     background:
-      linear-gradient(180deg, var(--hero-base) 26%, rgba(7, 29, 23, 0.23) 48%, rgba(7, 29, 23, 0.32) 72%, var(--hero-base)),
+      linear-gradient(180deg, var(--hero-base) 26%, rgba(7, 29, 23, 0.1) 48%, rgba(7, 29, 23, 0.2) 72%, var(--hero-base)),
       linear-gradient(90deg, rgba(7, 29, 23, 0.83), rgba(7, 29, 23, 0.756) 34.527%, rgba(7, 29, 23, 0.35) 52%, transparent);
     background-size: 100% 480px;
     background-position: 0 83px;
@@ -113,10 +115,11 @@ const cards = [
   }
 
   .hero-art::after {
+    z-index: 2;
     background:
       linear-gradient(180deg, var(--hero-base) 22%, rgba(7, 29, 23, 0.84) 48%, rgba(7, 29, 23, 0.38) 73%, transparent) left top 58px / 100% 190px no-repeat,
-      linear-gradient(180deg, rgba(7, 21, 52, 0.46), rgba(5, 15, 33, 0.22) 62%, rgba(1, 3, 5, 0.01)) left top 83px / 100% 492px no-repeat,
-      linear-gradient(180deg, transparent, rgba(7, 29, 23, 0.08) 25%, rgba(7, 29, 23, 0.38) 55%, rgba(7, 29, 23, 0.79) 88%, var(--hero-base) 100%) left top 330px / 100% 178px no-repeat;
+      linear-gradient(180deg, rgba(7, 21, 52, 0.28), rgba(5, 15, 33, 0.08) 62%, rgba(1, 3, 5, 0.01)) left top 83px / 100% 492px no-repeat,
+      linear-gradient(180deg, transparent, rgba(7, 29, 23, 0.08) 18%, rgba(7, 29, 23, 0.38) 40%, rgba(7, 29, 23, 0.79) 64%, rgba(7, 29, 23, 0.96) 82%, var(--hero-base) 100%) left top 330px / 100% 245px no-repeat;
   }
 
   .hero-content {
@@ -225,7 +228,11 @@ const cards = [
     padding-right: 22px;
   }
 
-  .hero-news picture {
+  .hero-news > a {
+    display: grid;
+    min-height: 44px;
+    place-items: center end;
+    min-width: 32px;
     flex: none;
     align-self: center;
   }
@@ -346,7 +353,7 @@ const cards = [
       min-height: 120px;
       padding: 19px;
       border-color: rgba(255, 241, 217, 0.62);
-      background: rgba(25, 43, 41, 0.46);
+      background: var(--hero-card-surface);
     }
 
     .hero-card h2 {

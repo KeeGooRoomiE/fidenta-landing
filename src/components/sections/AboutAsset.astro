@@ -7,7 +7,7 @@ const cards = [
   {
     icon: 'investor.svg',
     title: 'Для инвестора',
-    text: 'Организуем совместное участие инвесторов в более масштабных проектах коммерческой недвижимости',
+    text: 'Организуем совместное участие инвесторов в масштабных проектах коммерческой недвижимости',
   },
   {
     icon: 'owner.svg',
@@ -31,7 +31,7 @@ const cards = [
   <SectionHeading eyebrow="О компании" leadMax="max-w-[948px]" class="about-heading">
     <span class="text-gold-plate">Раскрываем потенциал</span> коммерческой недвижимости
     <Fragment slot="lead">
-      <span>Мы верим, что за каждым объектом стоят не только квадратные метры, но и возможности</span>
+      <span>Мы верим, что за каждым объектом стоят не только квадратные метры, но и возможности.</span>
       <span>Фидента объединяет капитал, опыт и людей, чтобы находить новые пути развития коммерческой недвижимости</span>
     </Fragment>
   </SectionHeading>
@@ -51,9 +51,9 @@ const cards = [
 
       <figcaption class="about-caption">
         <p>
-          Что будет востребовано здесь через год, пять, десять лет?<br />
-          Во сколько это обойдётся? Кому доверить работу?<br />
-          Эти вопросы стоит задать до того, как в проект вложены миллионы
+          Что будет востребовано здесь через год, пять, десять лет?<br class="mobile-break" />
+          Во сколько это обойдётся? <br class="desktop-break" />Кому доверить работу?<br class="mobile-break" />
+          Эти вопросы стоит задать до того, как <span class="desktop-wording">в проект </span>вложены миллионы
         </p>
       </figcaption>
     </figure>
@@ -132,11 +132,11 @@ const cards = [
 
   @media (max-width: 639px) {
     .about-section :global(.about-heading .text-lead) {
-      max-width: min(100%, 36ch);
+      max-width: 100%;
     }
 
     .about-section :global(.about-heading .text-lead > span) {
-      text-wrap: balance;
+      display: inline;
     }
 
     .about-section :global(.about-heading .text-lead > span + span) {
@@ -249,9 +249,36 @@ const cards = [
     letter-spacing: -0.05em;
   }
 
+  .desktop-break, .desktop-wording {
+    display: none;
+  }
+
   @media (max-width: 639px) {
+    .about-section :global(.about-heading .text-h2) {
+      font-size: 34px;
+      line-height: 40px;
+    }
+
+    .about-grid, .about-cards { gap: 10px; }
+    .about-figure { display: contents; }
+    .about-photo { aspect-ratio: 350 / 190; }
+    .about-card { min-height: 98px; padding: 10px; gap: 11px; border: 0.7px solid transparent;
+      background: linear-gradient(var(--color-tile), var(--color-tile)) padding-box,
+        linear-gradient(177deg, rgb(255 241 217 / 50%) 25.714%, rgb(168 133 72 / 50%) 120.56%) border-box; }
+    .about-icon { width: 42px; }
+    .about-card p { font-size: 14px; margin-top: 0; }
+    .about-card:nth-child(3) p { font-size: 16px; }
+
     .about-caption {
-      font-size: 12px;
+      order: 1;
+      margin-top: 10px;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #b8c2b8;
+      text-align: center;
+      font-size: 14px;
     }
   }
 
@@ -305,6 +332,13 @@ const cards = [
 
     .about-caption {
       min-height: 120px;
+      padding: 12px 0;
+      border-color: #fff1d9;
+      color: #b8c2b8;
     }
+
+    .about-caption p { max-width: none; }
+    .mobile-break { display: none; }
+    .desktop-break, .desktop-wording { display: inline; }
   }
 </style>
