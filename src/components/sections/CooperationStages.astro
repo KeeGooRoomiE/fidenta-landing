@@ -127,15 +127,14 @@ const roles = [
 </script>
 
 <style>
-  .cooperation { background: radial-gradient(ellipse at 75% 25%, #102d26, transparent 65%), #061e16; }
+  .cooperation { background: #061e16; }
   .cooperation-layout { position: relative; isolation: isolate; overflow: hidden; }
   .bridge-visual {
     position: relative;
     background: radial-gradient(ellipse at 60% 42%, #1c3b33, transparent 68%);
-    mask-image: radial-gradient(ellipse at 50% 46%, black 35%, transparent 74%);
+    mask-image: linear-gradient(#000 74%, transparent);
   }
-  .bridge-visual img { width: 100%; height: auto; mask-image: radial-gradient(ellipse at 56% 48%, black 42%, transparent 75%); }
-  @media (width < 768px) { .bridge-visual { margin-bottom: 24px; } }
+  .bridge-visual img { width: 100%; height: auto; }
   .cooperation-intro { max-width: 550px; }
   .role-switch { width: min(100%, 346px); }
   .role-step { color: #e8d4ae; }

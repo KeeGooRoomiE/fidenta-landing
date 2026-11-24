@@ -310,20 +310,6 @@
   position: relative;
 }
 
-/* A single rounded border keeps both Plat edges continuous at fractional zoom. */
-.contact-action {
-  display: flex;
-  width: min(350px, 100%);
-  margin-inline: auto;
-  border: 0.7px solid transparent;
-  background: linear-gradient(var(--color-cta-dark), var(--color-cta-dark)) padding-box,
-    linear-gradient(160deg, rgb(255 241 217 / 50%), rgb(168 133 72 / 50%)) border-box;
-}
-#cta { padding-bottom: clamp(28px, 4vw, 56px); }
-#contacts { padding-top: 0; }
-#contacts > .container-page > div {
-  border-image: linear-gradient(90deg, transparent, rgb(216 196 157 / 48%) 24%, rgb(216 196 157 / 48%) 76%, transparent) 1;
-}
 .aud-btn.plat-outline {
   border: 0;
 }
