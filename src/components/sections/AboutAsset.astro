@@ -96,7 +96,7 @@ const cards = [
     --gradient-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
     font-family: var(--font-accent);
     scroll-margin-top: 32px;
-    zoom: calc(1 / var(--desktop-reference-zoom, 1));
+    zoom: var(--investment-layout-zoom, calc(1 / var(--desktop-reference-zoom, 1)));
   }
 
   .about-section :global(.container-page) {
@@ -287,6 +287,11 @@ const cards = [
   }
 
   @media (min-width: 1024px) {
+    .about-section :global(.container-page) {
+      width: var(--investment-layout-width);
+      max-width: var(--investment-layout-max);
+    }
+
     .about-section :global(.about-heading) {
       margin-inline-start: 10px;
     }

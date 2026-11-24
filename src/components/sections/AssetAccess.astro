@@ -136,7 +136,7 @@ const occlusion = (index: number) => index === 2
     font-family: var(--font-accent);
     scroll-margin-top: 98px;
     overflow-anchor: none;
-    zoom: calc(1 / var(--desktop-reference-zoom, 1));
+    zoom: var(--investment-layout-zoom, calc(1 / var(--desktop-reference-zoom, 1)));
   }
 
   .investment-container {
@@ -475,8 +475,8 @@ const occlusion = (index: number) => index === 2
     }
 
     .investment-container {
-      max-width: clamp(1280px, 83vw, 1560px);
-      width: calc(100% - 2 * clamp(30px, 5.56%, 80px));
+      max-width: var(--investment-layout-max);
+      width: var(--investment-layout-width);
     }
 
     .investment-heading {
@@ -519,9 +519,9 @@ const occlusion = (index: number) => index === 2
 
     .investment-grid {
       display: grid;
-      grid-template-columns: minmax(0, 466fr) minmax(0, 788fr);
+      grid-template-columns: minmax(0, 466fr) minmax(0, 800fr);
       grid-template-rows: auto auto auto auto;
-      gap: 16px clamp(16px, 2.08vw, 30px);
+      gap: 16px 14px;
       align-items: start;
       background: var(--puzzle-background);
     }
@@ -617,7 +617,7 @@ const occlusion = (index: number) => index === 2
 
     [data-puzzle-compact] .investment-grid {
       grid-template-rows: auto auto auto auto;
-      gap: 10px clamp(16px, 2.08vw, 30px);
+      gap: 10px 14px;
     }
 
     [data-puzzle-compact] .investment-capital {

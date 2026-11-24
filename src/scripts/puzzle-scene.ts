@@ -122,9 +122,9 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (innerWidth > 2560) {
       const pageZoom = Number(getComputedStyle(document.documentElement).zoom) || 1;
       const viewportScale = Math.min(innerWidth / 2560, Math.max(1, innerHeight / 1320));
-      root.style.zoom = String((1.75 / 1.08) * viewportScale / pageZoom);
+      document.documentElement.style.setProperty('--investment-layout-zoom', String((1.75 / 1.08) * viewportScale / pageZoom));
     } else {
-      root.style.removeProperty('zoom');
+      document.documentElement.style.removeProperty('--investment-layout-zoom');
     }
     root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;

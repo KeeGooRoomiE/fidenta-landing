@@ -309,3 +309,10 @@
   mask-composite: exclude;
   pointer-events: none;
 }
+
+@media (min-width: 1024px) {
+  :root {
+    --investment-layout-width: calc(100% - 2 * clamp(30px, 5.56%, 80px));
+    --investment-layout-max: clamp(1280px, 83vw, 1560px);
+  }
+}
