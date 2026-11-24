@@ -5,10 +5,9 @@ const clamp = (value: number) => Math.max(0, Math.min(1, value));
 export function initInvestmentPuzzle(root: HTMLElement) {
   const desktop = matchMedia('(min-width: 1024px)');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const desktopPin = root.querySelector<HTMLElement>('[data-puzzle-pin="desktop"]')!;
-  const mobilePin = root.querySelector<HTMLElement>('[data-puzzle-pin="mobile"]')!;
-  const desktopMarker = root.querySelector<HTMLElement>('[data-puzzle-marker="desktop"]')!;
-  const mobileMarker = root.querySelector<HTMLElement>('[data-puzzle-marker="mobile"]')!;
+  const pin = root.querySelector<HTMLElement>('[data-puzzle-pin]')!;
+  const marker = root.querySelector<HTMLElement>('[data-puzzle-marker]')!;
+  const photo = root.querySelector<SVGSVGElement>('.investment-scene svg')!;
   const header = document.querySelector<HTMLElement>('.header-bar');
   const expand = root.querySelector<HTMLButtonElement>('[data-puzzle-expand]')!;
   const expandLabel = expand.querySelector<HTMLElement>('[data-puzzle-expand-label]')!;
@@ -41,19 +40,26 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   let pinTop = 0;
   let lastCount = -1;
   let lastProgress = -1;
-  let marker = mobileMarker;
 
   function setExpanded(open: boolean) {
     root.toggleAttribute('data-puzzle-expanded', open);
     expand.setAttribute('aria-expanded', String(open));
-    expandLabel.textContent = open ? 'Свернуть текст' : 'Читать далее';
+    expandLabel.textContent = open ? 'свернуть текст' : 'читать далее';
   }
 
   expand.addEventListener('click', (event) => {
     const opening = expand.getAttribute('aria-expanded') !== 'true';
     setExpanded(opening);
-    if (opening && event.detail === 0) firstDetail.focus();
-    if (!opening) expand.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    measure();
+    if (!opening) {
+      marker.scrollIntoView({ block: 'start', behavior: 'instant' });
+    } else {
+      if (event.detail === 0) firstDetail.focus({ preventScroll: true });
+      const detailTop = firstDetail.getBoundingClientRect().top;
+      if (detailTop < (header?.getBoundingClientRect().bottom ?? 0) || detailTop > innerHeight - 40) {
+        firstDetail.scrollIntoView({ block: 'start', behavior: 'instant' });
+      }
+    }
   });
   root.setAttribute('data-puzzle-ready', '');
 
@@ -67,13 +73,16 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     percent.textContent = percentage + '%';
     progressbar.setAttribute('aria-valuenow', String(percentage));
     bar.style.setProperty('--investment-progress', String(capital / totalMln));
-    phase.textContent = landed === pieces.length ? 'Объект собран' : 'Формирование долей объекта';
+    phase.textContent = landed === pieces.length ? 'Сбор долей завершён · этап управления'
+      : landed > 0 ? `Объединение капитала · этап ${landed} из ${pieces.length}`
+      : 'Формирование долей объекта';
   }
 
   function render(progress: number) {
     if (progress === lastProgress) return;
     lastProgress = progress;
     const time = progress * duration;
+    root.toggleAttribute('data-puzzle-start', time < leadIn);
     let landed = 0;
     pieces.forEach(({ center, enter }, index) => {
       const elapsed = time - leadIn - index * slot;
@@ -106,28 +115,34 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   }
 
   function measure() {
-    if (reducedMotion.matches) {
+    const wide = desktop.matches;
+    const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
+    if (reducedMotion.matches || reading) {
       travel = 0;
       root.removeAttribute('data-puzzle-motion');
       root.removeAttribute('data-puzzle-compact');
+      root.removeAttribute('data-puzzle-short');
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
-      render(1);
+      render(reducedMotion.matches ? 1 : 0);
       return;
     }
 
-    const wide = desktop.matches;
-    const pin = wide ? desktopPin : mobilePin;
-    marker = wide ? desktopMarker : mobileMarker;
     const bounds = pin.getBoundingClientRect();
     // getBoundingClientRect учитывает масштаб страницы, а CSS top задаётся в локальных пикселях.
     const scale = pin.offsetWidth ? bounds.width / pin.offsetWidth : 1;
     const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + 10;
-    const room = (innerHeight - availableTop - 8) / scale;
+    const viewportHeight = visualViewport?.height ?? innerHeight;
+    const room = (viewportHeight - availableTop - 8) / scale;
     root.style.setProperty('--investment-room', `${Math.round(room)}px`);
     root.toggleAttribute('data-puzzle-compact', wide && room < 670);
-    pinTop = wide ? availableTop : Math.min(availableTop, innerHeight - bounds.height - 8);
-    travel = innerHeight * (wide ? 1.9 : 1.55);
+    root.toggleAttribute('data-puzzle-short', !wide && room < 565);
+    if (!wide) {
+      const occupied = (pin.getBoundingClientRect().height - photo.getBoundingClientRect().height) / scale;
+      root.style.setProperty('--investment-mobile-photo', `${Math.max(70, Math.floor(room - occupied - 2))}px`);
+    }
+    pinTop = availableTop;
+    travel = viewportHeight * (wide ? 1.9 : 1.55);
     root.style.setProperty('--investment-pin', `${pinTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
     root.setAttribute('data-puzzle-motion', '');
@@ -136,11 +151,11 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   addEventListener('scroll', scheduleUpdate, { passive: true });
   addEventListener('resize', measure, { passive: true });
+  visualViewport?.addEventListener('resize', measure, { passive: true });
   desktop.addEventListener('change', measure);
   reducedMotion.addEventListener('change', measure);
   const layout = new ResizeObserver(measure);
-  layout.observe(desktopPin);
-  layout.observe(mobilePin);
+  layout.observe(pin);
   layout.observe(root.querySelector<HTMLElement>('.investment-copy')!);
   measure();
 }

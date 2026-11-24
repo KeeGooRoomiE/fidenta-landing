@@ -10,101 +10,93 @@ const occlusion = (index: number) => index === 2
 
 <section id="asset" class="asset-puzzle" data-investment-puzzle aria-labelledby="investment-title">
   <div class="investment-container">
-    <div data-puzzle-marker="desktop" aria-hidden="true"></div>
-    <div class="investment-stage" data-puzzle-pin="desktop">
+    <div data-puzzle-marker aria-hidden="true"></div>
+    <div class="investment-stage" data-puzzle-pin>
       <div class="investment-heading">
         <p class="investment-eyebrow"><span class="text-gold-plate">Инвестиции в недвижимость</span></p>
         <h2 id="investment-title">
-          Приобрести недостаточно. <span class="text-gold-plate">Важно развивать</span>
+          Приобрести недостаточно<span class="investment-title-period">.</span> <span class="text-gold-plate">Важно развивать</span>
         </h2>
       </div>
 
       <div class="investment-grid">
         <div class="investment-copy">
-          <p>Фидента объединяет участников вокруг проектов коммерческой недвижимости.</p>
+          <p>Фидента объединяет участников вокруг проектов коммерческой недвижимости.<br />Каждая доля становится частью общего капитала, необходимого для реализации проекта</p>
           <div id="investment-details" class="investment-details">
-            <p tabindex="-1">Каждая доля становится частью общего капитала, необходимого для реализации проекта.</p>
-            <p>Участвуя в проектах «Фиденты», вы направляете капитал в реальные объекты с потенциалом получения арендного дохода и увеличения рыночной стоимости.</p>
-            <p>Это могут быть торговые помещения, складские комплексы, сервисные и другие коммерческие объекты.</p>
-            <p>Мы рассматриваем недвижимость как долгосрочный актив, ценность которого формируется благодаря грамотному использованию, профессиональному управлению и развитию.</p>
+            <p tabindex="-1">Капитал направляют в торговые помещения, склады, сервисные и другие коммерческие объекты с потенциалом арендного дохода и роста стоимости.</p>
+            <p>Для нас недвижимость — долгосрочный актив. Её ценность раскрывают грамотное использование, профессиональное управление и развитие.</p>
           </div>
           <button type="button" class="investment-more" data-puzzle-expand aria-expanded="false" aria-controls="investment-details">
-            <span data-puzzle-expand-label>Читать далее</span>
+            <span class="text-gold-plate" data-puzzle-expand-label>читать далее</span>
             <span class="investment-chevron" aria-hidden="true"></span>
           </button>
         </div>
 
-        <div data-puzzle-marker="mobile" aria-hidden="true"></div>
-        <div class="investment-scroll-track">
-          <div class="investment-visual" data-puzzle-pin="mobile">
-            <div class="investment-capital">
-              <p class="text-gold-plate investment-capital-label">Объединение капитала</p>
-              <div class="investment-amount">
-                <span><span data-puzzle-amount>{totalMln}</span> млн ₽</span>
-                <span>из {totalMln} млн ₽</span>
-              </div>
-              <div class="investment-count">
-                <span><span data-puzzle-count>{pieces.length}</span> из {pieces.length} долей</span>
-                <span class="text-gold-plate" data-puzzle-percent>100%</span>
-              </div>
-              <div class="investment-progress" role="progressbar" aria-label="Объединение капитала" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-puzzle-progress>
-                <span data-puzzle-bar></span>
-              </div>
-              <p class="investment-phase" data-puzzle-phase>Объект собран</p>
-            </div>
-
-            <figure class="investment-board">
-              <figcaption>Логистический комплекс</figcaption>
-              <div class="investment-scene">
-                <svg viewBox={`0 0 ${sceneWidth} ${sceneHeight}`} role="img" aria-label="Логистический комплекс: кран, контейнеры, грузовики и склад">
-                  <defs>
-                    <image id="investment-image" href={`${base}images/investment-puzzle.webp`} width={sceneWidth} height={sceneHeight} />
-                    <filter id="investment-monochrome" color-interpolation-filters="sRGB">
-                      <feColorMatrix type="saturate" values="0" />
-                    </filter>
-                    <mask id="investment-sky" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                      <path d={sky} fill="white" />
-                      {craneMetal.map((path) => <path d={path} fill="black" />)}
-                      <path d={craneCables} fill="none" stroke="black" stroke-width="2" />
-                    </mask>
-                    <mask id="investment-background-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                      <rect width={sceneWidth} height={sceneHeight} fill="white" />
-                      {foregroundPieces.map(({ path }) => <path d={path} fill="black" />)}
-                    </mask>
-                    <mask id="investment-crane-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                      <rect width={sceneWidth} height={sceneHeight} fill="white" />
-                      <path d={pieces[1].path} fill="black" />
-                    </mask>
-                    {pieces.map(({ id, path }) => (
-                      <clipPath id={`investment-piece-${id}`}><path d={path} /></clipPath>
-                    ))}
-                  </defs>
-
-                  <g class="investment-animated-art">
-                    <use href="#investment-image" filter="url(#investment-monochrome)" />
-                    <use href="#investment-image" mask="url(#investment-sky)" />
-                    {pieces.map(({ id }, index) => (
-                      <g data-puzzle-reveal opacity="0" mask={occlusion(index)}>
-                        <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
-                      </g>
-                    ))}
-                    {pieces.map(({ id, path, amount, center }, index) => (
-                      <g data-puzzle-flight display="none">
-                        <g mask={occlusion(index)}>
-                          <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
-                          <path d={path} fill="none" stroke="#e1bf80" stroke-width="3" stroke-linejoin="round" />
-                        </g>
-                        <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label">+{amount} млн ₽</text>
-                      </g>
-                    ))}
-                  </g>
-                  <use data-puzzle-final href="#investment-image" />
-                </svg>
-              </div>
-            </figure>
+        <div class="investment-capital">
+          <p class="text-gold-plate investment-capital-label">Объединение капитала</p>
+          <div class="investment-amount">
+            <span><span data-puzzle-amount>{totalMln}</span> млн ₽</span>
+            <span>из {totalMln} млн ₽</span>
           </div>
-          <div class="investment-scroll-space investment-scroll-space--mobile" aria-hidden="true"></div>
+          <div class="investment-count">
+            <span><span data-puzzle-count>{pieces.length}</span> из {pieces.length} долей</span>
+            <span class="text-gold-plate" data-puzzle-percent>100%</span>
+          </div>
+          <div class="investment-progress" role="progressbar" aria-label="Объединение капитала" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-puzzle-progress>
+            <span data-puzzle-bar></span>
+          </div>
+          <p class="investment-phase" data-puzzle-phase>Сбор долей завершён · этап управления</p>
         </div>
+
+        <figure class="investment-board">
+          <figcaption>Логистический комплекс</figcaption>
+          <div class="investment-scene">
+            <svg viewBox={`0 0 ${sceneWidth} ${sceneHeight}`} role="img" aria-label="Логистический комплекс: кран, контейнеры, грузовики и склад">
+              <defs>
+                <image id="investment-image" href={`${base}images/investment-puzzle.webp`} width={sceneWidth} height={sceneHeight} />
+                <filter id="investment-monochrome" color-interpolation-filters="sRGB">
+                  <feColorMatrix type="saturate" values="0" />
+                </filter>
+                <mask id="investment-sky" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
+                  <path d={sky} fill="white" />
+                  {craneMetal.map((path) => <path d={path} fill="black" />)}
+                  <path d={craneCables} fill="none" stroke="black" stroke-width="2" />
+                </mask>
+                <mask id="investment-background-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
+                  <rect width={sceneWidth} height={sceneHeight} fill="white" />
+                  {foregroundPieces.map(({ path }) => <path d={path} fill="black" />)}
+                </mask>
+                <mask id="investment-crane-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
+                  <rect width={sceneWidth} height={sceneHeight} fill="white" />
+                  <path d={pieces[1].path} fill="black" />
+                </mask>
+                {pieces.map(({ id, path }) => (
+                  <clipPath id={`investment-piece-${id}`}><path d={path} /></clipPath>
+                ))}
+              </defs>
+
+              <g class="investment-animated-art">
+                <use href="#investment-image" filter="url(#investment-monochrome)" />
+                <use class="investment-sky-color" href="#investment-image" mask="url(#investment-sky)" />
+                {pieces.map(({ id }, index) => (
+                  <g data-puzzle-reveal opacity="0" mask={occlusion(index)}>
+                    <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
+                  </g>
+                ))}
+                {pieces.map(({ id, path, amount, center }, index) => (
+                  <g data-puzzle-flight display="none">
+                    <g mask={occlusion(index)}>
+                      <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
+                      <path d={path} fill="none" stroke="#e1bf80" stroke-width="3" stroke-linejoin="round" />
+                    </g>
+                    <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label">+{amount} млн ₽</text>
+                  </g>
+                ))}
+              </g>
+              <use data-puzzle-final href="#investment-image" />
+            </svg>
+          </div>
+        </figure>
 
         <div class="investment-directions">
           <span>Арендаторы</span>
@@ -118,13 +110,11 @@ const occlusion = (index: number) => index === 2
         </div>
 
         <div class="investment-disclaimer">
-          <p class="investment-disclaimer-desktop">Представлена условная модель объединения капитала и формирования долей объекта. Демонстрация не является сбором средств или предложением участия в конкретном проекте. Все суммы, параметры и изображение объекта приведены исключительно для иллюстрации.</p>
-          <p class="investment-disclaimer-mobile">Демонстрация принципа, не сбор средств и не предложение конкретного проекта. Суммы условные. Изображение — концепция.</p>
-          <p>Форма участия, имущественные права и условия получения дохода определяются индивидуально для каждого проекта.</p>
+          <p><span class="investment-disclaimer-desktop">Представлена условная модель объединения капитала и формирования долей объекта. Демонстрация не является сбором средств или предложением участия в конкретном проекте. Все суммы, параметры и изображение объекта приведены исключительно для иллюстрации.</span><span class="investment-disclaimer-mobile">Демонстрация принципа, не сбор средств и не предложение конкретного проекта. Суммы условные. Изображение — концепция.</span>{' '}<span class="investment-disclaimer-terms">Форма участия, имущественные права и условия получения дохода определяются индивидуально для каждого проекта.</span></p>
         </div>
       </div>
     </div>
-    <div class="investment-scroll-space investment-scroll-space--desktop" aria-hidden="true"></div>
+    <div class="investment-scroll-space" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -183,7 +173,7 @@ const occlusion = (index: number) => index === 2
     line-height: 1.16;
   }
 
-  .investment-heading h2 span {
+  .investment-heading h2 .text-gold-plate {
     display: block;
   }
 
@@ -193,17 +183,23 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-disclaimer-desktop,
+  .investment-title-period,
   .investment-scroll-space {
     display: none;
   }
 
-  .investment-stage,
+  .investment-stage {
+    background: var(--puzzle-background);
+    scroll-margin-top: 88px;
+  }
+
   .investment-grid {
-    display: contents;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
   }
 
   .investment-copy {
-    margin-bottom: 12px;
     color: #b8c2b8;
     font-size: 16px;
     line-height: 1.23;
@@ -211,22 +207,25 @@ const occlusion = (index: number) => index === 2
 
   .investment-details p {
     margin-top: 7px;
+    scroll-margin-top: 88px;
   }
 
   .investment-more {
     display: none;
-    min-height: 44px;
-    margin-top: 4px;
-    padding: 5px 14px;
+    min-height: 36px;
+    padding: 0 8px 0 0;
     align-items: center;
-    gap: 10px;
-    border: 1px solid var(--puzzle-edge);
-    border-radius: 8px;
-    color: #fff1d9;
-    background: #0d291e;
+    gap: 8px;
+    color: #d9bc83;
     text-align: left;
     cursor: pointer;
     scroll-margin-top: 98px;
+  }
+
+  .investment-more:hover [data-puzzle-expand-label],
+  .investment-more:focus-visible [data-puzzle-expand-label] {
+    text-decoration: underline #b9a274;
+    text-underline-offset: 3px;
   }
 
   [data-puzzle-ready] .investment-more {
@@ -249,13 +248,6 @@ const occlusion = (index: number) => index === 2
     transform: translateY(2px) rotate(225deg);
   }
 
-  .investment-visual {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-    background: var(--puzzle-background);
-  }
-
   .investment-capital {
     display: grid;
     align-content: center;
@@ -263,7 +255,7 @@ const occlusion = (index: number) => index === 2
     padding: 12px 13px;
     border: 1px solid rgba(217, 188, 131, 0.4);
     border-radius: 9px;
-    background: #0d291e;
+    background: #071814;
   }
 
   .investment-capital-label {
@@ -323,7 +315,7 @@ const occlusion = (index: number) => index === 2
   .investment-board figcaption {
     margin-bottom: 7px;
     color: #dedede;
-    font-size: 10px;
+    font-size: clamp(9px, 2.55vw, 10px);
     text-transform: uppercase;
   }
 
@@ -360,7 +352,6 @@ const occlusion = (index: number) => index === 2
     align-items: center;
     gap: 5px;
     min-height: 78px;
-    margin-top: 12px;
     padding: 9px 12px;
     border: 1px solid var(--puzzle-edge);
     border-radius: 9px;
@@ -395,18 +386,14 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-disclaimer {
-    margin-top: 10px;
     color: var(--puzzle-muted);
     font-size: 10px;
     line-height: 1.3;
   }
 
-  .investment-disclaimer p + p {
-    margin-top: 3px;
-  }
-
   [data-puzzle-marker] {
     height: 0;
+    scroll-margin-top: 88px;
   }
 
   @media (640px <= width < 1024px) {
@@ -417,23 +404,52 @@ const occlusion = (index: number) => index === 2
 
   @media (width < 1024px) and (max-height: 740px) {
     .asset-puzzle { padding-top: 12px; }
-    .investment-heading { margin-bottom: 10px; padding-top: 10px; }
-    .investment-copy { font-size: 15px; }
-    .investment-amount { margin-top: 6px; }
+    .investment-heading { margin-bottom: 6px; padding-top: 5px; }
+    .investment-eyebrow { line-height: 1.12; }
+    .investment-heading h2 { margin-top: 5px; font-size: clamp(24px, 7vw, 31px); line-height: 1.1; }
+    .investment-grid { gap: 7px; }
+    .investment-copy { font-size: 14px; line-height: 1.15; }
+    .investment-more { min-height: 32px; }
+    .investment-capital { min-height: 105px; padding-block: 8px; line-height: 1.1; }
+    .investment-capital-label { font-size: 12px; }
+    .investment-amount { margin-top: 5px; }
+    .investment-amount > :first-child { font-size: clamp(25px, 7.5vw, 32px); }
+    .investment-amount > :last-child { font-size: 16px; }
+    .investment-count { font-size: 10px; }
     .investment-count,
-    .investment-progress { margin-top: 6px; }
+    .investment-progress { margin-top: 4px; }
+    .investment-phase { font-size: 10px; }
+    .investment-board figcaption { margin-bottom: 4px; line-height: 1.12; }
+    .investment-scene { padding-block: 4px; }
+    .investment-directions { min-height: 50px; padding-block: 4px; }
+    .investment-directions picture { min-height: 34px; }
+    .investment-disclaimer { font-size: 9px; line-height: 1.25; }
+  }
+
+  @media (width < 640px) {
+    [data-puzzle-short] .investment-heading { margin-bottom: 5px; }
+    [data-puzzle-short] .investment-heading h2 { font-size: clamp(24px, 7.3vw, 29px); }
+    [data-puzzle-short] .investment-grid { gap: 4px; }
+    [data-puzzle-short] .investment-copy { font-size: 13px; }
+    [data-puzzle-short] .investment-more { min-height: 28px; }
+    [data-puzzle-short] .investment-directions { min-height: 40px; }
   }
 
   @media (640px <= width < 1024px) and (max-height: 550px) {
-    .investment-visual {
+    .investment-heading h2 { font-size: 26px; }
+    .investment-heading h2 .text-gold-plate { display: inline; }
+
+    .investment-grid {
       grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
       align-items: start;
-      gap: 10px 14px;
+      gap: 6px 14px;
     }
 
-    .investment-capital {
-      grid-area: 1 / 1;
-    }
+    .investment-copy { grid-column: 1 / -1; }
+    .investment-copy > p { display: inline; }
+    .investment-copy > p br { display: none; }
+    .investment-more { min-height: 30px; }
+    .investment-capital { grid-area: 2 / 1 / 4; }
 
     .investment-amount > :first-child {
       font-size: clamp(22px, 4vw, 30px);
@@ -443,22 +459,20 @@ const occlusion = (index: number) => index === 2
       font-size: 15px;
     }
 
-    .investment-board { grid-area: 1 / 2; }
+    .investment-board { grid-area: 2 / 2; }
+    .investment-directions { grid-area: 3 / 2; min-height: 38px; }
+    .investment-disclaimer { grid-column: 1 / -1; }
   }
 
   @media (min-width: 1024px) {
     .asset-puzzle {
       padding-top: 48px;
       scroll-margin-top: 112px;
+      border-block: 0.7px solid rgba(255, 241, 217, 0.55);
     }
 
     .investment-container {
       width: calc(100% - 2 * clamp(30px, 5.56%, 80px));
-    }
-
-    .investment-stage {
-      display: block;
-      background: var(--puzzle-background);
     }
 
     .investment-heading {
@@ -472,23 +486,22 @@ const occlusion = (index: number) => index === 2
       letter-spacing: 0.01em;
     }
 
-    .investment-heading h2 span {
+    .investment-heading h2 .text-gold-plate,
+    .investment-title-period,
+    .investment-disclaimer-desktop {
       display: inline;
     }
 
-    .investment-disclaimer-desktop {
+    .investment-disclaimer-terms {
       display: block;
     }
 
     .investment-disclaimer-mobile,
     .investment-board figcaption,
+    .investment-copy,
+    [data-puzzle-start] .investment-sky-color,
     [data-puzzle-ready] .investment-more {
       display: none;
-    }
-
-    .investment-details,
-    [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-details {
-      display: contents;
     }
 
     .investment-grid {
@@ -498,27 +511,6 @@ const occlusion = (index: number) => index === 2
       gap: 16px clamp(16px, 2.08vw, 30px);
       align-items: start;
       background: var(--puzzle-background);
-    }
-
-    .investment-copy {
-      grid-area: 1 / 1;
-      margin: 0;
-      color: #dedede;
-      line-height: 1.12;
-    }
-
-    .investment-details p {
-      margin-top: 3px;
-    }
-
-    .investment-copy > p,
-    .investment-details p:first-child {
-      display: inline;
-    }
-
-    .investment-scroll-track,
-    .investment-visual {
-      display: contents;
     }
 
     .investment-capital {
@@ -584,6 +576,11 @@ const occlusion = (index: number) => index === 2
     .investment-directions span:nth-child(even) { text-align: left; }
     .investment-directions span:nth-child(3) { text-align: right; }
 
+    .investment-directions span:nth-child(even)::before {
+      content: '·';
+      margin-right: 8px;
+    }
+
     .investment-directions picture {
       width: 58px;
       min-height: 25px;
@@ -603,12 +600,8 @@ const occlusion = (index: number) => index === 2
     }
 
     [data-puzzle-compact] .investment-grid {
-      grid-template-rows: minmax(185px, auto) minmax(170px, auto) auto;
-      gap: 12px clamp(16px, 2.08vw, 30px);
-    }
-
-    [data-puzzle-compact] .investment-copy {
-      font-size: 14px;
+      grid-template-rows: minmax(166px, auto) minmax(170px, auto) auto;
+      gap: 10px clamp(16px, 2.08vw, 30px);
     }
 
     [data-puzzle-compact] .investment-capital {
@@ -623,33 +616,20 @@ const occlusion = (index: number) => index === 2
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    [data-puzzle-motion] .investment-scroll-space--mobile {
+    [data-puzzle-motion] .investment-scroll-space {
       display: block;
       height: var(--investment-scroll, 0px);
     }
 
-    [data-puzzle-motion] [data-puzzle-pin='mobile'] {
+    [data-puzzle-motion] [data-puzzle-pin] {
       position: sticky;
       top: var(--investment-pin, 0px);
     }
 
-    @media (min-width: 1024px) {
-      [data-puzzle-motion] .investment-scroll-space--mobile {
-        display: none;
-      }
-
-      [data-puzzle-motion] .investment-scroll-space--desktop {
-        display: block;
-        height: var(--investment-scroll, 0px);
-      }
-
-      [data-puzzle-motion] [data-puzzle-pin='mobile'] {
-        position: static;
-      }
-
-      [data-puzzle-motion] [data-puzzle-pin='desktop'] {
-        position: sticky;
-        top: var(--investment-pin, 0px);
+    @media (width < 1024px) {
+      [data-puzzle-motion] .investment-scene svg {
+        width: min(100%, calc(var(--investment-mobile-photo, 360px) * 1880 / 836));
+        margin-inline: auto;
       }
     }
   }
