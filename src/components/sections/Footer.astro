@@ -31,13 +31,9 @@ const legal = [
       <div class="footer-brand mx-auto flex min-w-0 max-w-full flex-col items-center gap-3">
         <img src={`${base}icons/footer-frame4541.svg`} loading="lazy" decoding="async" alt="Фидента — архитектура капитала" width="341" height="282" class="h-auto max-w-full" />
         <a href={phones.header.href} class="text-fg whitespace-nowrap text-[clamp(28px,7vw,40px)] leading-none">{phones.header.text}</a>
-        <p class="footer-mobile-address text-fg text-center text-lg leading-tight lg:hidden">{officeCity},<br />{officeStreet}</p>
-      </div>
-
-      <div class="footer-office hidden flex-col items-end text-right text-xl lg:flex">
-        <div>
-          <p class="text-fg"><span class="lg:hidden">офис продаж</span><span class="hidden lg:inline">Офис компании Фидента</span></p>
-          <p class="mt-3 text-fg">{officeCity},<br class="lg:hidden" /> {officeStreet}</p>
+        <div class="footer-address text-center text-lg leading-tight text-fg lg:text-xl">
+          <p class="hidden lg:block">Офис компании Фидента</p>
+          <p>{officeCity},<br />{officeStreet}</p>
         </div>
       </div>
     </div>
@@ -97,12 +93,11 @@ const legal = [
 
 <style>
   .footer-preview { background: linear-gradient(to bottom, #0a2019, #0d1b16 47.294%, #101612) top / 100% clamp(72px, 15vw, 156px) no-repeat, #101612; }
-  .footer-top { grid-template-areas: 'top' 'navigation' 'brand' 'office'; }
+  .footer-top { grid-template-areas: 'top' 'navigation' 'brand'; }
   .footer-top-chevron { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border: solid #c7b590; border-width: 1px 0 0 1px; rotate: 45deg; }
   .footer-top-link { grid-area: top; justify-self: center; min-width: 200px; text-align: center; }
   .footer-brand { grid-area: brand; }
   .footer-navigation { grid-area: navigation; }
-  .footer-office { grid-area: office; }
   .footer-icon { overflow: hidden; }
   .rutube-clip { position: relative; display: block; width: 30px; height: 30px; mask-image: var(--rutube-mask); }
   .rutube-clip img { position: absolute; max-width: none; top: -15px; }
@@ -118,7 +113,7 @@ const legal = [
     .footer-navigation { grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 8px 18px; grid-template-columns: 1fr auto; }
     .footer-brand { width: 100%; gap: 21px; }
     .footer-brand a { font-size: 28px; }
-    .footer-mobile-address { margin-top: -7px; }
+    .footer-address { margin-top: -7px; }
     .footer-description { width: min(350px, calc(100vw - 24px)); max-width: none; margin-inline: 50% 0; translate: -50% 0; margin-top: 24px; font-size: 15px; }
     .footer-documents { margin-top: 9px; }
     .footer-socials { justify-content: space-between; margin-top: 46px; gap: 8px; }
@@ -127,8 +122,8 @@ const legal = [
     .footer-disclaimer { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgb(87 92 79 / 80%); }
   }
   @media (min-width: 1024px) {
-    .footer-top { grid-template-areas: 'navigation brand office'; grid-template-columns: minmax(0, 1fr) 341px minmax(0, 1fr); }
-  .footer-top-link { grid-area: office; justify-self: end; align-self: start; }
-    .footer-office { padding-top: 128px; }
+    .footer-top { grid-template-areas: 'navigation brand top'; grid-template-columns: minmax(0, 1fr) 341px minmax(0, 1fr); }
+    .footer-address p + p { margin-top: 6px; }
+    .footer-top-link { justify-self: end; align-self: start; }
   }
 </style>

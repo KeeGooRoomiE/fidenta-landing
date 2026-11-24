@@ -79,12 +79,12 @@ const extraQuestions = [
 
 <style>
   .faq-section { background: #071f18; }
-  .faq-layout { grid-template-areas: 'intro' 'questions' 'more' 'contact'; }
-  .faq-more { grid-area: more; min-height: 44px; font-family: var(--font-accent); justify-self: center; cursor: pointer; }
-  .faq-list, .faq-sidebar { display: contents; }
+  .faq-layout { grid-template-areas: 'intro' 'list' 'contact'; }
+  .faq-more { min-height: 44px; font-family: var(--font-accent); justify-self: center; cursor: pointer; }
+  .faq-sidebar { display: contents; }
+  .faq-list { grid-area: list; display: grid; gap: 16px; }
   .faq-layout { reading-flow: grid-rows; }
   .faq-intro { grid-area: intro; }
-  .faq-questions { grid-area: questions; }
   .faq-contact { grid-area: contact; }
   .faq-question { background: var(--surface-40); }
   .faq-question[open] { background: var(--surface-60); }
@@ -103,7 +103,6 @@ const extraQuestions = [
   }
   @media (min-width: 1024px) {
     .faq-layout { grid-template-areas: 'sidebar list'; grid-template-columns: minmax(0, 2fr) minmax(0, 3.6fr); align-items: start; }
-    .faq-list { grid-area: list; display: grid; gap: 16px; }
     .faq-sidebar { grid-area: sidebar; display: flex; flex-direction: column; gap: 16px; }
   }
 </style>
