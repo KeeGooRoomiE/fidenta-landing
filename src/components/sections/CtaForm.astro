@@ -35,9 +35,9 @@ const copy = {
     eyebrow: 'Обратная связь',
     title: 'Покажем объекты, открытые для входа',
     accent: 'и подберём решение',
-    lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода.',
+    lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода',
     steps: [
-      'Свяжемся в течение одного рабочего дня',
+      'Свяжемся в течение одного рабочего дня и уточним вашу задачу',
       'Пришлём карточку объекта с адресом и арендатором',
       'Съездим на объект вместе, если захотите',
     ],
@@ -50,11 +50,11 @@ const copy = {
     eyebrow: 'Обратная связь',
     title: 'Передайте объект под управление',
     accent: 'и обсудим его потенциал',
-    lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива.',
+    lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива',
     steps: [
-      'Свяжемся в течение одного рабочего дня',
-      'Запросим данные по объекту и оценим его потенциал',
-      'Приедем на объект и предложим условия управления',
+      'Свяжемся в течение одного рабочего дня и уточним вашу задачу',
+      'Уточним, как используется объект, какие есть договоры аренды и что нужно изменить',
+      'Договоримся об осмотре и предложим план работ и условия управления',
     ],
     formTitle: 'Заявка собственника',
     placeholder: 'Например, офисное здание, 3 000 м², Санкт-Петербург',
@@ -81,10 +81,13 @@ const copy = {
         <span data-t="accent" class="text-gold-plate">{copy.investor.accent}</span>
       </h2>
       <p data-t="lead" class="max-w-[428px] text-lead text-copy">{copy.investor.lead}</p>
-      <p class="cta-next text-base text-fg md:text-xl">Что будет дальше?</p>
-      <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
-        {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
-      </ul>
+      <details class="cta-process">
+        <summary class="text-gold-plate cursor-pointer">Читать далее <span aria-hidden="true"></span></summary>
+        <p class="mt-3 text-fg md:text-xl">Как мы работаем после заявки</p>
+        <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
+          {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
+        </ul>
+      </details>
     </div>
 
     {/* Правая колонка: переключатель + форма */}
@@ -98,7 +101,7 @@ const copy = {
       <h3 data-t="formTitle" class="mt-3 hidden font-accent text-4xl font-normal leading-[1.1] text-fg lg:block">
         {copy.investor.formTitle}
       </h3>
-      <p class="hidden text-xl leading-[1.12] text-copy lg:block">Ответим в течение одного рабочего дня.</p>
+      <p class="hidden text-xl leading-[1.12] text-copy lg:block">Ответим в течение одного рабочего дня</p>
 
       <form id="cta-form" class="flex flex-col gap-3 md:gap-4" novalidate>
         {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
@@ -119,8 +122,8 @@ const copy = {
           Электронная почта (по желанию)
           <input name="client_email" type="email" autocomplete="email" placeholder="name@example.ru" class="cta-input" />
           <span class="text-sm text-copy">
-            <span class="lg:hidden">Для документов или письменного ответа.</span>
-            <span class="hidden lg:inline">Если удобнее получить документы или ответ письменно.</span>
+            <span class="lg:hidden">Для документов или письменного ответа</span>
+            <span class="hidden lg:inline">Если удобнее получить документы или ответ письменно</span>
           </span>
         </label>
 
@@ -146,19 +149,23 @@ const copy = {
       </form>
 
       <p class="cta-note mt-2 font-accent text-sm leading-5 text-copy">
-        <span class="lg:hidden">Телефон обязателен. Email и сообщение можно не заполнять.</span>
-        <span class="hidden text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре.</span>
+        <span class="lg:hidden">Телефон обязателен. Email и сообщение можно не заполнять</span>
+        <span class="hidden text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре</span>
       </p>
     </div>
   </div>
 </Section>
 
 <style>
+  .cta-process summary { width: fit-content; display: flex; align-items: center; gap: 8px; list-style: none; }
+  .cta-process summary::-webkit-details-marker { display: none; }
+  .cta-process summary span { width: 8px; height: 8px; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
+  .cta-process[open] summary span { rotate: 225deg; }
+  .cta-process ul { margin-top: 8px; }
   @media (width < 768px) {
     .cta-layout { gap: 36px; }
     .cta-intro { gap: 14px; }
     .cta-intro > [data-t='lead'] { margin-top: 6px; }
-    .cta-next { margin-top: 6px; color: #d9c49c; }
     .cta-form-column { gap: 24px; }
     .cta-audiences { padding-inline: 13px; }
     .cta-audiences button { min-height: 44px; font-size: 17px; }
@@ -212,10 +219,10 @@ const copy = {
       event.preventDefault();
       const data = new FormData(form);
       if (!String(data.get('name')).trim() || !String(data.get('phone')).trim()) {
-        return show('Укажите имя и телефон.', false);
+        return show('Укажите имя и телефон', false);
       }
       if (!(form.elements.namedItem('consent') as HTMLInputElement).checked) {
-        return show('Нужно согласие на обработку персональных данных.', false);
+        return show('Нужно согласие на обработку персональных данных', false);
       }
 
       // TODO(CTA): отправка заявки письмом — пока доступов нет, это заглушка.
@@ -227,7 +234,7 @@ const copy = {
       //   3) целевая почта зависит от audience (investor / owner): завести словарь
       //      «аудитория → адрес» на стороне отправки (secrets), а не в браузере;
       //   4) показать успех/ошибку по ответу, очистить форму при успехе.
-      show('Форма собрана. Отправка письма будет подключена позже.', true);
+      show('Форма собрана. Отправка письма будет подключена позже', true);
     });
   }
 </script>
