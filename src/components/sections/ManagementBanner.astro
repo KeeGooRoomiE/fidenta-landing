@@ -34,8 +34,8 @@ const base = import.meta.env.BASE_URL;
           Если помещение пустует, разберёмся, что мешает его сдать. Если арендаторы уже работают, посмотрим, где теряются время и деньги.
           Определим, с чего начать, и возьмём на себя все работы по объекту в рамках договора
         </p>
-        <div class="mt-2 max-md:-mx-4 md:mt-3">
-          <Button variant="plat" block href="#cta" data-cta-audience="owner" class="mobile-cta plat-outline text-[15px]">Передать объект под управление</Button>
+        <div class="mt-2 md:mt-3">
+          <Button variant="plat" href="#cta" data-cta-audience="owner" class="w-full plat-outline">Передать объект под управление</Button>
         </div>
       </div>
 
@@ -69,6 +69,7 @@ const base = import.meta.env.BASE_URL;
   }
   .management-banner :global(.btn-hero) {
     border: 0;
-    height: 48px;
+    min-height: 48px;
+    font-size: clamp(15px, 1.35vw, 20px);
   }
 </style>

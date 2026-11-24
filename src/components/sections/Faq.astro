@@ -47,11 +47,11 @@ const extraQuestions = [
         </SectionHeading>
       </div>
       <div class="faq-contact flex flex-col items-start">
-        <div class="faq-visual w-full max-w-[360px]" aria-hidden="true">
+        <div class="faq-visual w-full" aria-hidden="true">
           <img src={`${base}images/faq-illustration.jpg`} width="720" height="480" alt="" loading="lazy" decoding="async" />
         </div>
         <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос? Обсудим вашу задачу</p>
-        <div class="faq-contact-action w-full max-w-[350px]">
+        <div class="faq-contact-action w-full">
           <ContactMenu label="Задать вопрос специалисту" />
         </div>
       </div>
@@ -92,6 +92,7 @@ const extraQuestions = [
   .faq-question summary::-webkit-details-marker { display: none; }
   .faq-plus { font-size: 24px; }
   .faq-question[open] .faq-plus { rotate: 45deg; }
+  .faq-visual { max-width: 560px; }
   .faq-visual img { display: block; width: 100%; height: auto; mask-image: radial-gradient(ellipse at center, black 45%, transparent 77%); }
   @media (width < 768px) {
     .faq-questions { gap: 0; border-block: 1px solid rgb(255 241 217 / 25%); }
@@ -108,7 +109,7 @@ const extraQuestions = [
     .faq-more { grid-area: more; }
     .faq-sidebar { grid-area: sidebar; align-self: stretch; display: flex; flex-direction: column; gap: 16px; }
     .faq-contact { flex: 1; }
-    .faq-visual { max-width: 270px; }
+    .faq-visual { width: min(100%, clamp(245px, 20vw, 420px)); }
     .faq-contact-action { margin-top: auto; }
     .faq-questions { align-self: stretch; }
     .faq-question:last-of-type, .faq-question:not([hidden]):has(+ [hidden]) { flex: 1; }

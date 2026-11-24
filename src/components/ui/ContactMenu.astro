@@ -16,7 +16,7 @@ const { label } = Astro.props;
 
 <style>
   .contact-choice { position: relative; width: 100%; font-family: var(--font-accent); }
-  summary { display: grid; place-items: center; min-height: 48px; padding: 6px 12px; border-radius: 9px; background: var(--surface-40); cursor: pointer; list-style: none; text-align: center; font-size: 18px; }
+  summary { display: grid; place-items: center; min-height: 48px; padding: 6px 12px; border-radius: 9px; background: var(--surface-40); cursor: pointer; list-style: none; text-align: center; font-size: clamp(16px, 1.45vw, 21px); }
   summary::-webkit-details-marker { display: none; }
   .contact-choice-options { position: absolute; z-index: 20; top: calc(100% + 8px); inset-inline: 0; padding: 6px; border: 1px solid #766e5c; border-radius: 9px; background: var(--surface-60); backdrop-filter: blur(12px); }
   a { display: block; padding: 10px 14px; border-radius: 5px; font-size: 18px; }

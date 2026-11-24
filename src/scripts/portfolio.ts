@@ -19,15 +19,14 @@ export function initPortfolio(root: HTMLElement) {
     const close = back.querySelector<HTMLButtonElement>('[data-object-close]')!;
     const heading = back.querySelector('h3')!;
     open.addEventListener('click', () => {
-
-      front.hidden = true;
-      back.hidden = false;
+      front.inert = true;
+      back.inert = false;
       open.setAttribute('aria-expanded', 'true');
       heading.focus({ preventScroll: true });
     });
     close.addEventListener('click', () => {
-      back.hidden = true;
-      front.hidden = false;
+      back.inert = true;
+      front.inert = false;
       open.setAttribute('aria-expanded', 'false');
       open.focus();
     });

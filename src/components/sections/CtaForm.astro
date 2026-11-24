@@ -140,7 +140,7 @@ const copy = {
           </span>
         </label>
 
-        <div class="cta-submit grid gap-3 max-md:-mx-3 sm:grid-cols-2">
+        <div class="cta-submit grid gap-3 sm:grid-cols-2 md:gap-4">
           <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
           <ContactMenu label="Связаться сейчас" />
         </div>
@@ -163,9 +163,8 @@ const copy = {
   .cta-process summary span { width: 8px; height: 8px; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
   .cta-process[open] summary span { rotate: 225deg; }
   .cta-process ul { margin-top: 8px; }
-  @media (width < 640px) {
-    .cta-submit { max-width: 350px; width: calc(100% + 24px); margin-inline: auto; align-self: center; }
-  }
+  .cta-submit :global(button) { width: 100%; min-height: 48px; height: auto; padding: 8px 12px; font-size: clamp(15px, 1.4vw, 20px); }
+  .cta-submit :global(summary) { height: 100%; }
   @media (width < 768px) {
     .cta-layout { gap: 36px; }
     .cta-intro { gap: 14px; }
@@ -174,7 +173,7 @@ const copy = {
     .cta-audiences { padding-inline: 13px; }
     .cta-audiences button { min-height: 44px; font-size: 17px; }
     #cta-form { gap: 19px; }
-    #cta-form > :is(label, div:not(.cta-submit), [role='status']) { margin-inline: 17px; }
+    #cta-form > :is(label, div, [role='status']) { margin-inline: 17px; }
     #cta-form > div:first-of-type { gap: 19px; }
     .cta-note { margin-top: 0; }
   }
