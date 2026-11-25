@@ -164,6 +164,11 @@ const objects = [
 </script>
 
 <style>
+  #portfolio { padding-top: clamp(38px, 5vw, 64px); }
+  #portfolio > :global(.container-page) {
+    position: relative;
+    top: var(--portfolio-puzzle-offset, 0px);
+  }
   .portfolio-title-accent { --plat-text-fill: var(--gradient-plat-heading); }
 
   .portfolio-toggle {

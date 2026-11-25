@@ -88,6 +88,7 @@
   --gradient-plat-navigation: linear-gradient(108deg, var(--plat-text-midpoint) 16%, var(--plat-text-mid-dark) 102%);
   --gradient-plat-wide-heading: linear-gradient(162deg, var(--plat-text-midpoint) 9%, var(--plat-text-mid-dark) 92%);
   --gradient-plat-button: linear-gradient(165deg, #e1d8c5, #c9b996);
+  --gradient-plat-contact-button: linear-gradient(159deg, #ded3bd 12%, #c2b08c 96%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
   --radius-lg: 12px;             /* блоки                                    → rounded-lg    */

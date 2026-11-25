@@ -98,6 +98,16 @@ const cards = [
     object-fit: cover;
   }
 
+  .hero::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: auto 0 0;
+    height: clamp(44px, 8vw, 128px);
+    background: linear-gradient(transparent, var(--color-canvas));
+    pointer-events: none;
+  }
+
   .hero-art::before,
   .hero-art::after {
     content: '';
@@ -187,7 +197,7 @@ const cards = [
 
   .hero-btn--primary {
     color: #000;
-    background: var(--gradient-plat-button);
+    background: var(--gradient-plat-contact-button);
   }
 
   .hero-btn--secondary {

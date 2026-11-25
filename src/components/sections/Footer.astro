@@ -82,8 +82,9 @@ const legal = [
       <p>Инвестиции в коммерческую недвижимость связаны с рисками. Прогнозы и расчёты не гарантируют результат. Информация не является публичной офертой</p>
       <details>
         <summary class="plat-outline mt-5 cursor-pointer rounded-[9px] bg-[#0b1b16] px-3 py-3 text-center font-accent text-lg">
-          <span class="text-gold-plate when-closed">Читать полный дисклеймер<span class="ml-3 text-gold-plate" aria-hidden="true">↓</span></span>
-          <span class="text-gold-plate when-open">Свернуть дисклеймер<span class="ml-3 text-gold-plate" aria-hidden="true">↑</span></span>
+          <span class="text-gold-plate when-closed">Читать полный дисклеймер</span>
+          <span class="text-gold-plate when-open">Свернуть дисклеймер</span>
+          <span class="footer-disclaimer-chevron" aria-hidden="true"></span>
         </summary>
         <p class="mt-4">{disclaimer}</p>
       </details>
@@ -102,10 +103,12 @@ const legal = [
   .footer-icon { overflow: hidden; }
   .rutube-clip { position: relative; display: block; width: 30px; height: 30px; mask-image: var(--rutube-mask); }
   .rutube-clip img { position: absolute; max-width: none; top: -15px; }
-  .footer-disclaimer summary { list-style: none; }
+  .footer-disclaimer summary { display: flex; align-items: center; justify-content: center; gap: 12px; list-style: none; }
   .footer-disclaimer summary::-webkit-details-marker { display: none; }
   .footer-disclaimer .when-open, .footer-disclaimer details[open] .when-closed { display: none; }
   .footer-disclaimer details[open] .when-open { display: inline; }
+  .footer-disclaimer-chevron { flex: 0 0 8px; height: 8px; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; translate: 0 -2px; }
+  .footer-disclaimer details[open] .footer-disclaimer-chevron { rotate: 225deg; translate: 0 2px; }
   @media (width < 1024px) {
 
     .footer-inner { padding-bottom: 58px; }

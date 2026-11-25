@@ -14,6 +14,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const photo = root.querySelector<SVGSVGElement>('.investment-scene svg')!;
   const replay = root.querySelector<HTMLButtonElement>('[data-puzzle-replay]')!;
   const header = document.querySelector<HTMLElement>('.header-bar');
+  const portfolio = document.getElementById('portfolio');
+  const portfolioContent = portfolio?.firstElementChild;
   const expand = root.querySelector<HTMLButtonElement>('[data-puzzle-expand]')!;
   const expandLabel = expand.querySelector<HTMLElement>('[data-puzzle-expand-label]')!;
   const firstDetail = root.querySelector<HTMLElement>('#investment-details p')!;
@@ -46,6 +48,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   let travel = 0;
   let progressAnchor: Element = marker;
   let progressStart = 0;
+  let portfolioScale = 0;
+  let portfolioOverlap = 0;
   let lastCount = -1;
   let lastProgress = -1;
   let replayFrame = 0;
@@ -121,7 +125,15 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (travel === 0 || replayFrame || replayPosition === scrollY) return;
     replayPosition = undefined;
     const offset = progressStart - progressAnchor.getBoundingClientRect().top;
+    positionPortfolio(offset);
     render(clamp(offset / travel));
+  }
+
+  function positionPortfolio(offset: number) {
+    if (!portfolio || portfolioScale === 0) return;
+    const remaining = Math.max(0, travel - Math.max(0, offset));
+    const overlap = Math.max(0, portfolioOverlap - Math.max(0, offset - travel) * 0.6);
+    portfolio.style.setProperty('--portfolio-puzzle-offset', `${-(remaining + overlap) / portfolioScale}px`);
   }
 
   function scheduleUpdate() {
@@ -142,10 +154,12 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     const started = performance.now();
     render(0);
     if (pinned) window.scrollTo({ top: startScroll, behavior: 'instant' });
+    positionPortfolio(0);
 
     function replayStep(now: number) {
       const progress = clamp((now - started) / 3800);
       if (pinned) window.scrollTo({ top: startScroll + progress * travel, behavior: 'instant' });
+      positionPortfolio(progress * travel);
       render(progress);
       if (progress < 1) {
         replayFrame = requestAnimationFrame(replayStep);
@@ -167,6 +181,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   function measure() {
     lastProgress = -1;
+    portfolioScale = 0;
+    portfolio?.style.removeProperty('--portfolio-puzzle-offset');
     root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;
     const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
@@ -220,6 +236,13 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
     root.toggleAttribute('data-puzzle-motion', !reading);
     root.toggleAttribute('data-puzzle-demo-motion', reading);
+    if (!reading && portfolio && portfolioContent && portfolio.offsetWidth && freeSpace >= (wide ? 34 : 68)) {
+      portfolioScale = portfolio.getBoundingClientRect().width / portfolio.offsetWidth;
+      const remaining = travel - (progressStart - progressAnchor.getBoundingClientRect().top);
+      const naturalTopAtEnd = portfolioContent.getBoundingClientRect().top - remaining;
+      const pinnedBottom = availableTop + stage.getBoundingClientRect().height;
+      portfolioOverlap = Math.max(0, naturalTopAtEnd - (pinnedBottom + 18));
+    }
     update();
   }
 

@@ -4,6 +4,7 @@ import Section from '../ui/Section.astro';
 import { cooperationStages as stages } from '../../data/cooperation';
 
 const base = import.meta.env.BASE_URL;
+const animateBirds = import.meta.env.DEV || import.meta.env.PUBLIC_FIDENTA_ANIMATE_BIRDS === 'true';
 ---
 
 <Section id="cooperation" class="cooperation" data-cooperation>
@@ -15,9 +16,12 @@ const base = import.meta.env.BASE_URL;
       </SectionHeading>
     </div>
 
-    <div class="bridge-visual" aria-hidden="true">
-      <div class="bridge-guides"></div>
+    <div class="bridge-visual" aria-hidden="true" data-animate-birds={animateBirds ? '' : undefined}>
       <img src={`${base}images/cooperation-bridge.webp`} width="1100" height="620" alt="" loading="lazy" decoding="async" />
+      <svg class="bridge-birds" viewBox="0 0 80 36" fill="currentColor" focusable="false">
+        <path d="M3 23c8-2 16 0 22 4 8-7 15-9 23-8-8 2-14 6-20 11l-3 2-3-2C16 26 10 24 3 23Z" />
+        <path d="M48 9c6-1 11 0 16 3 4-5 9-7 14-8-5 3-8 6-12 10l-2 1-2-1c-5-3-9-5-14-5Z" opacity=".62" />
+      </svg>
     </div>
 
     <div class="cooperation-panel relative" data-cooperation-panel>
@@ -58,6 +62,15 @@ const base = import.meta.env.BASE_URL;
     const count = root.querySelector<HTMLElement>('[data-cooperation-count]')!;
     const stops = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stage-stop]'));
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const bridge = root.querySelector('[data-animate-birds]');
+    if (bridge && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        bridge.setAttribute('data-birds-visible', '');
+        observer.disconnect();
+      }, { threshold: 0.35 });
+      observer.observe(bridge);
+    }
 
     let current = 0;
 
@@ -146,7 +159,14 @@ const base = import.meta.env.BASE_URL;
       radial-gradient(ellipse at 50% 92%, rgb(190 152 96 / 14%), transparent 58%);
   }
   .bridge-visual img { display: block; width: 100%; height: auto; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent), linear-gradient(black 96%, transparent); mask-composite: intersect; }
-  .bridge-guides, .bridge-stops { display: none; }
+  .bridge-birds {
+    position: absolute;
+    inset: 28% auto auto 19%;
+    width: clamp(25px, 6%, 56px);
+    color: rgb(206 194 167 / 70%);
+    pointer-events: none;
+  }
+  .bridge-stops { display: none; }
   .cooperation-panel { min-width: 0; }
   .bridge-progress { height: 2px; margin-inline: 8px; background: rgb(209 184 135 / 20%); }
   .bridge-progress span { display: block; height: 100%; width: calc(var(--stage-progress) * 1%); background: var(--gradient-gold); }
@@ -185,6 +205,7 @@ const base = import.meta.env.BASE_URL;
   }
   @media (width < 640px) {
     .cooperation { padding-block: 16px; }
+    .bridge-visual { margin-top: 16px; }
     .stage-card { padding: 14px; }
     .stage-card h3 { font-size: clamp(20px, 6vw, 24px); }
   }
@@ -197,16 +218,6 @@ const base = import.meta.env.BASE_URL;
       background: radial-gradient(ellipse at 66% 42%, #203c3a 0%, transparent 67%),
         radial-gradient(ellipse at 50% 95%, rgb(163 133 84 / 19%), transparent 64%);
       mask-image: radial-gradient(ellipse at 55% 55%, black 25%, transparent 76%);
-    }
-    .bridge-guides {
-      display: block;
-      position: absolute;
-      z-index: -1;
-      inset: 0 0 6%;
-      background-image: linear-gradient(rgb(173 188 179 / 9%) 1px, transparent 1px),
-        linear-gradient(90deg, rgb(173 188 179 / 9%) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(ellipse at 53% 63%, black, transparent 71%);
     }
     .bridge-scale { position: relative; }
     .bridge-progress { position: absolute; inset: 11px 0 auto; height: 1px; margin: 0; }
@@ -225,20 +236,37 @@ const base = import.meta.env.BASE_URL;
     .bridge-stop-dot { width: 9px; height: 9px; border: 1px solid #ad9c79; border-radius: 50%; background: #061e16; }
     .bridge-stops button:is(:hover, [aria-current]) { color: var(--color-fg); }
     .bridge-stops button[aria-current] .bridge-stop-dot { background: #dfc797; box-shadow: 0 0 14px rgb(243 217 158 / 52%); }
-    .stage-track { --stage-inset: 34%; gap: clamp(16px, 2vw, 32px); padding-block: 22px 24px; }
+    .stage-track { --stage-inset: 38%; gap: clamp(14px, 1.6vw, 26px); padding-block: 22px 24px; }
     .cooperation-layout > .text-legal { text-align: center; }
     .stage-card { padding: 18px 24px 24px; }
     .stage-description { font-size: 18px; }
   }
   @media (prefers-reduced-motion: no-preference) {
+    [data-birds-visible] .bridge-birds {
+      animation: bridge-bird-glide 4.2s ease-in-out;
+    }
+    [data-birds-visible] .bridge-birds path {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: bridge-bird-wings 1.15s ease-in-out 3;
+    }
+    [data-birds-visible] .bridge-birds path + path { animation-delay: .22s; }
     .stage-card {
       transform: translate(calc(var(--stage-side, 0) * -20%), calc(var(--stage-lift, 0) * 15px)) perspective(580px) rotateY(var(--stage-turn, 0deg)) scale(calc(1 - var(--stage-depth, 0) * .12));
       opacity: calc(1 - var(--stage-depth, 0) * .32);
     }
   }
+  @keyframes bridge-bird-glide {
+    from { transform: translate(-30%, 15%); }
+    62% { transform: translate(-8%, -8%); }
+    to { transform: translate(0); }
+  }
+  @keyframes bridge-bird-wings {
+    50% { transform: scaleY(.58) rotate(-5deg); }
+  }
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     .stage-card {
-      transform: translate(calc(var(--stage-side, 0) * -13%), calc(var(--stage-depth, 0) * 12px)) perspective(820px) rotateY(calc(var(--stage-turn, 0deg) * .65)) scale(calc(1 - var(--stage-depth, 0) * .10));
+      transform: translateY(calc(var(--stage-depth, 0) * 5px)) perspective(1100px) rotateY(calc(var(--stage-turn, 0deg) * .24)) scale(calc(1 - var(--stage-depth, 0) * .035));
     }
     [data-stage-current] .stage-card { box-shadow: inset 0 0 0 1px rgb(223 199 151 / 58%), 0 16px 27px rgb(2 10 7 / 38%); }
   }

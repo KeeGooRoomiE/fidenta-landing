@@ -116,7 +116,9 @@ const info = [
 </Section>
 
 <style>
-  .contact-map-section { background: linear-gradient(to bottom, #061e17 90%, #0a2019); }
+  .contact-map-section {
+    background: linear-gradient(to bottom, var(--color-canvas), var(--color-investment-surface) clamp(40px, 7vw, 104px), var(--color-investment-surface) 90%, var(--color-canvas));
+  }
   .map-frame::after { z-index: 1; }
   [data-map] { border-radius: 7px; }
 </style>

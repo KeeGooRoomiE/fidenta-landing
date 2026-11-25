@@ -136,9 +136,10 @@ const occlusion = (index: number) => index === 2
     --puzzle-background: var(--color-investment-surface);
     --puzzle-edge: rgba(255, 241, 217, 0.6);
     --investment-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
+    --investment-label-plat: linear-gradient(155deg, #d0bc97, #bfaa82);
     padding-block: 20px 56px;
     color: var(--color-fg);
-    background: linear-gradient(to bottom, var(--puzzle-background) calc(100% - 56px), var(--color-canvas)), var(--color-canvas);
+    background: linear-gradient(to bottom, var(--puzzle-background) calc(100% - 56px), color-mix(in srgb, var(--puzzle-background), var(--color-canvas)) calc(100% - 34px), var(--color-canvas)), var(--color-canvas);
     position: relative;
     font-family: var(--font-accent);
     scroll-margin-top: 98px;
@@ -301,7 +302,7 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-capital-label {
-    --plat-text-fill: var(--gradient-gold);
+    --plat-text-fill: var(--investment-label-plat);
     font-size: clamp(16px, 4.4vw, 18px);
     line-height: 1.15;
   }
@@ -388,7 +389,7 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-directions {
-    --plat-text-fill: var(--gradient-gold);
+    --plat-text-fill: var(--investment-label-plat);
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
