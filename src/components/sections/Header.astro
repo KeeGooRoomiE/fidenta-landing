@@ -11,11 +11,11 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
     <a href="#" class="header-brand" aria-label="Фидента — архитектура капитала">
       <picture class="header-bridge">
         <source media="(min-width: 1024px)" srcset={`${assets}logo-desktop.svg`} width="120" height="54" />
-        <img src={`${assets}logo-mobile.svg`} width="80" height="33" alt="" />
+        <img src={`${assets}logo-mobile-header.svg`} width="80" height="33" alt="" />
       </picture>
       <span class="header-wordmark" aria-hidden="true">
-        <span class="header-name">ФИДЕНТА</span>
-        <span class="header-tagline">АРХИТЕКТУРА КАПИТАЛА</span>
+        <span class="header-name text-gold-plate">ФИДЕНТА</span>
+        <span class="header-tagline text-gold-plate">АРХИТЕКТУРА КАПИТАЛА</span>
       </span>
     </a>
 
@@ -36,8 +36,9 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
           <stop stop-color="#FFF1D9" stop-opacity="0.99"/>
           <stop offset="1" stop-color="#A88548"/>
           </linearGradient>
-          <linearGradient id="paint1_linear_0_8" x1="9.12857" y1="9.88857" x2="31.4714" y2="36.8457" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FFF1D9" stop-opacity="0.98"/>
+          <linearGradient id="paint1_linear_0_8" x1="11" y1="13" x2="33" y2="34" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#E2CEAA"/>
+          <stop offset="0.37" stop-color="#F4E5C9"/>
           <stop offset="1" stop-color="#A88548"/>
           </linearGradient>
           </defs>
@@ -74,7 +75,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
     </div>
     <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-white/10 px-6 py-4 text-base text-fg/75">
       <a href={phones.header.href} class="font-semibold text-fg hover:text-accent">{phones.header.text}</a>
-      <span>{office.short}</span>
+      <span class="text-copy">{office.short}</span>
     </div>
   </nav>
 </header>
@@ -82,7 +83,6 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
 <style>
   .site-header {
     --header-inset: 12px;
-    --header-gold: linear-gradient(169deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
     padding-top: 16px;
     pointer-events: none;
     /* Шапка задана в масштабе 1:1 при ширине макета 1440px. */
@@ -139,19 +139,18 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   .header-wordmark {
     display: grid;
     min-width: 108px;
-    color: transparent;
-    background: var(--header-gold);
-    background-clip: text;
     text-align: center;
   }
 
   .header-name {
+    --plat-text-fill: var(--gradient-plat-wordmark);
     font-size: 24px;
     line-height: 1.1;
     letter-spacing: 1.2px;
   }
 
   .header-tagline {
+    --plat-text-fill: linear-gradient(167deg, var(--plat-text-base) 18%, var(--plat-text-shadow) 111%);
     font-size: 10px;
     line-height: 1.22;
   }
@@ -216,6 +215,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   }
 
   .nav-panel-card {
+    --plat-text-fill: var(--gradient-plat-navigation);
     margin-top: 8px;
     max-height: calc(100dvh - 120px);
     overflow-y: auto;
@@ -323,7 +323,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       min-height: 50px;
       font-size: 20px;
       color: #082419;
-      background: linear-gradient(165deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
+      background: var(--gradient-plat-button);
     }
 
     .header-cta svg {
@@ -349,61 +349,64 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   }
 </style>
 
-<script>
-  const toggle = document.getElementById('menu-toggle');
-  const panel = document.getElementById('nav-panel');
-  const backdrop = document.getElementById('nav-backdrop');
+<script is:inline>
+  // Bind the controls as soon as the header is parsed on a slow connection.
+  (() => {
+    const toggle = document.getElementById('menu-toggle');
+    const panel = document.getElementById('nav-panel');
+    const backdrop = document.getElementById('nav-backdrop');
 
-  const contactButton = document.querySelector<HTMLButtonElement>('.header-cta');
-  const options = document.getElementById('contact-options');
+    const contactButton = document.querySelector('.header-cta');
+    const options = document.getElementById('contact-options');
 
-  function setContactOpen(open: boolean) {
-    if (options) options.hidden = !open;
-    contactButton?.setAttribute('aria-expanded', String(open));
-  }
-
-  contactButton?.addEventListener('click', () => {
-    setMenuOpen(false);
-    setContactOpen(options?.hidden ?? false);
-  });
-  function closeOutside(event: Event) {
-    if (event.target instanceof Element && !event.target.closest('.contact-choice')) setContactOpen(false);
-  }
-  document.addEventListener('click', closeOutside);
-  document.addEventListener('focusin', closeOutside);
-  options?.addEventListener('click', () => setContactOpen(false));
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && options && !options.hidden) {
-      setContactOpen(false);
-      contactButton?.focus();
+    function setContactOpen(open) {
+      if (options) options.hidden = !open;
+      contactButton?.setAttribute('aria-expanded', String(open));
     }
-  });
 
-  function setMenuOpen(open: boolean) {
-    panel?.classList.toggle('hidden', !open);
-    backdrop?.classList.toggle('hidden', !open);
-    toggle?.setAttribute('aria-expanded', String(open));
-  }
-
-  toggle?.addEventListener('click', () => setMenuOpen(panel?.classList.contains('hidden') ?? false));
-
-  panel?.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener('click', () => setMenuOpen(false));
-  });
-
-  backdrop?.addEventListener('click', () => setMenuOpen(false));
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+    contactButton?.addEventListener('click', () => {
       setMenuOpen(false);
-      toggle.focus();
+      setContactOpen(options?.hidden ?? false);
+    });
+    function closeOutside(event) {
+      if (event.target instanceof Element && !event.target.closest('.contact-choice')) setContactOpen(false);
     }
-  });
+    document.addEventListener('click', closeOutside);
+    document.addEventListener('focusin', closeOutside);
+    options?.addEventListener('click', () => setContactOpen(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && options && !options.hidden) {
+        setContactOpen(false);
+        contactButton?.focus();
+      }
+    });
 
-  const header = document.getElementById('site-header');
-  function syncScrolledState() {
-    header?.setAttribute('data-scrolled', String(window.scrollY > 24));
-  }
+    function setMenuOpen(open) {
+      panel?.classList.toggle('hidden', !open);
+      backdrop?.classList.toggle('hidden', !open);
+      toggle?.setAttribute('aria-expanded', String(open));
+    }
 
-  syncScrolledState();
-  window.addEventListener('scroll', syncScrolledState, { passive: true });
+    toggle?.addEventListener('click', () => setMenuOpen(panel?.classList.contains('hidden') ?? false));
+
+    panel?.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', () => setMenuOpen(false));
+    });
+
+    backdrop?.addEventListener('click', () => setMenuOpen(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+        setMenuOpen(false);
+        toggle.focus();
+      }
+    });
+
+    const header = document.getElementById('site-header');
+    function syncScrolledState() {
+      header?.setAttribute('data-scrolled', String(window.scrollY > 24));
+    }
+
+    syncScrolledState();
+    window.addEventListener('scroll', syncScrolledState, { passive: true });
+  })();
 </script>

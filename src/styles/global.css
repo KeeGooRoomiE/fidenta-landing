@@ -17,10 +17,20 @@
    ============================================================ */
 
 @import "tailwindcss";
+@import "./pt-sans.css";
+
+@font-face {
+  font-family: Manrope;
+  src: url('../assets/fonts/manrope/Manrope-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
 
 @theme {
   /* --- Зелёная шкала (фоны и рамки) -------------------------------- */
   --color-canvas: #0A2019;       /* bg-deep: самый тёмный фон страницы       → bg-canvas    */
+  --color-investment-surface: #061e17;
   --color-surface: #143A30;      /* surface: фон карточек                    → bg-surface   */
   --color-border: #1C4A3D;       /* линии и рамки                           → border-border */
   --color-footer: #101612;       /* фон футера (Figma: «Futer»)             → bg-footer     */
@@ -32,7 +42,7 @@
   --color-gold-deep: #9C7E38;    /* gold-700 · тень / active                → text-gold-deep */
 
   /* --- Нейтрали (текст) -------------------------------------------- */
-  --color-fg: #F6F3E8;           /* text: основной текст                    → text-fg       */
+  --color-fg: #EDEAE0;           /* text: основной текст                    → text-fg       */
   --color-copy: #B8C2B8;
   --color-legal: #9CAFA4;
   --color-fg-dim: #D4D4D4;       /* нейтральный (не кремовый) светлый текст — встречается
@@ -66,6 +76,18 @@
   /* --- Металлик-градиент («plate») — для логотипа, золотого текста и кнопок ---
      Точный «Plat» из Figma: светлый блик → тёмное золото (с лёгкой прозрачностью). */
   --gradient-gold: linear-gradient(140.35deg, rgba(255, 241, 217, 0.87) -25.71%, rgba(168, 133, 72, 0.87) 120.56%);
+  --plat-text-highlight: color-mix(in srgb, rgb(255 241 217 / 87%) 89%, rgb(168 133 72 / 87%));
+  --plat-text-base: color-mix(in srgb, rgb(255 241 217 / 87%) 68%, rgb(168 133 72 / 87%));
+  --plat-text-shadow: color-mix(in srgb, rgb(255 241 217 / 87%) 46%, rgb(168 133 72 / 87%));
+  --gradient-plat-feature-heading: linear-gradient(116deg, var(--plat-text-base) 4%, var(--plat-text-highlight) 34%, var(--plat-text-base) 58%, var(--plat-text-shadow) 100%);
+  --gradient-plat-wordmark: linear-gradient(108deg, var(--plat-text-base) 4%, color-mix(in srgb, var(--plat-text-highlight) 55%, var(--plat-text-base)) 43%, var(--plat-text-base) 64%, var(--plat-text-shadow) 113%);
+  --plat-text-midpoint: color-mix(in srgb, #fff1d9 50%, #a88548);
+  --plat-text-mid-dark: color-mix(in srgb, #fff1d9 38%, #a88548);
+  --gradient-plat-heading: linear-gradient(148deg, var(--plat-text-midpoint) 8%, var(--plat-text-mid-dark) 100%);
+  --gradient-plat-subtle: linear-gradient(155deg, var(--plat-text-midpoint), var(--plat-text-mid-dark));
+  --gradient-plat-navigation: linear-gradient(108deg, var(--plat-text-midpoint) 16%, var(--plat-text-mid-dark) 102%);
+  --gradient-plat-wide-heading: linear-gradient(162deg, var(--plat-text-midpoint) 9%, var(--plat-text-mid-dark) 92%);
+  --gradient-plat-button: linear-gradient(165deg, #e1d8c5, #c9b996);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
   --radius-lg: 12px;             /* блоки                                    → rounded-lg    */
@@ -75,11 +97,20 @@
   --font-display: "Playfair Display", Georgia, "Times New Roman", serif; /* заголовки и цифры */
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; /* текст и UI       */
   --font-accent: "Forum", "Playfair Display", Georgia, serif;            /* акцентные подписи (плитки, цифры) → font-accent */
+  --font-eyebrow: "Manrope", system-ui, sans-serif;
+  --font-legal: "PT Sans", system-ui, sans-serif;
 }
 
 @layer base {
   html {
+    color-scheme: only dark;
     scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -136,10 +167,14 @@
 /* Металлик-золото как заливка ТЕКСТА (обрезка градиента по глифам).
    Пример: <span class="text-gold-plate font-display">ФИДЕНТА</span> */
 @utility text-gold-plate {
-  background-image: var(--gradient-gold);
+  background-image: var(--plat-text-fill, var(--gradient-plat-subtle));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+@utility text-plat-dense {
+  --plat-text-fill: var(--gradient-plat-subtle);
 }
 
 /* ---- Кнопки Hero (спека из Figma, узел 974:65347) ----
@@ -165,7 +200,7 @@
 /* Заливка плат-градиентом + тёмный текст + inset-тень.
    Инсет-тень — ТОЛЬКО у primary-кнопки (у outline-варианта её нет). */
 @utility btn-plat {
-  background-image: var(--gradient-gold);
+  background-image: var(--gradient-plat-button);
   color: #000;
   box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
 }
@@ -190,11 +225,12 @@
    SectionHeading или напрямую), поэтому размеры не «плывут» от блока к блоку.
    Мобильный → sm (640) → md (768+); значения из макета Figma (H2 50px, подзаголовок 20px). */
 
-/* Надзаголовок «— КОНТАКТЫ»: Forum, капс, трекинг 0.1em. Золотой цвет — отдельно (text-gold-plate). */
+/* Надзаголовки секций: Manrope, капс, трекинг −0.01em. */
 @utility text-eyebrow {
-  font-family: var(--font-accent);
+  font-family: var(--font-eyebrow);
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: var(--eyebrow-ls, 0.1em); /* переопределяется: [--eyebrow-ls:0.15em] */
+  letter-spacing: -0.01em;
   font-size: 1rem;
   line-height: 1.5rem;
   @media (min-width: 768px) {
@@ -205,6 +241,7 @@
 
 /* Заголовок секции (H2): Forum обычного начертания, 30 → 48 → 50px. */
 @utility text-h2 {
+  --plat-text-fill: var(--gradient-plat-heading);
   text-wrap: balance;
   font-family: var(--font-accent);
   font-weight: 400;
@@ -236,8 +273,8 @@
 }
 
 /* Кнопки-переключатели аудитории «Инвестор / Собственник» (CtaForm, FAQ):
-   активная (aria-pressed=true) — золотая заливка + тёмный текст,
-   неактивная — кремовая рамка и золотой текст (через background-clip:text). */
+   активная (aria-pressed=true) — заливка PLAT и тёмный текст,
+   неактивная — кремовая рамка и светлый PLAT на тексте. */
 .aud-btn {
   border: 1px solid var(--color-cream);
   border-radius: 9px;
@@ -246,13 +283,13 @@
   font-size: 20px;
   line-height: 1.2;
   color: transparent;
-  background-image: var(--gradient-gold), linear-gradient(var(--surface-40), var(--surface-40));
+  background-image: var(--gradient-plat-subtle), linear-gradient(var(--surface-40), var(--surface-40));
   background-clip: text, padding-box;
   -webkit-background-clip: text, padding-box;
   transition: filter 0.15s;
 }
 .aud-btn[aria-pressed='true'] {
-  background-image: var(--gradient-gold);
+  background-image: var(--gradient-plat-button);
   background-clip: border-box;
   -webkit-background-clip: border-box;
   color: var(--color-canvas);

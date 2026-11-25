@@ -6,6 +6,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const desktop = matchMedia('(min-width: 1024px)');
   const phone = matchMedia('(width < 640px)');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const viewport = root.querySelector<HTMLElement>('[data-puzzle-viewport]')!;
   const pin = root.querySelector<HTMLElement>('[data-puzzle-pin]')!;
   const marker = root.querySelector<HTMLElement>('[data-puzzle-marker]')!;
   const demo = root.querySelector<HTMLElement>('[data-puzzle-demo]')!;
@@ -22,6 +23,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const progressbar = root.querySelector<HTMLElement>('[data-puzzle-progress]')!;
   const bar = root.querySelector<HTMLElement>('[data-puzzle-bar]')!;
   const phase = root.querySelector<HTMLElement>('[data-puzzle-phase]')!;
+  const sky = root.querySelector<SVGUseElement>('[data-puzzle-sky]')!;
   const final = root.querySelector<SVGUseElement>('[data-puzzle-final]')!;
   const reveals = Array.from(root.querySelectorAll<SVGGElement>('[data-puzzle-reveal]'));
   const flights = Array.from(root.querySelectorAll<SVGGElement>('[data-puzzle-flight]'));
@@ -40,6 +42,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   for (const piece of pieces) sums.push(sums[sums.length - 1] + piece.amount);
 
   let frame = 0;
+  let layoutFrame = 0;
   let travel = 0;
   let progressAnchor: Element = marker;
   let progressStart = 0;
@@ -90,16 +93,18 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (progress === lastProgress) return;
     lastProgress = progress;
     const time = progress * duration;
-    root.toggleAttribute('data-puzzle-start', time < leadIn);
+    sky.setAttribute('opacity', String(desktop.matches ? clamp((time - leadIn) / flightTime) : 1));
     let landed = 0;
     pieces.forEach(({ center, enter }, index) => {
       const elapsed = time - leadIn - index * slot;
       const arrival = elapsed - flightTime;
-      const isFlying = elapsed >= 0 && arrival < 0;
+      const isFlying = elapsed >= 0 && arrival < revealTime;
+      const reveal = clamp(arrival / revealTime);
       if (arrival >= 0) landed++;
-      reveals[index].setAttribute('opacity', String(clamp(arrival / revealTime)));
+      reveals[index].setAttribute('opacity', String(reveal));
       flights[index].setAttribute('display', isFlying ? 'inline' : 'none');
       if (isFlying) {
+        flights[index].setAttribute('opacity', String(1 - reveal ** 2));
         const distance = 1 - ease(elapsed / flightTime);
         const [x, y] = center;
         const [dx, dy] = enter;
@@ -161,6 +166,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   }
 
   function measure() {
+    lastProgress = -1;
     root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;
     const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
@@ -181,7 +187,9 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     const bounds = stage.getBoundingClientRect();
     // getBoundingClientRect учитывает масштаб страницы, а CSS top задаётся в локальных пикселях.
     const scale = stage.offsetWidth ? bounds.width / stage.offsetWidth : 1;
-    const viewportHeight = visualViewport?.height ?? innerHeight;
+    // Mobile browser chrome can resize the visual viewport mid-scroll.
+    // Keep the sticky geometry tied to the smallest viewport instead.
+    const viewportHeight = viewport.getBoundingClientRect().height || innerHeight;
     const headerGap = wide ? Math.min(64, Math.max(24, viewportHeight * 0.045)) : 10;
     const availableTop = (header?.getBoundingClientRect().bottom ?? 0) + headerGap;
     const availableHeight = viewportHeight - availableTop - 8;
@@ -221,12 +229,18 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   addEventListener('keydown', (event) => {
     if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) interruptReplay();
   });
-  addEventListener('resize', measure, { passive: true });
-  visualViewport?.addEventListener('resize', measure, { passive: true });
-  desktop.addEventListener('change', measure);
-  reducedMotion.addEventListener('change', measure);
-  const layout = new ResizeObserver(measure);
+  function scheduleMeasure() {
+    if (layoutFrame) return;
+    layoutFrame = requestAnimationFrame(() => {
+      layoutFrame = 0;
+      measure();
+    });
+  }
+
+  reducedMotion.addEventListener('change', scheduleMeasure);
+  const layout = new ResizeObserver(scheduleMeasure);
+  layout.observe(viewport);
   layout.observe(pin);
-  layout.observe(root.querySelector<HTMLElement>('.investment-copy')!);
+  if (header) layout.observe(header);
   measure();
 }

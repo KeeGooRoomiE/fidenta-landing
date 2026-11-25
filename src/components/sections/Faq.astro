@@ -50,8 +50,8 @@ const extraQuestions = [
         <div class="faq-visual w-full" aria-hidden="true">
           <img src={`${base}images/faq-illustration.jpg`} width="720" height="480" alt="" loading="lazy" decoding="async" />
         </div>
-        <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос? Обсудим вашу задачу</p>
-        <div class="faq-contact-action w-full">
+        <p class="mb-4 mt-3 font-accent text-lg text-copy">Не нашли свой вопрос?<br class="lg:hidden" />{' '}Обсудим вашу задачу</p>
+        <div class="faq-contact-action w-full text-plat-dense">
           <ContactMenu label="Задать вопрос специалисту" />
         </div>
       </div>
@@ -63,14 +63,14 @@ const extraQuestions = [
           <details hidden={index >= questions.length} data-faq-extra={index >= questions.length ? "" : undefined} name="fidenta-faq" class="faq-question plat-outline rounded-[9px]">
             <summary class="flex min-h-[60px] cursor-pointer items-center justify-between gap-4 px-5 py-4 font-accent text-lg leading-snug md:min-h-[69px] md:text-xl">
               <span>{question}</span>
-              <span class="faq-plus text-gold-plate" aria-hidden="true">+</span>
+              <span class="faq-plus text-gold-plate text-plat-dense" aria-hidden="true">+</span>
             </summary>
             <p class="mx-5 border-t border-cream/20 pb-5 pt-3 font-accent text-base leading-snug text-copy md:text-lg">{answer.replace(/\.$/, "")}</p>
           </details>
         ))}
       </div>
 
-      <button type="button" class="faq-more text-gold-plate w-fit" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
+      <button type="button" class="faq-more text-gold-plate text-plat-dense w-fit" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
     </div>
 
 

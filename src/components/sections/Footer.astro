@@ -14,9 +14,9 @@ const messengers = [
   { label: 'Telegram', file: 'footer-frame456.svg', size: 50 },
 ];
 const legal = [
-  'Политика обработки персональных данных',
-  'Согласие на обработку персональных данных',
-  'Правовая информация',
+  { label: 'Политика обработки персональных данных', slug: 'privacy' },
+  { label: 'Согласие на обработку персональных данных', slug: 'consent' },
+  { label: 'Правовая информация', slug: 'legal' },
 ];
 ---
 
@@ -41,7 +41,7 @@ const legal = [
     <p class="footer-description mx-auto mt-12 max-w-[900px] text-center text-lg leading-snug text-copy lg:mt-20 lg:text-xl">Фидента работает с коммерческой недвижимостью Санкт-Петербурга и Ленинградской области: инвестиционные проекты, аренда<span class="lg:hidden"> и управление</span><span class="hidden lg:inline">, управление и развитие объектов</span></p>
 
     <div class="footer-documents mt-9 flex flex-col items-center text-xl">
-      <span>Проектная документация</span>
+      <a href={`${base}project-documents/`}>Проектная документация</a>
       <span class="mt-0.5 h-px w-[213px] bg-gold-line" aria-hidden="true"></span>
     </div>
 
@@ -67,21 +67,21 @@ const legal = [
       </div>
     </div>
 
-    <div class="footer-legal mt-3 flex flex-col gap-3 border-t border-canvas pt-4 text-sm text-legal lg:flex-row lg:items-center lg:justify-between">
+    <div class="footer-legal mt-3 flex flex-col gap-3 border-t border-canvas pt-4 font-legal text-sm text-legal lg:flex-row lg:items-center lg:justify-between">
       <p>© 2013–{year} ООО «УК Фидента». Все права защищены</p>
       <div class="footer-legal-links flex flex-wrap gap-x-7 gap-y-2">
-        {legal.map(label => <span>{label}</span>)}
+        {legal.map(({ label, slug }) => <a href={`${base}${slug}/`} class="hover:underline">{label}</a>)}
       </div>
     </div>
 
-    <div class="mt-4 hidden text-[15px] leading-snug text-legal lg:block">
+    <div class="mt-4 hidden font-legal text-[15px] leading-snug text-legal lg:block">
       <p>Дисклеймер</p>
       <p>{disclaimer}</p>
     </div>
-    <div class="footer-disclaimer text-sm leading-snug text-legal lg:hidden">
+    <div class="footer-disclaimer font-legal text-sm leading-snug text-legal lg:hidden">
       <p>Инвестиции в коммерческую недвижимость связаны с рисками. Прогнозы и расчёты не гарантируют результат. Информация не является публичной офертой</p>
       <details>
-        <summary class="plat-outline mt-5 cursor-pointer rounded-[9px] bg-[#0b1b16] px-3 py-3 text-center text-lg">
+        <summary class="plat-outline mt-5 cursor-pointer rounded-[9px] bg-[#0b1b16] px-3 py-3 text-center font-accent text-lg">
           <span class="text-gold-plate when-closed">Читать полный дисклеймер<span class="ml-3 text-gold-plate" aria-hidden="true">↓</span></span>
           <span class="text-gold-plate when-open">Свернуть дисклеймер<span class="ml-3 text-gold-plate" aria-hidden="true">↑</span></span>
         </summary>
@@ -92,6 +92,7 @@ const legal = [
 </footer>
 
 <style>
+  .footer-navigation { --plat-text-fill: var(--gradient-plat-navigation); }
   .footer-preview { background: linear-gradient(to bottom, #0a2019, #0d1b16 47.294%, #101612) top / 100% clamp(72px, 15vw, 156px) no-repeat, #101612; }
   .footer-top { grid-template-areas: 'top' 'navigation' 'brand'; }
   .footer-top-chevron { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border: solid #c7b590; border-width: 1px 0 0 1px; rotate: 45deg; }

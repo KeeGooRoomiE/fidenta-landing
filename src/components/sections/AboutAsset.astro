@@ -84,6 +84,7 @@ const cards = [
   .about-section {
     --gradient-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
     font-family: var(--font-accent);
+    background: linear-gradient(to bottom, var(--color-canvas) calc(100% - clamp(36px, 6vw, 92px)), var(--color-investment-surface)), var(--color-investment-surface);
     scroll-margin-top: 32px;
     zoom: calc(1 / var(--desktop-reference-zoom, 1));
   }
@@ -97,12 +98,11 @@ const cards = [
   .about-section :global(.about-heading .text-eyebrow) {
     font-size: clamp(16px, 1.4vw, 20px);
     line-height: 1.2;
-    letter-spacing: 0.104em;
   }
 
   .about-section :global(.about-heading .text-h2) {
     margin-top: 4px;
-    color: #f6f3e8;
+    color: var(--color-fg);
     font-size: clamp(30px, 3.48vw, 50px);
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -202,7 +202,7 @@ const cards = [
   .about-card h3 {
     font-size: clamp(18px, 1.4vw, 20px);
     line-height: 1.1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.01em;
   }
 
   .about-card p,

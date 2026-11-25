@@ -31,6 +31,7 @@
 import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 import ContactMenu from '../ui/ContactMenu.astro';
+const base = import.meta.env.BASE_URL;
 const copy = {
   investor: {
     eyebrow: 'Обратная связь',
@@ -39,7 +40,7 @@ const copy = {
     lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода',
     steps: [
       'Позвоним по указанному номеру и уточним, какую сумму вы рассматриваете, на какой срок и как хотите участвовать в проекте',
-      'Если есть подходящий объект, пришлём карточку с адресом, арендатором и основными условиями. Расскажем, какие документы можно изучить и какие расходы и риски стоит учесть',
+      'Если есть подходящий объект, пришлём карточку с адресом, арендатором и основными условиями. Расскажем, какие документы необходимо изучить и какие расходы и риски стоит учесть',
       'Ответим на вопросы и при необходимости договоримся о просмотре объекта. Дальнейшие шаги согласуем после того, как вы изучите условия',
     ],
     formTitle: 'Заявка инвестора',
@@ -81,14 +82,16 @@ const copy = {
         <span data-t="title">{copy.investor.title}</span><br />
         <span data-t="accent" class="text-gold-plate">{copy.investor.accent}</span>
       </h2>
-      <p data-t="lead" class="max-w-[428px] text-lead text-copy">{copy.investor.lead}</p>
-      <details class="cta-process">
-        <summary class="text-gold-plate cursor-pointer">Читать далее <span aria-hidden="true"></span></summary>
-        <p class="mt-3 text-gold-plate md:text-xl">Как мы обрабатываем заявки</p>
-        <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-xl [&>li+li]:mt-2">
-          {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
-        </ul>
-      </details>
+      <div class="cta-lead max-w-[428px] text-lead text-copy">
+        <span data-t="lead">{copy.investor.lead}</span>{' '}
+        <details class="cta-process">
+          <summary class="cursor-pointer"><span class="text-gold-plate text-plat-dense">Читать далее</span> <span class="cta-chevron" aria-hidden="true"></span></summary>
+          <p class="mt-3 text-gold-plate md:text-xl">Как мы обрабатываем заявки</p>
+          <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-xl [&>li+li]:mt-2">
+            {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
+          </ul>
+        </details>
+      </div>
     </div>
 
     {/* Правая колонка: переключатель + форма */}
@@ -132,11 +135,10 @@ const copy = {
           <textarea name="message" rows="3" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input"></textarea>
         </label>
 
-        {/* Согласие: ссылка #privacy — страница политики появится позже */}
         <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-legal md:text-xl md:leading-[1.04]">
           <input type="checkbox" name="consent" required class="mt-0.5 size-[18px] shrink-0 accent-link" />
           <span>
-            Согласие на обработку данных для ответа на обращение
+            <a href={`${base}consent/`} class="underline underline-offset-2">Согласие на обработку данных</a> для ответа на обращение
           </span>
         </label>
 
@@ -151,24 +153,25 @@ const copy = {
 
       <p class="cta-note mt-2 font-accent text-sm leading-5 text-copy">
         <span class="lg:hidden">Телефон обязателен. Email и сообщение можно не заполнять</span>
-        <span class="hidden text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре</span>
+        <span class="hidden font-legal text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре</span>
       </p>
     </div>
   </div>
 </Section>
 
 <style>
-  .cta-process summary { width: fit-content; display: flex; align-items: center; gap: 8px; list-style: none; }
+  .cta-process { display: inline; }
+  .cta-process summary { display: inline; white-space: nowrap; list-style: none; }
   .cta-process summary::-webkit-details-marker { display: none; }
-  .cta-process summary span { width: 8px; height: 8px; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
-  .cta-process[open] summary span { rotate: 225deg; }
+  .cta-chevron { display: inline-block; width: 8px; height: 8px; margin-inline: 4px; vertical-align: 0.16em; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
+  .cta-process[open] .cta-chevron { rotate: 225deg; vertical-align: 0; }
   .cta-process ul { margin-top: 8px; }
   .cta-submit :global(button) { width: 100%; min-height: 48px; height: auto; padding: 8px 12px; font-size: clamp(15px, 1.4vw, 20px); }
   .cta-submit :global(summary) { height: 100%; }
   @media (width < 768px) {
     .cta-layout { gap: 36px; }
     .cta-intro { gap: 14px; }
-    .cta-intro > [data-t='lead'] { margin-top: 6px; }
+    .cta-lead { margin-top: 6px; }
     .cta-form-column { gap: 24px; }
     .cta-audiences { padding-inline: 13px; }
     .cta-audiences button { min-height: 44px; font-size: 17px; }

@@ -42,7 +42,7 @@ const cards = [
 
     <div class="hero-actions">
       <a href="#cta" data-cta-audience="investor" class="hero-btn hero-btn--primary">Обсудить инвестиции</a>
-      <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary plat-outline"><span class="text-gold-plate">Я собственник</span></a>
+      <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary plat-outline"><span class="text-fg">Я собственник</span></a>
     </div>
 
     <ul class="hero-cards">
@@ -54,7 +54,7 @@ const cards = [
       ))}
       <li class="plat-outline hero-card hero-news">
         <div>
-          <h2 class="text-gold-plate">Смотрите за проектами Фидента</h2>
+          <h2><span class="text-gold-plate">Смотрите за проектами</span>{' '}<span class="hero-news-brand text-gold-plate">Фидента</span></h2>
           <p>Новые объекты | Новости Фидента<br />В нашем канале «Архитектура Капитала»</p>
         </div>
         <a href="https://t.me/fidenta" aria-label="Открыть канал Фидента в Telegram">
@@ -85,6 +85,8 @@ const cards = [
     inset: 0 0 auto;
     z-index: -1;
     height: 575px;
+    max-height: 100%;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - clamp(72px, 11vw, 168px)), transparent);
     pointer-events: none;
   }
 
@@ -147,8 +149,10 @@ const cards = [
   }
 
   .hero-title .text-gold-plate {
-    --gradient-gold: linear-gradient(169deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
+    --plat-text-fill: linear-gradient(166deg, var(--plat-text-mid-dark), var(--plat-text-midpoint) 33%, var(--plat-text-shadow) 100%);
   }
+
+  .hero-news-brand { --plat-text-fill: var(--gradient-plat-wordmark); }
 
   .hero-intro {
     max-width: 260px;
@@ -183,7 +187,7 @@ const cards = [
 
   .hero-btn--primary {
     color: #000;
-    background: linear-gradient(172deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
+    background: var(--gradient-plat-button);
   }
 
   .hero-btn--secondary {

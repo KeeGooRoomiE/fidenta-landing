@@ -9,6 +9,7 @@ const occlusion = (index: number) => index === 2
 ---
 
 <section id="asset" class="asset-puzzle" data-investment-puzzle aria-labelledby="investment-title">
+  <div class="investment-viewport" data-puzzle-viewport aria-hidden="true"></div>
   <div class="investment-container">
     <div data-puzzle-marker aria-hidden="true"></div>
     <div class="investment-stage" data-puzzle-pin>
@@ -23,11 +24,11 @@ const occlusion = (index: number) => index === 2
         <div class="investment-copy">
           <p>Фидента объединяет участников вокруг проектов коммерческой недвижимости</p>
           <div id="investment-details" class="investment-details">
-            <p tabindex="-1">Каждая доля становится частью общего капитала, необходимого для реализации проекта. Капитал направляют в торговые помещения, склады, сервисные и другие коммерческие объекты с потенциалом арендного дохода и роста стоимости</p>
+            <p tabindex="-1">Каждая доля становится частью общего капитала, необходимого для&nbsp;реализации проекта. Капитал направляют в торговые помещения, склады, сервисные и другие коммерческие объекты с потенциалом арендного дохода и роста стоимости</p>
             <p>Для нас недвижимость — долгосрочный актив. Её ценность раскрывают грамотное использование, профессиональное управление и развитие</p>
           </div>
           <button type="button" class="investment-more" data-puzzle-expand aria-expanded="false" aria-controls="investment-details">
-            <span class="text-gold-plate" data-puzzle-expand-label>читать далее</span>
+            <span class="text-gold-plate text-plat-dense" data-puzzle-expand-label>читать далее</span>
             <span class="investment-chevron" aria-hidden="true"></span>
           </button>
         </div>
@@ -80,7 +81,7 @@ const occlusion = (index: number) => index === 2
 
                   <g class="investment-animated-art">
                     <use href="#investment-image" filter="url(#investment-monochrome)" />
-                    <use class="investment-sky-color" href="#investment-image" mask="url(#investment-sky)" />
+                    <use data-puzzle-sky href="#investment-image" mask="url(#investment-sky)" />
                     {pieces.map(({ id }, index) => (
                       <g data-puzzle-reveal opacity="0" mask={occlusion(index)}>
                         <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
@@ -103,10 +104,10 @@ const occlusion = (index: number) => index === 2
             </figure>
 
             <div class="investment-directions plat-outline">
-              <span>Арендаторы</span>
-              <span>Согласования</span>
-              <span>Подрядчики</span>
-              <span>Инфраструктура</span>
+              <span class="text-gold-plate">Арендаторы</span>
+              <span class="text-gold-plate">Согласования</span>
+              <span class="text-gold-plate">Подрядчики</span>
+              <span class="text-gold-plate">Инфраструктура</span>
               <picture class="plat-outline">
                 <source media="(min-width: 1024px)" srcset={`${base}images/investment-puzzle/bridge-desktop.svg`} width="58" height="25" />
                 <img src={`${base}images/investment-puzzle/bridge-mobile.svg`} width="48" height="22" alt="" />
@@ -132,16 +133,24 @@ const occlusion = (index: number) => index === 2
 
 <style>
   .asset-puzzle {
-    --puzzle-background: #061e17;
+    --puzzle-background: var(--color-investment-surface);
     --puzzle-edge: rgba(255, 241, 217, 0.6);
     --investment-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
     padding-block: 20px 56px;
-    color: #f6f3e8;
-    background: var(--puzzle-background);
+    color: var(--color-fg);
+    background: linear-gradient(to bottom, var(--puzzle-background) calc(100% - 56px), var(--color-canvas)), var(--color-canvas);
+    position: relative;
     font-family: var(--font-accent);
     scroll-margin-top: 98px;
     overflow-anchor: none;
     zoom: calc(1 / var(--desktop-reference-zoom, 1));
+  }
+
+  .investment-viewport {
+    position: absolute;
+    width: 0;
+    height: 100svh;
+    visibility: hidden;
   }
 
   .investment-container {
@@ -160,7 +169,8 @@ const occlusion = (index: number) => index === 2
     align-items: center;
     gap: 10px;
     font-size: clamp(13px, 4.1vw, 16px);
-    letter-spacing: 0.06em;
+    font-family: var(--font-eyebrow);
+    letter-spacing: -0.01em;
     text-transform: uppercase;
   }
 
@@ -172,6 +182,7 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-heading h2 {
+    --plat-text-fill: var(--gradient-plat-wide-heading);
     margin-top: 7px;
     font-size: clamp(27px, 7.7vw, 38px);
     line-height: 1.16;
@@ -290,7 +301,9 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-capital-label {
-    font-size: 13px;
+    --plat-text-fill: var(--gradient-gold);
+    font-size: clamp(16px, 4.4vw, 18px);
+    line-height: 1.15;
   }
 
   .investment-amount {
@@ -375,6 +388,7 @@ const occlusion = (index: number) => index === 2
   }
 
   .investment-directions {
+    --plat-text-fill: var(--gradient-gold);
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -386,7 +400,8 @@ const occlusion = (index: number) => index === 2
     border-radius: 9px;
     background: var(--surface-60);
     color: #ebd6b0;
-    font-size: clamp(9px, 2.8vw, 11px);
+    font-size: clamp(14px, 3.8vw, 16px);
+    line-height: 1.16;
   }
 
   .investment-directions span:nth-child(1) { grid-area: tenants; }
@@ -407,6 +422,7 @@ const occlusion = (index: number) => index === 2
 
   .investment-disclaimer {
     color: var(--color-legal);
+    font-family: var(--font-legal);
     font-size: 10px;
     line-height: 1.3;
   }
@@ -431,7 +447,6 @@ const occlusion = (index: number) => index === 2
     .investment-copy { font-size: 14px; line-height: 1.15; }
     .investment-more { min-height: 32px; }
     .investment-capital { min-height: 105px; padding-block: 8px; line-height: 1.1; }
-    .investment-capital-label { font-size: 12px; }
     .investment-amount { margin-top: 5px; }
     .investment-amount > :first-child { font-size: clamp(25px, 7.5vw, 32px); }
     .investment-amount > :last-child { font-size: 16px; }
@@ -522,7 +537,6 @@ const occlusion = (index: number) => index === 2
 
     .investment-disclaimer-mobile,
     .investment-board figcaption,
-    [data-puzzle-start] .investment-sky-color,
     [data-puzzle-ready] .investment-more {
       display: none;
     }
