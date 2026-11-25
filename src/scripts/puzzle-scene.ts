@@ -49,10 +49,11 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   let progressStart = 0;
   let portfolioScale = 0;
   let furthestProgress = 0;
+  let released = false;
+  let previousScroll = scrollY;
   let lastCount = -1;
   let lastProgress = -1;
   let replayFrame = 0;
-  let replayPosition: number | undefined;
 
   function setExpanded(open: boolean) {
     root.toggleAttribute('data-puzzle-expanded', open);
@@ -121,12 +122,31 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   function update() {
     frame = 0;
-    if (travel === 0 || replayFrame || replayPosition === scrollY) return;
-    replayPosition = undefined;
+    if (travel === 0 || replayFrame) return;
+    const movingBack = scrollY < previousScroll;
+    previousScroll = scrollY;
     const offset = progressStart - progressAnchor.getBoundingClientRect().top;
+    if (offset >= travel || (movingBack && furthestProgress > 0)) {
+      releaseScene();
+      return;
+    }
     positionPortfolio(offset);
     furthestProgress = Math.max(furthestProgress, clamp(offset / travel));
     render(furthestProgress);
+  }
+
+  function releaseScene() {
+    const stage = root.hasAttribute('data-puzzle-demo-motion') ? demo : pin;
+    const anchor = stage.getBoundingClientRect().bottom <= 0 && portfolio ? portfolio : stage;
+    const anchorTop = anchor.getBoundingClientRect().top;
+    released = true;
+    travel = 0;
+    render(1);
+    root.removeAttribute('data-puzzle-motion');
+    root.removeAttribute('data-puzzle-demo-motion');
+    portfolio?.style.removeProperty('--portfolio-puzzle-offset');
+    const shift = anchor.getBoundingClientRect().top - anchorTop;
+    if (Math.abs(shift) >= 1) window.scrollTo({ top: scrollY + shift, behavior: 'instant' });
   }
 
   function positionPortfolio(offset: number) {
@@ -142,16 +162,18 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   function stopReplay() {
     cancelAnimationFrame(replayFrame);
     replayFrame = 0;
-    replayPosition = undefined;
+    previousScroll = scrollY;
   }
 
   replay.addEventListener('click', () => {
-    if (reducedMotion.matches || travel === 0) return;
+    if (reducedMotion.matches) return;
     stopReplay();
+    released = false;
+    furthestProgress = 0;
+    measure(false);
     const pinned = root.hasAttribute('data-puzzle-motion') || root.hasAttribute('data-puzzle-demo-motion');
     const startScroll = scrollY + progressAnchor.getBoundingClientRect().top - progressStart;
     const started = performance.now();
-    furthestProgress = 0;
     render(furthestProgress);
     if (pinned) window.scrollTo({ top: startScroll, behavior: 'instant' });
     positionPortfolio(0);
@@ -166,7 +188,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
         replayFrame = requestAnimationFrame(replayStep);
       } else {
         replayFrame = 0;
-        replayPosition = scrollY;
+        releaseScene();
       }
     }
 
@@ -180,11 +202,11 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     }
   }
 
-  function measure() {
+  function measure(sync = true) {
     lastProgress = -1;
+    previousScroll = scrollY;
     portfolioScale = 0;
     portfolio?.style.removeProperty('--portfolio-puzzle-offset');
-    root.removeAttribute('data-puzzle-tight');
     const wide = desktop.matches;
     const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
     if (reducedMotion.matches) {
@@ -194,11 +216,14 @@ export function initInvestmentPuzzle(root: HTMLElement) {
       root.removeAttribute('data-puzzle-demo-motion');
       root.removeAttribute('data-puzzle-compact');
       root.removeAttribute('data-puzzle-short');
+      root.removeAttribute('data-puzzle-tight');
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       render(1);
       return;
     }
+    if (released) return;
+    root.removeAttribute('data-puzzle-tight');
 
     const stage = reading ? demo : pin;
     const bounds = stage.getBoundingClientRect();
@@ -224,7 +249,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
         progressAnchor = reading ? demoMarker : photo;
         progressStart = reading ? availableTop : viewportHeight - 24;
         travel = Math.max(1, reading ? availableHeight * 0.65 : progressStart - availableTop);
-        update();
+        if (sync) update();
         return;
       }
     }
@@ -240,7 +265,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (!reading && portfolio && portfolio.offsetWidth && freeSpace >= (wide ? 34 : 68)) {
       portfolioScale = portfolio.getBoundingClientRect().width / portfolio.offsetWidth;
     }
-    update();
+    if (sync) update();
   }
 
   addEventListener('scroll', scheduleUpdate, { passive: true });
