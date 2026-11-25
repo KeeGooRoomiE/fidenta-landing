@@ -38,6 +38,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const finishTime = 0.65;
   const finishStarts = leadIn + (pieces.length - 1) * slot + flightTime + revealTime;
   const duration = finishStarts + finishTime;
+  const replayDuration = 7600;
   const ease = (p: number) => 1 - (1 - clamp(p)) ** 3;
   const sums = [0];
   for (const piece of pieces) sums.push(sums[sums.length - 1] + piece.amount);
@@ -50,7 +51,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   let portfolioScale = 0;
   let furthestProgress = 0;
   let released = false;
-  let previousScroll = scrollY;
+  let furthestScroll = scrollY;
   let lastCount = -1;
   let lastProgress = -1;
   let replayFrame = 0;
@@ -122,9 +123,18 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   function update() {
     frame = 0;
+    if (released) {
+      const viewportHeight = viewport.getBoundingClientRect().height || innerHeight;
+      if (reducedMotion.matches || root.getBoundingClientRect().top < viewportHeight) return;
+      released = false;
+      furthestProgress = 0;
+      measure(false);
+      render(0);
+      return;
+    }
     if (travel === 0 || replayFrame) return;
-    const movingBack = scrollY < previousScroll;
-    previousScroll = scrollY;
+    furthestScroll = Math.max(furthestScroll, scrollY);
+    const movingBack = furthestScroll - scrollY >= 24;
     const offset = progressStart - progressAnchor.getBoundingClientRect().top;
     if (offset >= travel || (movingBack && furthestProgress > 0)) {
       releaseScene();
@@ -156,13 +166,13 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   }
 
   function scheduleUpdate() {
-    if (!frame && travel > 0) frame = requestAnimationFrame(update);
+    if (!frame && (travel > 0 || released)) frame = requestAnimationFrame(update);
   }
 
   function stopReplay() {
     cancelAnimationFrame(replayFrame);
     replayFrame = 0;
-    previousScroll = scrollY;
+    furthestScroll = scrollY;
   }
 
   replay.addEventListener('click', () => {
@@ -179,7 +189,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     positionPortfolio(0);
 
     function replayStep(now: number) {
-      const progress = clamp((now - started) / 3800);
+      const progress = clamp((now - started) / replayDuration);
       furthestProgress = progress;
       if (pinned) window.scrollTo({ top: startScroll + progress * travel, behavior: 'instant' });
       positionPortfolio(progress * travel);
@@ -204,7 +214,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
 
   function measure(sync = true) {
     lastProgress = -1;
-    previousScroll = scrollY;
+    furthestScroll = scrollY;
     portfolioScale = 0;
     portfolio?.style.removeProperty('--portfolio-puzzle-offset');
     const wide = desktop.matches;
