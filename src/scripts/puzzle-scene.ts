@@ -38,7 +38,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   const finishTime = 0.65;
   const finishStarts = leadIn + (pieces.length - 1) * slot + flightTime + revealTime;
   const duration = finishStarts + finishTime;
-  const replayDuration = 7600;
+  const replayDuration = 10_000;
   const ease = (p: number) => 1 - (1 - clamp(p)) ** 3;
   const sums = [0];
   for (const piece of pieces) sums.push(sums[sums.length - 1] + piece.amount);
