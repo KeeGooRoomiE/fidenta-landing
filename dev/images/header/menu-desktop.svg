@@ -1,25 +1,18 @@
 <svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="54" height="50" viewBox="0 0 54 50" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Frame 448">
 <rect x="0.45" y="0.45" width="53.1" height="49.1" rx="8.55" stroke="url(#paint0_linear_0_4)" stroke-opacity="0.87" stroke-width="0.9"/>
-<line id="Line 53" x1="17.5" y1="19.5" x2="36.5" y2="19.5" stroke="url(#paint1_linear_0_4)" stroke-opacity="0.87"/>
-<line id="Line 55" x1="17.5" y1="25.5" x2="36.5" y2="25.5" stroke="url(#paint2_linear_0_4)" stroke-opacity="0.87"/>
-<line id="Line 54" x1="17.5" y1="31.5" x2="36.5" y2="31.5" stroke="url(#paint3_linear_0_4)" stroke-opacity="0.87"/>
+<g stroke="url(#menu-lines)" stroke-width="1" stroke-linecap="round" stroke-opacity="0.8">
+<path d="M17.5 19.5H36.5M17.5 25.5H36.5M17.5 31.5H36.5"/>
+</g>
 </g>
 <defs>
 <linearGradient id="paint0_linear_0_4" x1="-13.8857" y1="-12.8571" x2="50.7137" y2="71.3187" gradientUnits="userSpaceOnUse">
 <stop stop-color="#FFF1D9"/>
 <stop offset="1" stop-color="#A88548"/>
 </linearGradient>
-<linearGradient id="paint1_linear_0_4" x1="12.6143" y1="19.7429" x2="12.7308" y2="22.4128" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFF1D9"/>
-<stop offset="1" stop-color="#A88548"/>
-</linearGradient>
-<linearGradient id="paint2_linear_0_4" x1="12.6143" y1="25.7429" x2="12.7308" y2="28.4128" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFF1D9"/>
-<stop offset="1" stop-color="#A88548"/>
-</linearGradient>
-<linearGradient id="paint3_linear_0_4" x1="12.6143" y1="31.7429" x2="12.7308" y2="34.4128" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFF1D9"/>
+<linearGradient id="menu-lines" x1="16" y1="17" x2="40" y2="36" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E2CEAA"/>
+<stop offset="0.37" stop-color="#F4E5C9"/>
 <stop offset="1" stop-color="#A88548"/>
 </linearGradient>
 </defs>
