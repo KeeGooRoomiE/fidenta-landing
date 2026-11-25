@@ -100,7 +100,7 @@ const objects = [
 
 <Section id="portfolio">
   <SectionHeading eyebrow="Объекты" leadMax="max-w-[1080px]">
-    Как работает недвижимость <span class="portfolio-title-accent text-gold-plate">под нашим управлением</span>
+    Коммерческая недвижимость <span class="portfolio-title-accent text-gold-plate">под нашим управлением</span>
     <Fragment slot="lead">
       Автосервис на Васильевском острове, швейный цех и ЧПУ-мастерская в Кудрово, современный склад. Что делает помещение подходящим для одного бизнеса и неудобным для другого?
       <span class="mt-3 block portfolio-details" id="portfolio-details">Для автосервиса важны удобный заезд с улицы и автомобильный трафик, для производства — запас электрической мощности, для склада — площадь и расположение. Такие детали мы учитываем, когда подбираем арендаторов и обсуждаем с собственником стратегию развития объекта</span>
@@ -165,6 +165,7 @@ const objects = [
 
 <style>
   #portfolio { padding-top: clamp(38px, 5vw, 64px); }
+  #portfolio :global(h2.text-h2) { zoom: calc(1 / var(--desktop-reference-zoom, 1)); }
   #portfolio > :global(.container-page) {
     position: relative;
     top: var(--portfolio-puzzle-offset, 0px);
