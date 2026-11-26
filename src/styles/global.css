@@ -202,7 +202,7 @@
 /* Заливка плат-градиентом + тёмный текст + inset-тень.
    Инсет-тень — ТОЛЬКО у primary-кнопки (у outline-варианта её нет). */
 @utility btn-plat {
-  background-image: var(--gradient-plat-cta);
+  background-image: var(--gradient-plat-button);
   color: #000;
   box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
 }

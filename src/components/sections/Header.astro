@@ -50,9 +50,8 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       </div>
     </div>
 
-    <div class="header-account" role="img" aria-label="Личный кабинет — скоро" title="Личный кабинет скоро откроется">
-      <img src={`${assets}owner.svg`} width="54" height="50" alt="" />
-
+    <div class="header-account">
+      <img src={`${assets}owner.svg`} width="54" height="50" alt="Личный кабинет — скоро" />
     </div>
 
     <button id="menu-toggle" type="button" class="header-menu" aria-label="Меню"
@@ -331,7 +330,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       min-height: 50px;
       font-size: 20px;
       color: #082419;
-      background: var(--gradient-plat-cta);
+      background: var(--gradient-plat-contact-button);
     }
 
     .header-cta svg {
@@ -349,11 +348,12 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
       align-content: center;
       min-height: 50px;
 
-      border-radius: 9px;
-      color: #cacaca;
-      font-size: 10px;
+      cursor: default;
+      color: #b7aa91;
+      font-size: 14px;
       line-height: 1.22;
     }
+    .header-account img { filter: saturate(.38); }
   }
 </style>
 

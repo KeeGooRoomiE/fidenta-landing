@@ -29,7 +29,10 @@ const legal = [
       </nav>
 
       <div class="footer-brand mx-auto flex min-w-0 max-w-full flex-col items-center gap-3">
-        <img src={`${base}icons/footer-frame4541.svg`} loading="lazy" decoding="async" alt="Фидента — архитектура капитала" width="341" height="282" class="h-auto max-w-full" />
+        <div class="footer-logo">
+          <img src={`${base}images/header/bridge-asset-3.svg`} width="663" height="296" loading="lazy" alt="" />
+          <img src={`${base}images/footer-signature.svg`} width="341" height="130" loading="lazy" alt="Фидента — архитектура капитала" />
+        </div>
         <a href={phones.header.href} class="text-fg whitespace-nowrap text-[clamp(28px,7vw,40px)] leading-none">{phones.header.text}</a>
         <div class="footer-address text-center text-lg leading-tight text-fg lg:text-xl">
           <p class="hidden lg:block">Офис компании Фидента</p>
@@ -99,6 +102,8 @@ const legal = [
   .footer-top-chevron { display: inline-block; width: 8px; height: 8px; margin-left: 8px; border: solid #c7b590; border-width: 1px 0 0 1px; rotate: 45deg; }
   .footer-top-link { grid-area: top; justify-self: center; min-width: 200px; text-align: center; }
   .footer-brand { grid-area: brand; }
+  .footer-logo { width: min(341px, 100%); }
+  .footer-logo img { display: block; width: 100%; height: auto; }
   .footer-navigation { grid-area: navigation; }
   .footer-icon { overflow: hidden; }
   .rutube-clip { position: relative; display: block; width: 30px; height: 30px; mask-image: var(--rutube-mask); }
