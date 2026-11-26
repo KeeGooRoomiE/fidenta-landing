@@ -97,6 +97,12 @@ export function initPortfolio(root: HTMLElement) {
   const cards = Array.from(root.querySelectorAll<HTMLElement>('.object-card'));
   function equalizeCards() {
     root.style.removeProperty('--object-height');
+    root.style.removeProperty('--story-title-height');
+    const titles = root.querySelectorAll<HTMLElement>('.story-card h3 > span');
+    root.style.setProperty('--story-title-height', Math.max(0, ...Array.from(titles, title => title.offsetHeight)) + 'px');
+    root.style.removeProperty('--story-result-height');
+    const results = root.querySelectorAll<HTMLElement>('.story:has(.story-result) li:last-child');
+    root.style.setProperty('--story-result-height', Math.max(0, ...Array.from(results, result => result.offsetHeight)) + 'px');
     const height = Math.max(...cards.map(item => item.offsetHeight));
     root.style.setProperty('--object-height', height + 'px');
   }

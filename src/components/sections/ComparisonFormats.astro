@@ -12,7 +12,7 @@ const base = import.meta.env.BASE_URL;
       <Fragment slot="lead">Самостоятельная работа с недвижимостью требует времени: от просмотров до аренды и ремонта. С командой Фиденты вы выбираете, какие задачи передать и какие решения оставить за собой</Fragment>
     </SectionHeading>
 
-    <p class="mb-4 mt-6 font-accent text-lg text-fg">Выберите критерий, чтобы сопоставить подходы</p>
+    <p class="mb-4 mt-6 font-accent text-lg text-gold-plate text-plat-dense">Выберите критерий, чтобы сопоставить подходы</p>
     <div class="compare-options">
       <div class="compare-criteria grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
         {comparisonCriteria.map(([title], index) => (
@@ -88,6 +88,7 @@ const base = import.meta.env.BASE_URL;
     border-image: linear-gradient(90deg, transparent, rgb(215 201 175 / 45%) 28%, rgb(215 201 175 / 20%) 75%, transparent) 1;
   }
   .comparison { background: #071f18; }
+  .comparison > :global(.container-page) { padding-top: 6px; }
   .compare-options { display: flex; flex-direction: column; gap: 14px; }
   .compare-panel { scroll-margin-top: 120px; }
   .compare-trigger { min-height: 44px; justify-content: center; text-align: center; }

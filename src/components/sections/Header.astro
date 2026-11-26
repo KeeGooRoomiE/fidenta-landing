@@ -10,8 +10,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   <div class="header-shell header-bar relative">
     <a href="#" class="header-brand" aria-label="Фидента — архитектура капитала">
       <picture class="header-bridge">
-        <source media="(min-width: 1024px)" srcset={`${assets}logo-desktop.svg`} width="120" height="54" />
-        <img src={`${assets}logo-mobile-header.svg`} width="80" height="33" alt="" />
+        <img src={`${assets}bridge-asset-3.svg`} width="663" height="296" alt="" />
       </picture>
       <span class="header-wordmark" aria-hidden="true">
         <span class="header-name text-gold-plate">ФИДЕНТА</span>
@@ -133,7 +132,8 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   .header-bridge img {
     display: block;
     width: 100%;
-    height: auto;
+    height: var(--bridge-height, 35px);
+    translate: 0 -2.5px;
   }
 
   .header-wordmark {
@@ -234,6 +234,7 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
   @media (max-width: 350px) {
     .header-bridge {
       width: 67px;
+      --bridge-height: 32px;
     }
 
     .header-wordmark {
@@ -282,7 +283,10 @@ const assets = `${import.meta.env.BASE_URL}images/header/`;
 
     .header-bridge {
       width: 120px;
+      --bridge-height: 49px;
     }
+
+    .header-bridge img { translate: 0 -2.5px; }
 
     .header-wordmark {
       min-width: 154px;

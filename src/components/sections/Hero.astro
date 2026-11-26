@@ -53,15 +53,12 @@ const cards = [
         </li>
       ))}
       <li class="plat-outline hero-card hero-news">
-        <div>
-          <h2><span class="text-gold-plate">Смотрите за проектами</span>{' '}<span class="hero-news-brand text-gold-plate">Фидента</span></h2>
-          <p>Новые объекты | Новости Фидента<br />В нашем канале «Архитектура Капитала»</p>
-        </div>
-        <a href="https://t.me/fidenta" aria-label="Открыть канал Фидента в Telegram">
-          <picture>
-            <source media="(min-width: 1024px)" srcset={`${assets}news-telegram.svg`} width="52" height="48" />
-            <img src={`${assets}news-arrow.svg`} width="22" height="22" alt="" />
-          </picture>
+        <a href="https://t.me/fidenta" aria-label="Открыть канал Фиденты «Архитектура капитала»">
+          <h2 class="text-gold-plate">Смотрите за проектами Фиденты</h2>
+          <p>Новые объекты и новости<span class="channel-detail"> компании</span><br />в <span class="channel-detail">нашем </span>канале «Архитектура капитала»</p>
+          <svg class="channel-plane" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m3 10 17-6-3.6 15-5.5-4.4-3 2.7.5-5.5L17 6.8l-7.1 6.7"/>
+          </svg>
         </a>
       </li>
     </ul>
@@ -162,7 +159,6 @@ const cards = [
     --plat-text-fill: linear-gradient(166deg, var(--plat-text-mid-dark), var(--plat-text-midpoint) 33%, var(--plat-text-shadow) 100%);
   }
 
-  .hero-news-brand { --plat-text-fill: var(--gradient-plat-wordmark); }
 
   .hero-intro {
     max-width: 260px;
@@ -241,11 +237,26 @@ const cards = [
 
   .hero-news > a {
     display: grid;
-    min-height: 44px;
-    place-items: center end;
-    min-width: 32px;
-    flex: none;
-    align-self: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
+    align-items: center;
+    column-gap: 8px;
+  }
+  .hero-news { position: relative; }
+  .hero-news a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .hero-news:focus-within { outline: 2px solid var(--color-cream); }
+  .hero-news h2 { grid-column: 1 / -1; }
+  .channel-plane { grid-column: 2; grid-row: 2; color: #c5b392; }
+  @media (max-width: 365px) {
+    .hero-news .channel-detail { display: none; }
+    .hero-news { padding-inline: 12px; }
+    .hero-news > a { column-gap: 5px; }
+  }
+  .hero-news a:hover .channel-plane { color: #e0d2b7; }
+
+  @media (width < 640px) {
+    .hero-title { font-size: 34px; }
+    .hero-title-line { font-size: 30px; }
   }
 
   @media (min-width: 640px) {
