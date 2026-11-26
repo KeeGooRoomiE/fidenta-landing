@@ -44,7 +44,7 @@
   /* --- Нейтрали (текст) -------------------------------------------- */
   --color-fg: #EDEAE0;           /* text: основной текст                    → text-fg       */
   --color-copy: #B8C2B8;
-  --color-legal: #9CAFA4;
+  --color-legal: #91A79D;
   --color-fg-dim: #D4D4D4;       /* нейтральный (не кремовый) светлый текст — встречается
                                      в отдельных блоках (напр. «Крупный актив»), светлее
                                      muted, но холоднее/темнее fg      → text-fg-dim   */
@@ -89,6 +89,7 @@
   --gradient-plat-wide-heading: linear-gradient(162deg, var(--plat-text-midpoint) 9%, var(--plat-text-mid-dark) 92%);
   --gradient-plat-button: linear-gradient(165deg, #e1d8c5, #c9b996);
   --gradient-plat-contact-button: linear-gradient(159deg, #ded3bd 12%, #c2b08c 96%);
+  --gradient-plat-cta: linear-gradient(151deg, #c8ba9e 4%, #d8cbb0 33%, #cbbc9e 60%, #bba987 100%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
   --radius-lg: 12px;             /* блоки                                    → rounded-lg    */
@@ -201,7 +202,7 @@
 /* Заливка плат-градиентом + тёмный текст + inset-тень.
    Инсет-тень — ТОЛЬКО у primary-кнопки (у outline-варианта её нет). */
 @utility btn-plat {
-  background-image: var(--gradient-plat-button);
+  background-image: var(--gradient-plat-cta);
   color: #000;
   box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
 }
@@ -240,19 +241,17 @@
   }
 }
 
-/* Заголовок секции (H2): Forum обычного начертания, 30 → 48 → 50px. */
+/* Заголовок секции (H2): Forum обычного начертания, 30 → 50px. */
 @utility text-h2 {
   --plat-text-fill: var(--gradient-plat-heading);
   text-wrap: balance;
   font-family: var(--font-accent);
   font-weight: 400;
   letter-spacing: -0.02em;
-  line-height: 1.2;
-  font-size: var(--h2-fs, 1.875rem); /* переопределяется: [--h2-fs:1.65rem] (баннер) */
-  @media (min-width: 640px) {
-    font-size: 3rem;
-  }
-  @media (min-width: 768px) {
+  line-height: 1.1;
+  font-size: 30px;
+  zoom: calc(1 / var(--desktop-reference-zoom, 1));
+  @media (min-width: 1024px) {
     font-size: 50px;
   }
 }

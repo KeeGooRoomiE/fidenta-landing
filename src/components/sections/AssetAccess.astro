@@ -15,7 +15,7 @@ const occlusion = (index: number) => index === 2
     <div class="investment-stage" data-puzzle-pin>
       <div class="investment-heading">
         <p class="investment-eyebrow"><span class="text-gold-plate">Инвестиции в недвижимость</span></p>
-        <h2 id="investment-title">
+        <h2 id="investment-title" class="text-h2">
           Приобрести недостаточно <span class="text-gold-plate">Важно развивать</span>
         </h2>
       </div>
@@ -185,8 +185,7 @@ const occlusion = (index: number) => index === 2
   .investment-heading h2 {
     --plat-text-fill: var(--gradient-plat-wide-heading);
     margin-top: 7px;
-    font-size: clamp(27px, 7.7vw, 38px);
-    line-height: 1.16;
+    zoom: 1;
   }
 
   .investment-heading h2 .text-gold-plate {
@@ -443,7 +442,7 @@ const occlusion = (index: number) => index === 2
     .asset-puzzle { padding-top: 12px; }
     .investment-heading { margin-bottom: 6px; padding-top: 5px; }
     .investment-eyebrow { line-height: 1.12; }
-    .investment-heading h2 { margin-top: 5px; font-size: clamp(24px, 7vw, 31px); line-height: 1.1; }
+    .investment-heading h2 { margin-top: 5px; }
     .investment-grid { gap: 7px; }
     .investment-copy { font-size: 14px; line-height: 1.15; }
     .investment-more { min-height: 32px; }
@@ -471,7 +470,6 @@ const occlusion = (index: number) => index === 2
     [data-puzzle-tight] .investment-directions { min-height: 50px; padding-block: 4px; }
 
     [data-puzzle-short] .investment-heading { margin-bottom: 5px; }
-    [data-puzzle-short] .investment-heading h2 { font-size: clamp(24px, 7.3vw, 29px); }
     [data-puzzle-short] .investment-grid { gap: 4px; }
     [data-puzzle-short] .investment-copy { font-size: 13px; }
     [data-puzzle-short] .investment-more { min-height: 28px; }
@@ -479,7 +477,6 @@ const occlusion = (index: number) => index === 2
   }
 
   @media (640px <= width < 1024px) and (max-height: 550px) {
-    .investment-heading h2 { font-size: 26px; }
     .investment-heading h2 .text-gold-plate { display: inline; }
 
     .investment-grid {
@@ -520,11 +517,6 @@ const occlusion = (index: number) => index === 2
       margin-bottom: clamp(26px, 3.3vw, 48px);
       padding-top: 0;
       border: 0;
-    }
-
-    .investment-heading h2 {
-      font-size: clamp(35px, 3.48vw, 50px);
-      letter-spacing: 0.01em;
     }
 
     .investment-heading h2 .text-gold-plate,

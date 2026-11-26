@@ -87,7 +87,6 @@ const extraQuestions = [
   .faq-intro { grid-area: intro; }
   .faq-contact { grid-area: contact; }
   .faq-question { background: var(--surface-40); }
-  .faq-question[open] { background: var(--surface-60); }
   .faq-question summary { list-style: none; }
   .faq-question summary::-webkit-details-marker { display: none; }
   .faq-plus { font-size: 24px; }
@@ -95,7 +94,7 @@ const extraQuestions = [
   .faq-visual img { display: block; width: 100%; height: auto; mask-image: radial-gradient(ellipse at center, black 45%, transparent 77%); }
   @media (width < 768px) {
     .faq-questions { gap: 0; border-block: 1px solid rgb(255 241 217 / 25%); }
-    .faq-question { border-radius: 0; }
+    .faq-question { border-radius: 0; background: transparent; }
     .faq-question + .faq-question { border-top: 1px solid rgb(255 241 217 / 25%); }
     .faq-question::after { display: none; }
     .faq-question summary { padding-inline: 0; }

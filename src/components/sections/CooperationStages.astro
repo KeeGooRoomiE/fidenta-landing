@@ -202,6 +202,8 @@ const animateBirds = import.meta.env.DEV || import.meta.env.PUBLIC_FIDENTA_ANIMA
   .cooperation-layout > .text-legal { margin-top: 14px; }
   @media (width < 1024px) {
     .bridge-visual { margin: 10px auto 7px; width: min(100%, 480px); }
+    .stage-track { --stage-inset: max(11%, calc((100% - 340px) / 2)); }
+    .stage-card { height: auto; min-height: 100%; aspect-ratio: 1; }
   }
   @media (width < 640px) {
     .cooperation { padding-block: 16px; }
