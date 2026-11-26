@@ -93,14 +93,14 @@ const occlusion = (index: number) => index === 2
                           <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
                           <path d={path} fill="none" stroke="#e1bf80" stroke-width="3" stroke-linejoin="round" />
                         </g>
-                        <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label">+{amount} млн ₽</text>
+                        <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label" data-piece={id}>+{amount} млн ₽</text>
                       </g>
                     ))}
                   </g>
                   <use data-puzzle-final href="#investment-image" />
                 </svg>
-                <button class="investment-replay" type="button" data-puzzle-replay aria-label="Запустить анимацию пазла заново" title="Запустить анимацию заново"></button>
               </div>
+              <button class="investment-replay" type="button" data-puzzle-replay>Повторить сборку пазла</button>
             </figure>
 
             <div class="investment-directions plat-outline">
@@ -356,6 +356,8 @@ const occlusion = (index: number) => index === 2
     font-size: 11px;
   }
 
+  .investment-board { position: relative; }
+
   .investment-board figcaption {
     margin-bottom: 7px;
     color: var(--color-copy);
@@ -384,8 +386,10 @@ const occlusion = (index: number) => index === 2
     stroke-width: 7px;
     stroke-linejoin: round;
     paint-order: stroke;
-    font-size: 45px;
+    font-size: 50px;
   }
+
+  .investment-flight-label[data-piece="yard"] { font-size: 64px; }
 
   .investment-directions {
     --plat-text-fill: var(--investment-label-plat);
@@ -585,7 +589,7 @@ const occlusion = (index: number) => index === 2
 
     .investment-board {
       grid-area: 1 / 2 / 3;
-      align-self: end;
+      align-self: start;
     }
 
     .investment-scene {
@@ -656,13 +660,23 @@ const occlusion = (index: number) => index === 2
 
   @media (prefers-reduced-motion: no-preference) {
     [data-puzzle-ready] .investment-replay {
-      position: absolute;
-      z-index: 1;
-      inset: 0;
       display: block;
-      width: 100%;
-      border-radius: inherit;
+      margin: 4px auto 0;
+      padding: 3px 8px;
+      color: var(--color-copy);
+      font: 14px/1.2 var(--font-accent);
       cursor: pointer;
+    }
+
+    .investment-replay::before {
+      position: absolute;
+      inset: 0;
+      content: '';
+    }
+
+    .investment-replay:is(:hover, :focus-visible) {
+      color: var(--color-fg);
+      text-decoration: underline;
     }
 
     [data-puzzle-motion] .investment-scroll-space {

@@ -83,7 +83,7 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
             {result ? (
               <div class="story-result mt-2.5 rounded-[9px] plat-outline bg-interface/90 px-4 py-5">
                 <p class="text-xl leading-[1.16] text-gold-plate">{summary}</p>
-                {description.length > 0 && <p class="mt-1.5 whitespace-pre-line text-[15px] leading-[1.22] text-copy">{description.join('\n')}</p>}
+                {description.length > 0 && <p class="mt-1.5 text-[15px] leading-[1.22] text-copy">{description.map(line => <span class="block">{line}</span>)}</p>}
               </div>
             ) : (
               <p class="mt-2 whitespace-pre-line text-sm leading-[1.27] text-copy">{text}</p>
