@@ -32,6 +32,23 @@ export function initPortfolio(root: HTMLElement) {
     });
   }
 
+  for (const slider of root.querySelectorAll<HTMLInputElement>('[data-fact-slider]')) {
+    const pages = slider.parentElement!.querySelector<HTMLElement>('[data-fact-pages]')!;
+    function describePage() {
+      slider.setAttribute('aria-valuetext', slider.value === '1'
+        ? 'Основные показатели, 1 из 2' : 'Дополнительные показатели, 2 из 2');
+    }
+    slider.addEventListener('input', () => {
+      pages.scrollTo({ left: (slider.valueAsNumber - 1) * pages.clientWidth, behavior: 'instant' });
+      describePage();
+    });
+    pages.addEventListener('scroll', () => {
+      if (!pages.clientWidth) return;
+      slider.value = String(1 + Math.round(pages.scrollLeft / pages.clientWidth));
+      describePage();
+    }, { passive: true });
+  }
+
   for (const gallery of root.querySelectorAll<HTMLElement>('[data-gallery]')) {
     const slides = [...gallery.querySelectorAll<HTMLImageElement>('[data-slide]')];
     if (slides.length < 2) continue;
@@ -97,6 +114,9 @@ export function initPortfolio(root: HTMLElement) {
   const cards = Array.from(root.querySelectorAll<HTMLElement>('.object-card'));
   function equalizeCards() {
     root.style.removeProperty('--object-height');
+    root.style.removeProperty('--facts-height');
+    const facts = root.querySelectorAll<HTMLElement>('.object-facts');
+    root.style.setProperty('--facts-height', Math.max(0, ...Array.from(facts, row => row.offsetHeight)) + 'px');
     root.style.removeProperty('--story-title-height');
     const titles = root.querySelectorAll<HTMLElement>('.story-card h3 > span');
     root.style.setProperty('--story-title-height', Math.max(0, ...Array.from(titles, title => title.offsetHeight)) + 'px');
