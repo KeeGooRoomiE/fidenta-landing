@@ -24,10 +24,10 @@ export function initContactsMap(root: HTMLElement) {
   // ---- Метки ----
   const icon = L.divIcon({
     className: 'fidenta-pin',
-    html: `<img src="${base}images/header/logo-mobile.svg" alt="" width="26" height="14" />`,
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
-    popupAnchor: [0, -19],
+    html: `<img src="${base}images/icon-bridge.svg" alt="" width="30" height="15" />`,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+    popupAnchor: [0, -24],
   });
 
   let selected = points[0];

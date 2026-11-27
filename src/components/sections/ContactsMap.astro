@@ -25,103 +25,94 @@
   (второй похож на заглушку); подтвердить у клиента.
 */
 import SectionHeading from '../ui/SectionHeading.astro';
-import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
 import { locations } from '../../data/locations';
-import { office, phones } from '../../data/site';
+import { phones } from '../../data/site';
 
 const base = import.meta.env.BASE_URL;
 
 // Блоки реквизитов слева: заголовок + строки
 const info = [
+  { label: 'Офис', lines: ['Санкт-Петербург, [ДАННЫЕ: адрес офиса]', 'Пн–Пт, [ДАННЫЕ: часы работы]'] },
+  { label: 'Связь', lines: [phones.contacts, '[ДАННЫЕ: почта]'] },
   {
     label: 'Реквизиты',
     lines: ['[ДАННЫЕ: полное наименование юрлица]', 'ИНН [ДАННЫЕ] · ОГРН [ДАННЫЕ]', 'Юридический адрес: [ДАННЫЕ]'],
   },
   {
-    label: 'Личная встреча',
-    lines: ['Встречи проводятся по предварительной договорённости. Свяжитесь с нами, чтобы согласовать удобное время'],
+    label: 'Поддержка',
+    lines: ['Круглосуточная служба поддержки клиентов', `Телефон: ${phones.support}`, 'Email: support@[ДАННЫЕ]'],
   },
 ];
 ---
 
-<Section id="contacts" class="contact-map-section">
+<Section id="contacts">
    {/* Нижняя линия блока из Figma (кремовая 1px) — на внутренней обёртке, чтобы не залезала под боковые поля */}
-   <div class="border-t border-cream/25 pt-8 md:pt-10">
+   <div class="border-b pb-8 md:pb-12" style="border-color: var(--color-cream);">
     {/* Заголовок блока */}
-    <SectionHeading eyebrow="Контакты">
-      Большие проекты начинаются <span class="text-gold-plate">с малого</span>
+    <SectionHeading eyebrow="Контакты" line="sage" leadMax="max-w-none">
+      Приехать можно <span class="text-gold-plate">на любой объект</span>
+      <Fragment slot="lead">
+        Офис в Петербурге и все объекты под управлением — на одной карте. Адреса открыты, приезжайте и смотрите.
+      </Fragment>
     </SectionHeading>
-    <div class="mt-5 grid gap-y-6 md:mt-8 lg:grid-cols-[minmax(0,0.63fr)_minmax(0,1fr)] lg:gap-x-16">
-      <p class="max-w-[460px] text-lead text-copy lg:col-start-1 lg:row-start-1">
-        Приглашаем в офис Фидента в Санкт-Петербурге. Познакомимся, обсудим ваши задачи и возможные направления сотрудничества
-      </p>
 
-      <div class="flex min-w-0 flex-col gap-3 lg:col-start-2 lg:row-span-2 lg:row-start-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
-        {/* Карта. isolate + z-0: у Leaflet свои z-index (до 1000) — не даём им
-             перекрыть шапку сайта и cookie-плашку */}
-        <div class="map-frame plat-outline isolate z-0 h-[280px] overflow-hidden rounded-[9px] bg-interface/60 p-[3px] md:h-[433px] lg:h-auto lg:flex-1">
-          <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
-        </div>
-
-        <div class="max-md:-mx-3">
-
-          {/* Кнопка + выпадающий выбор сервиса */}
-          <div class="relative max-md:mx-auto max-md:max-w-[350px]">
-            <Button
-              variant="outline-form"
-              type="button"
-              data-route-btn
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <span class="text-gold-plate">Построить маршрут</span>
-            </Button>
-            <div
-              data-route-menu
-              hidden
-              class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-cream bg-interface/60 backdrop-blur-md p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
-            >
-              <p data-route-target class="px-3 pb-1 pt-1.5 font-accent text-sm leading-5 text-copy"></p>
-              <a data-route="yandex" target="_blank" rel="noopener noreferrer" class="route-link"><span class="text-gold-plate">Яндекс Карты</span></a>
-              <a data-route="2gis" target="_blank" rel="noopener noreferrer" class="route-link"><span class="text-gold-plate">2ГИС</span></a>
-              <a data-route="google" target="_blank" rel="noopener noreferrer" class="route-link"><span class="text-gold-plate">Google Карты</span></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-5 lg:col-start-1 lg:row-start-2 lg:gap-6">
-        <div class="flex flex-col gap-1.5 lg:gap-2">
-          <span class="h-px w-full bg-gold-line"></span>
-          <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] plat-card-heading lg:text-sm">Контакты</span>
-          <div class="grid gap-1 font-accent text-sm leading-snug text-copy lg:text-lg">
-            <p>Адрес: {office.full}</p>
-            <p>Номер телефона: <a href={phones.header.href} class="hover:underline">{phones.header.text}</a></p>
-            <p>Email: <a href="mailto:info@uk-fidenta.ru" class="hover:underline">info@uk-fidenta.ru</a></p>
-          </div>
-        </div>
-        {info.map((block) => (
-          <div class="flex flex-col gap-1.5 lg:gap-2">
+    {/* Реквизиты | карта */}
+    {/* Мобильный порядок (правка дизайнера: контактов слишком много перед картой): карта ПЕРВОЙ
+         (max-lg:order-1), реквизиты после неё компактно: Офис и Связь в 2 колонки, мелкий шрифт */}
+    <div class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-[60px] lg:pt-10">
+      <div class="grid grid-cols-2 gap-x-4 gap-y-5 max-lg:order-2 lg:flex lg:w-[460px] lg:shrink-0 lg:flex-col lg:gap-7">
+        {info.map((block, bi) => (
+          <div class:list={['flex flex-col gap-1.5 lg:gap-2', bi > 1 && 'col-span-2 lg:col-span-1']}>
             <span class="h-px w-full bg-gold-line"></span>
-            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] plat-card-heading lg:text-sm">{block.label}</span>
-            <div class="font-accent text-sm leading-snug text-copy lg:text-lg lg:leading-7">
+            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
+            <div class="font-accent text-sm leading-snug text-fg lg:text-lg lg:leading-7">
               {block.lines.map((line) => <p>{line}</p>)}
             </div>
           </div>
         ))}
       </div>
+
+      <div class="flex min-w-0 flex-1 flex-col gap-3 max-lg:order-1" data-contacts-map data-base={base} data-points={JSON.stringify(locations)}>
+        {/* Карта. isolate + z-0: у Leaflet свои z-index (до 1000) — не даём им
+             перекрыть шапку сайта и cookie-плашку */}
+        <div class="isolate z-0 h-[280px] overflow-hidden rounded-[9px] border-[5px] border-[#525252] md:h-[433px]">
+          <div data-map class="size-full" role="application" aria-label="Карта объектов"></div>
+        </div>
+
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <p class="font-accent text-sm leading-5 text-gold-plate">
+            Метки — объекты под управлением. Клик по метке открывает карточку объекта.
+          </p>
+
+          {/* Кнопка + выпадающий выбор сервиса */}
+          <div class="relative shrink-0">
+            <button
+              type="button"
+              data-route-btn
+              aria-haspopup="true"
+              aria-expanded="false"
+              class="w-full rounded-[9px] border border-cream px-[14px] py-2.5 font-accent text-xl text-sand transition-colors hover:bg-[rgba(255,241,217,0.08)] sm:w-[233px]"
+              style="text-shadow: 0 4px 4px rgba(0,0,0,0.11);"
+            >
+              Построить маршрут
+            </button>
+            <div
+              data-route-menu
+              hidden
+              class="absolute right-0 top-[calc(100%+6px)] z-20 w-full min-w-[233px] rounded-[9px] border border-cream bg-plaque p-2 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
+            >
+              <p data-route-target class="px-3 pb-1 pt-1.5 font-accent text-sm leading-5 text-muted"></p>
+              <a data-route="yandex" target="_blank" rel="noopener noreferrer" class="route-link">Яндекс Карты</a>
+              <a data-route="2gis" target="_blank" rel="noopener noreferrer" class="route-link">2ГИС</a>
+              <a data-route="google" target="_blank" rel="noopener noreferrer" class="route-link">Google Карты</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
    </div>
 </Section>
-
-<style>
-  .contact-map-section {
-    background: linear-gradient(to bottom, var(--color-canvas), var(--color-investment-surface) clamp(40px, 7vw, 104px), var(--color-investment-surface) 90%, var(--color-canvas));
-  }
-  .map-frame::after { z-index: 1; }
-  [data-map] { border-radius: 7px; }
-</style>
 
 <script>
   // Ленивая загрузка: Leaflet и карта подтягиваются, только когда блок подъезжает к экрану
@@ -143,21 +134,17 @@ const info = [
 
 <style is:global>
   /* Метка: плашка как в макете (тёмный фон + кремовая рамка + иконка моста) */
-  .leaflet-marker-icon.fidenta-pin {
+  .fidenta-pin {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-90);
-    border: 0.7px solid #9e9277;
-    border-radius: 9px;
-    box-sizing: border-box;
+    background: var(--color-plaque);
+    border: 1px solid var(--color-cream);
+    border-radius: 14px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
-  .leaflet-container .fidenta-pin img {
+  .fidenta-pin img {
     display: block;
-    width: 26px;
-    height: 14px;
-    object-fit: contain;
   }
   /* Подсказка (popup) в цветах сайта */
   .leaflet-popup-content-wrapper {

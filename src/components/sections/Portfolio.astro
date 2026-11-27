@@ -1,355 +1,122 @@
 ---
+/*
+  УРОВЕНЬ 3 — БЛОК «Объекты под управлением УК ФИДЕНТА»
+  Источник: Figma, узел 974:64979 («block 9 Object»)
+
+  Структура: заголовок → сетка карточек (3 в ряд на десктопе, 1 на мобильных)
+  → строка-сноска → кнопка «Показать ещё».
+
+  Фильтров в макете нет (старая заготовка с фильтрами удалена).
+
+  Поведение (JS внизу файла, ~40 строк, без библиотек):
+    1. Изначально видно 6 карточек, ещё 3 скрыты (hidden в ObjectCard).
+    2. «Показать ещё 3 объекта» открывает скрытые → всего 9; кнопка исчезает
+       до перезагрузки страницы (состояние нигде не хранится — так и задумано).
+    3. «Авито-превью» фото: когда курсор ведут по ширине фото карточки,
+       показывается кадр по позиции курсора (ширина делится на N зон);
+       при уходе курсора возвращается первый кадр. Работает и со свайпом
+       пальцем (pointer events покрывают мышь и тач одинаково).
+
+  Фото: 1-й кадр каждой из первых 6 карточек — из Figma; остальные кадры и
+  все фото карточек 7–9 — СТОКОВЫЕ ПЛЕЙСХОЛДЕРЫ (Wikimedia Commons), заменить
+  на реальные снимки объектов. Лежат в public/images/objects/objN-K.webp
+  (N — номер карточки, K — номер кадра).
+
+  Карточки 7–9 в макете нет (там 6) — их контент целиком [ДАННЫЕ]-плейсхолдеры,
+  по соглашению проекта: ничего не выдумываем, ждём реальные данные клиента.
+
+  id="portfolio" — якорь для ссылок из шапки и кнопки Hero.
+*/
+import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Section from '../ui/Section.astro';
 import ObjectCard from '../ui/ObjectCard.astro';
 
 const base = import.meta.env.BASE_URL;
-const photo = (name: string) => `${base}images/objects/${name}.jpg`;
-const exterior = (album: number, ...frames: number[]) =>
-  frames.map((frame) => photo(`exterior-${album}-${frame}`));
-const cover = (object: number) => `${base}images/objects/obj${object}-1.webp`;
+// photos('3', 3) → ['…/objects/obj3-1.webp', '…/obj3-2.webp', '…/obj3-3.webp']
+const photos = (n: number, count: number) =>
+  Array.from({ length: count }, (_, i) => `${base}images/objects/obj${n}-${i + 1}.webp`);
 
 const objects = [
-  {
-    id: 'autograd', title: 'Малярно-кузовной центр', photos: [photo('autograd-facade'), ...exterior(4, 6)],
-    lead: 'В одном здании работают диагностические и ремонтные посты, а также малярно-кузовной центр',
-    facts: ['С 2024 года', 'Кузовной ремонт', 'Диагностика'],
-    labels: ['В управлении', 'Профиль', 'Также на объекте'],
-    extraFacts: [{ label: 'Работы', value: 'Диагностика и ремонт' }],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Проект автосервиса с кузовным ремонтом' },
-      { title: 'Что мы сделали', text: 'Организовали диагностические и ремонтные посты в одном здании' },
-      { title: 'Результат', text: 'Малярно-кузовной центр\nДиагностика, ремонт и кузовные работы в одном здании' },
-    ],
-  },
-  {
-    id: 'detailing', title: 'Детейлинг-центр', photos: [photo('detailing-facade'), ...exterior(4, 0)],
-    lead: 'У центра своё помещение рядом с мойкой. После мойки машину можно передать мастерам на той же площадке',
-    facts: ['С 2024 года', 'Детейлинг', 'Полная'],
-    extraFacts: [{ label: 'Размещение', value: 'Рядом с автомойкой' }],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Отдельное помещение рядом с моечными постами' },
-      { title: 'Что мы сделали', text: 'Открыли детейлинг-центр на одной площадке с мойкой' },
-      { title: 'Результат', text: 'С 2024 года\nЦентр работает рядом с мойкой\nПомещение полностью занято' },
-    ],
-  },
-  {
-    id: 'wash', title: 'Автомойка', photos: [...exterior(3, 2), cover(2), photo('disk-3-0')],
-    lead: 'На одной площадке можно вымыть машину и оставить её на детейлинг. Все три помещения заняты',
-    facts: ['С 2024 года', 'Автомойка', 'Полная'],
-    extraFacts: [{ label: 'Помещения', value: '3' }, { label: 'Формат', value: 'Субаренда' }],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Площадка для автомойки и детейлинга' },
-      { title: 'Что мы сделали', text: 'Взяли объект в субаренду' },
-      { title: 'Результат', text: 'С 2024 года\nНа площадке работают мойка и детейлинг\nВсе три помещения заняты' },
-    ],
-  },
-  {
-    id: 'park-five', title: 'Автосервис с ремонтными постами', photos: [cover(1), ...exterior(7, 0), `${base}images/objects/obj1-2.webp`],
-    lead: 'В 2022 году мы построили отдельное здание под автосервис. Теперь все помещения заняты',
-    facts: ['С 2022 года', 'Автосервис', 'Полная'],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Создание нового объекта под автосервис' },
-      { title: 'Что мы сделали', text: 'Построили здание с нуля' },
-      { title: 'Результат', text: 'В 2022 году\nАвтосервис построен с нуля\nВсе помещения заняты' },
-    ],
-  },
-  {
-    id: 'sewing', title: 'Швейный цех', photos: [cover(6), photo('production-4'), ...exterior(5, 2)],
-    lead: 'В Кудрово мы арендовали землю и построили корпуса швейного цеха. С 2019 года арендаторы занимают все три помещения',
-    facts: ['С 2019 года', 'Швейный цех', 'Полная'],
-    extraFacts: [{ label: 'Помещения', value: '3' }, { label: 'Земля', value: 'В аренде' }],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Арендованный земельный участок — пустая площадка' },
-      { title: 'Что мы сделали', text: 'Построили корпуса и подготовили цех к сдаче в аренду' },
-      { title: 'Результат', text: 'В 2019 году\nЗапустили швейный цех\nВсе три помещения сданы в аренду' },
-    ],
-  },
-  {
-    id: 'bogatyrsky', title: 'Автомобильный комплекс', storyTitle: 'Объект на Богатырском',
-    photos: [...exterior(2, 12), cover(3)],
-    lead: 'На Богатырском мы полностью реконструировали автоцентр — от внутренних помещений до территории вокруг здания. Уже в 2022 году все помещения были сданы',
-    facts: ['С 2022 года', 'Автоцентр', 'Полная'],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Здание и территория нуждались в капитальном ремонте' },
-      { title: 'Что мы сделали', text: 'Реконструировали здание и благоустроили территорию' },
-      { title: 'Результат', text: 'Уже в 2022 году\nВ автоцентре сданы все помещения' },
-    ],
-  },
-  {
-    id: 'warehouse', title: 'Помещение под склад', photos: [photo('disk-6-5')],
-    lead: 'Для крупной компании мы подобрали 450 м² под склад с учётом её маршрутов доставки. До передачи ключей отремонтировали помещение',
-    facts: ['С 2024 года', 'Склад', 'Полная'],
-    extraFacts: [{ label: 'Площадь', value: '450 м²' }, { label: 'Арендаторы', value: '1' }],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Коммерческое помещение площадью 450 м²' },
-      { title: 'Что мы сделали', text: 'Подобрали помещение под заказ и выполнили ремонт перед сдачей' },
-      { title: 'Результат', text: 'Сдано в аренду\nПосле ремонта все 450 м² передали одному арендатору' },
-    ],
-  },
-  {
-    id: 'containers', title: 'Контейнерная площадка', photos: [cover(5), ...exterior(2, 7), `${base}images/objects/obj5-2.webp`],
-    lead: 'На участке нельзя было строить. Мы поставили складские контейнеры и нашли для них арендаторов. Сейчас заняты все контейнеры',
-    facts: ['С 2022 года', 'Хранение', 'Полная'],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Пустой земельный участок. Земля не предназначена для строительства' },
-      { title: 'Что мы сделали', text: 'Закуплены контейнеры под склад временного хранения' },
-      { title: 'Результат', text: 'Новое назначение\nВсе складские контейнеры сданы в аренду' },
-    ],
-  },
-  {
-    id: 'kudrovo-service', title: 'Автосервис в Кудрово', photos: [photo('disk-1-0'), ...exterior(1, 25), photo('exterior-kudrovo-side')],
-    lead: 'В 2022 году мы с нуля построили в Кудрово здание с ремонтными постами. Сегодня здесь обслуживают и ремонтируют автомобили',
-    facts: ['С 2022 года', 'Автосервис', 'Полная'],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Участок под строительство автосервиса' },
-      { title: 'Что мы сделали', text: 'В 2022 году построили здание с ремонтными постами' },
-      { title: 'Результат', text: 'Автосервис работает\nВсе помещения автосервиса сданы в аренду' },
-    ],
-  },
-  {
-    id: 'cnc', title: 'ЧПУ-мастерская в Кудрово', photos: [photo('production-3'), ...exterior(5, 7)],
-    lead: 'Между двумя корпусами швейного цеха мы построили мастерскую на арендованной земле. Здесь работают станки с числовым программным управлением',
-    facts: ['Кудрово', 'ЧПУ-мастерская', 'В аренде'],
-    labels: ['Расположение', 'Профиль', 'Земля'],
-    story: [
-      { title: 'Состояние объекта на старте', text: 'Арендованная земля на производственной площадке' },
-      { title: 'Что мы сделали', text: 'Построили корпус между двумя зданиями швейного цеха' },
-      { title: 'Результат', text: 'Действующая мастерская\nВ корпусе между швейными цехами работают станки с ЧПУ' },
-    ],
-  },
+  { type: 'Автосервис', title: 'Автосервис #ПАРК5', address: 'В.О., 7-я линия, 76', lead: 'Автосервис, который существует 14 лет', gla: '450', occupancy: '100%', since: 'с 2014', photos: photos(1, 3) },
+  { type: 'Детейлинг Автомойка', title: 'Автомойка', address: 'В.О., 7-я линия, 76', lead: 'Стабилизированный арендный поток', gla: '220', occupancy: '100%', since: 'с 2018', photos: photos(2, 3) },
+  { type: 'Кузовной ремонт и покраска', title: 'Автосервис, мойка, офисы', address: 'Богатырский 18', lead: 'Стабилизированный арендный поток', gla: '4 200', occupancy: '97%', since: 'с 2018', photos: photos(3, 3) },
+  { type: 'Кузовной ремонт и покраска', title: 'Склад яндекс лавка', address: 'В.О., 7-я линия, 76', lead: 'Поиск помещений под маркетплейсы и склады', gla: '4 200', occupancy: '97%', since: 'с 2018', photos: photos(4, 3) },
+  { type: 'контейнерное хранение', title: 'Складской комплекс Контик', address: 'Богатырский 18', lead: 'Стабилизированный арендный поток', gla: '4 200', occupancy: '97%', since: 'с 2018', photos: photos(5, 3) },
+  { type: 'Швейное производство', title: 'Швейный цех', address: 'Кудрово, Ленобласть', lead: 'Долгосрочные договоры', gla: '12 500', occupancy: '100%', since: 'с 2021', photos: photos(6, 3) },
+  // Ниже — «Показать ещё» (в Figma не нарисованы, контент — плейсхолдеры)
+  { type: '[ДАННЫЕ: тип]', title: '[ДАННЫЕ: название объекта]', address: '[ДАННЫЕ: адрес]', lead: '[ДАННЫЕ: краткое описание]', gla: '[ДАННЫЕ]', occupancy: '[ДАННЫЕ]', since: '[ДАННЫЕ]', photos: photos(7, 3), hidden: true },
+  { type: '[ДАННЫЕ: тип]', title: '[ДАННЫЕ: название объекта]', address: '[ДАННЫЕ: адрес]', lead: '[ДАННЫЕ: краткое описание]', gla: '[ДАННЫЕ]', occupancy: '[ДАННЫЕ]', since: '[ДАННЫЕ]', photos: photos(8, 3), hidden: true },
+  { type: '[ДАННЫЕ: тип]', title: '[ДАННЫЕ: название объекта]', address: '[ДАННЫЕ: адрес]', lead: '[ДАННЫЕ: краткое описание]', gla: '[ДАННЫЕ]', occupancy: '[ДАННЫЕ]', since: '[ДАННЫЕ]', photos: photos(9, 3), hidden: true },
 ];
-const featuredObjects = objects.slice(0, 6);
-const desktopOnlyObjects = featuredObjects.slice(2);
-const additionalObjects = [desktopOnlyObjects[0], ...objects.slice(featuredObjects.length), ...desktopOnlyObjects.slice(1)];
+
+const extraCount = objects.filter((o) => o.hidden).length;
 ---
 
 <Section id="portfolio">
-  <SectionHeading eyebrow="Объекты" leadMax="max-w-[1080px]">
-    Коммерческая недвижимость <span class="portfolio-title-accent text-gold-plate">под нашим управлением</span>
-    <Fragment slot="lead">
-      В Кудрово мы с нуля построили производственные корпуса на арендованной земле. С нуля создали и комплекс с малярно-кузовным центром, детейлингом и мойкой. На Богатырском реконструировали здание, а склад подбирали под задачу собственника
-      <span class="mt-3 block portfolio-details" id="portfolio-details">Для автосервиса важны удобный заезд с улицы и автомобильный трафик, для производства — запас электрической мощности, для склада — площадь и расположение. Такие детали мы учитываем, когда подбираем арендаторов и обсуждаем с собственником стратегию развития объекта</span>
-    </Fragment>
-  </SectionHeading>
-  <button class="portfolio-read" type="button" data-portfolio-read aria-expanded="false" aria-controls="portfolio-details">
-    <span class="text-gold-plate text-plat-dense">читать далее</span>
-  </button>
+    {/* Заголовок блока */}
+    <SectionHeading eyebrow="Объекты">
+      Объекты под управлением <span class="text-gold-plate uppercase">УК Фидента</span>
+      <Fragment slot="lead">
+        Повышаем заполняемость, контролируем арендаторов, операционные расходы и инвестиционную доходность объектов в Санкт-Петербурге.
+      </Fragment>
+    </SectionHeading>
 
-  <div class="object-grid mt-8 grid gap-5 lg:mt-12 lg:grid-cols-3 lg:gap-8">
-    {featuredObjects.map((object) => (
-      <ObjectCard {...object} class={object.id === 'bogatyrsky' ? 'object-card--deeper-tone' : undefined} />
-    ))}
-  </div>
+    {/* Сетка карточек: 1 колонка на мобильных, 3 в ряд на десктопе */}
+    <div class="mt-12 grid grid-cols-1 gap-[34px] lg:grid-cols-3 md:mt-[70px]">
+      {objects.map((obj) => <ObjectCard {...obj} />)}
+    </div>
 
-  <div class="mt-8 flex justify-center" data-portfolio-more>
-    <button class="portfolio-toggle plat-outline plat-action" type="button" aria-controls="portfolio-more" aria-expanded="false"><span>Показать ещё объекты</span></button>
-  </div>
+    {/* Сноска + линия */}
+    <div class="mt-6">
+      <p class="font-accent text-xs leading-5 text-[#63645c]">Все объекты находятся под управлением УК ФИДЕНТА</p>
+      <div class="h-px w-full bg-[rgba(20,58,48,0.35)]"></div>
+    </div>
 
-  <div class="mt-8" id="portfolio-more" hidden>
-    <div class="mb-4 flex items-center justify-between gap-4">
-      <h3 class="text-2xl leading-tight text-fg" tabindex="-1">Другие объекты</h3>
-      <div class="flex shrink-0 gap-2">
-        <button class="slider-arrow" type="button" data-track-step="-1" aria-label="Предыдущий объект">←</button>
-        <button class="slider-arrow" type="button" data-track-step="1" aria-label="Следующий объект">→</button>
-      </div>
+    {/* Кнопка «Показать ещё»: после нажатия удаляется из DOM */}
+    <div class="flex justify-center pt-6" data-more-wrap>
+      <Button variant="more" tone="fg" data-more>Показать ещё {extraCount} объекта</Button>
     </div>
-    <div class="object-track" data-object-track>
-      {additionalObjects.map((object) => (
-        <ObjectCard {...object} id={`${object.id}-slider`} class={[desktopOnlyObjects.includes(object) && 'track-mobile', object.id === 'bogatyrsky' && 'object-card--deeper-tone'].filter(Boolean).join(' ')} />
-      ))}
-      {/* Michael, Pexels: https://www.pexels.com/photo/35577502/ */}
-      <ObjectCard
-        id="portfolio-project"
-        class="project-card"
-        title="Здесь может начаться ваш проект"
-        photos={[`${base}images/project-factory.jpg`]}
-        lead="Хотите вложиться в коммерческую недвижимость или предложить свой объект? Обсудим вашу задачу"
-        projectHref="#cta"
-      >
-        <Fragment slot="title">
-          <span class="block">Здесь может начаться</span>
-          <span class="text-gold-plate">ваш проект</span>
-        </Fragment>
-      </ObjectCard>
-    </div>
-    <input class="object-position" type="range" min="0" max="1" value="0" aria-label="Позиция в галерее объектов" data-track-position />
-    <div class="mt-4 flex justify-center">
-      <button type="button" class="portfolio-toggle plat-outline plat-action" aria-controls="portfolio-more" data-portfolio-close>
-        <span>Скрыть дополнительные объекты</span>
-      </button>
-    </div>
-  </div>
 </Section>
 
 <script>
-  import { initPortfolio } from '../../scripts/portfolio';
+  import { showMore } from '../../scripts/ui';
 
-  const portfolio = document.getElementById('portfolio');
-  if (portfolio) initPortfolio(portfolio);
+  // 1. «Показать ещё»: открываем скрытые карточки, кнопку убираем (общая логика — src/scripts/ui.ts)
+  const root = document.getElementById('portfolio');
+  if (root) {
+    showMore(root, {
+      button: '[data-more]',
+      extra: '[data-extra]',
+      reveal: (card) => card.classList.remove('hidden'),
+      done: () => root.querySelector('[data-more-wrap]')?.remove(),
+    });
+  }
+
+  // 2. «Авито-превью» фото. Один набор обработчиков на всю страницу
+  //    (делегирование): карточки 7–9 тоже работают, хотя были скрыты при загрузке.
+  function showSlide(gallery: HTMLElement, index: number) {
+    const slides = gallery.querySelectorAll<HTMLElement>('[data-slide]');
+    const bars = gallery.querySelectorAll<HTMLElement>('[data-bar]');
+    // индекс ограничиваем: курсор на самом правом пикселе даёт x/width = 1
+    const i = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach((el, k) => el.toggleAttribute('data-active', k === i));
+    bars.forEach((el, k) => el.toggleAttribute('data-active', k === i));
+  }
+
+  function onMove(e: PointerEvent) {
+    const gallery = (e.target as HTMLElement).closest<HTMLElement>('[data-gallery]');
+    if (!gallery) return;
+    const rect = gallery.getBoundingClientRect();
+    const count = gallery.querySelectorAll('[data-slide]').length;
+    // ширина делится на count равных зон: зона = номер кадра
+    showSlide(gallery, Math.floor(((e.clientX - rect.left) / rect.width) * count));
+  }
+
+  document.addEventListener('pointermove', onMove);
+  // pointerout всплывает; сбрасываем кадр, только когда курсор покинул саму галерею
+  document.addEventListener('pointerout', (e) => {
+    const gallery = (e.target as HTMLElement).closest<HTMLElement>('[data-gallery]');
+    if (gallery && !gallery.contains(e.relatedTarget as Node | null)) showSlide(gallery, 0);
+  });
 </script>
-
-<style>
-  #portfolio { padding-top: calc(clamp(38px, 5vw, 64px) + 8px); }
-  #portfolio > :global(.container-page) {
-    position: relative;
-    top: var(--portfolio-puzzle-offset, 0px);
-  }
-  .portfolio-title-accent { --plat-text-fill: var(--gradient-plat-heading); }
-
-  .portfolio-toggle { width: min(100%, 300px); }
-
-  .object-grid > :global(article:nth-child(n + 3)) {
-    display: none;
-  }
-
-  @media (min-width: 1024px) {
-    :global(main:has([data-puzzle-motion]) #portfolio > .container-page) {
-      top: calc(var(--portfolio-puzzle-offset, 0px) + 20px);
-    }
-  }
-
-  .object-track {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 100%;
-    gap: 20px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
-  .object-track::-webkit-scrollbar {
-    display: none;
-  }
-
-  .object-position {
-    --position-track: linear-gradient(176deg, rgb(255 241 217 / 50%) 25.714%, rgb(168 133 72 / 50%) 120.56%);
-    display: block;
-    width: 100%;
-    height: 32px;
-    margin-top: 6px;
-    appearance: none;
-    background: var(--position-track) center / 100% 2px no-repeat;
-    cursor: ew-resize;
-  }
-
-  .object-position::-webkit-slider-runnable-track {
-    height: 2px;
-    background: transparent;
-  }
-
-  .object-position::-moz-range-track {
-    height: 2px;
-    background: transparent;
-  }
-
-  .object-position::-webkit-slider-thumb {
-    appearance: none;
-    width: 28px;
-    height: 6px;
-    margin-top: -2px;
-    border-radius: 3px;
-    background: var(--gradient-gold);
-  }
-
-  .object-position::-moz-range-thumb {
-    width: 28px;
-    height: 6px;
-    border: 0;
-    border-radius: 3px;
-    background: var(--gradient-gold);
-  }
-
-  .portfolio-read {
-    display: none;
-  }
-
-  [data-portfolio-ready] .portfolio-read {
-      display: inline-flex;
-      min-height: 36px;
-      align-items: center;
-      gap: 8px;
-      padding-right: 8px;
-      color: #d9bc83;
-      font-family: var(--font-accent);
-      cursor: pointer;
-    }
-
-    [data-portfolio-ready]:not([data-portfolio-expanded]) .portfolio-details {
-      display: none;
-    }
-
-    .portfolio-read::after {
-      width: 7px;
-      height: 7px;
-      border: solid currentColor;
-      border-width: 0 1px 1px 0;
-      transform: translateY(-2px) rotate(45deg);
-      content: '';
-    }
-
-    .portfolio-read[aria-expanded='true']::after {
-      transform: translateY(2px) rotate(225deg);
-    }
-
-    .portfolio-read:is(:hover, :focus-visible) span {
-      text-decoration: underline #b9a274;
-      text-underline-offset: 3px;
-    }
-
-    .portfolio-details {
-      scroll-margin-top: 98px;
-    }
-
-  .object-track > :global(article) {
-    scroll-snap-align: start;
-  }
-
-  @media (min-width: 1024px) {
-    .object-track > :global(.track-mobile) {
-      display: none;
-    }
-
-    .object-grid > :global(article:nth-child(n + 3)) {
-      display: grid;
-    }
-
-    .object-track {
-      gap: 32px;
-      grid-auto-columns: calc((100% - 64px) / 3);
-    }
-  }
-
-  .slider-arrow {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
-    color: #fff1d9;
-    cursor: pointer;
-  }
-
-  .slider-arrow::before {
-    position: absolute;
-    inset: 0;
-    padding: 0.7px;
-    border-radius: inherit;
-    background: var(--gradient-gold);
-    opacity: 0.5;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-    content: '';
-  }
-
-  .slider-arrow:disabled {
-    color: rgb(255 241 217 / 40%);
-    cursor: default;
-  }
-
-  .slider-arrow:hover:not(:disabled) {
-    background: rgb(255 241 217 / 10%);
-  }
-
-</style>

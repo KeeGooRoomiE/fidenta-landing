@@ -38,5 +38,5 @@ const hasLead = Astro.slots.has('lead');
     <span class="text-eyebrow text-gold-plate">{eyebrow}</span>
   </div>
   <h2 class:list={['text-h2', titleClass]}><slot /></h2>
-  {hasLead && <p class:list={['mt-1 text-lead text-copy', leadMax]}><slot name="lead" /></p>}
+  {hasLead && <p class:list={['mt-1 text-lead text-fg', leadMax]}><slot name="lead" /></p>}
 </div>

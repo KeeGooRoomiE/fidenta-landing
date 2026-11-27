@@ -1,749 +1,259 @@
 ---
-import { craneCables, craneMetal, pieces, sceneHeight, sceneWidth, sky, totalMln } from '../../data/investment-puzzle';
+/*
+  УРОВЕНЬ 3 — БЛОК «Крупный актив — по силам частному инвестору» + 3D-пазл по скроллу
+  (заголовок утверждён дизайнером 28.10; в Figma было «…без крупного капитала»)
+  Источник текста: Figma, узел 974:65806 («block 2 invest»). Пазл — из прототипа
+  fidenta-puzzle-studio.html (Three.js), движок вынесен в src/scripts/puzzle-scene.ts.
+
+  КАК УСТРОЕНО
+   - Секция высокая (≈2.6 экрана), внутри «залипает» (sticky) сцена на один экран.
+     Пока пользователь прокручивает секцию, пазл собирается: от разлетевшихся «долей»
+     к целому объекту (прогресс 0→1 = положение скролла внутри секции; прокрутка назад
+     разбирает пазл обратно).
+   - Пазл — фон ВСЕЙ сцены (canvas на весь экран, пазл крупно справа), текст и счётчик —
+     поверх, слева, на тёмном градиенте для читаемости.
+   - Цифры («N млн ₽» на деталях, счётчик, шкала, фазы) — ДЕМОНСТРАЦИЯ механики из
+     прототипа; под счётчиком пометка «Демонстрация механики, не текущий сбор». Реальные
+     числа подставить в demo ниже, когда пришлёт клиент.
+   - Тяжёлое (three.js ~0,6 МБ + модель ~3 МБ) грузится ЛЕНИВО — только когда секция
+     подъезжает к экрану (IntersectionObserver). Рендер идёт, только пока сцена видна.
+   - Запасной вариант: при prefers-reduced-motion или без WebGL — статичная картинка
+     собранного объекта, секция обычной высоты, счётчик на 100%.
+
+  CSS ZOOM на больших экранах (см. global.css): vh/svh в таких условиях «врут», поэтому
+  высота сцены задаётся переменной --stage-h из JS (innerHeight / zoom); без zoom остаётся
+  чистый CSS (100svh).
+
+  ФОТО пазла: public/images/puzzle-photo.webp (детейлинг-автомойка, 1280×853024 из Figma). В прототипе лежало
+  низкое разрешение (509×216) с вшитой подписью «120 млн ₽» — оно сохранено как
+  public/images/puzzle-photo-prototype.jpg; заменить фото = заменить один файл (4:3 лучше).
+  Текст блока: в Figma было 3 абзаца; по правке дизайнера первая фраза убрана, смысл
+  «без необходимости приобретать объект целиком» — в конце последнего абзаца.
+*/
+import Button from '../ui/Button.astro';
 
 const base = import.meta.env.BASE_URL;
-const foregroundPieces = pieces.slice(0, 3);
-const occlusion = (index: number) => index === 2
-  ? 'url(#investment-crane-occlusion)'
-  : index >= 3 ? 'url(#investment-background-occlusion)' : undefined;
+
+// Демо-значения пазла (замена реальными — одной правкой здесь)
+const demo = { totalMln: 120 };
 ---
 
-<section id="asset" class="asset-puzzle" data-investment-puzzle aria-labelledby="investment-title">
-  <div class="investment-viewport" data-puzzle-viewport aria-hidden="true"></div>
-  <div class="investment-container">
-    <div data-puzzle-marker aria-hidden="true"></div>
-    <div class="investment-stage" data-puzzle-pin>
-      <div class="investment-heading">
-        <p class="investment-eyebrow"><span class="text-gold-plate">Инвестиции в недвижимость</span></p>
-        <h2 id="investment-title" class="text-h2">
-          Приобрести недостаточно <span class="text-gold-plate">Важно развивать</span>
-        </h2>
-      </div>
-
-      <div class="investment-grid">
-        <div class="investment-copy">
-          <p>Фидента объединяет участников вокруг проектов коммерческой недвижимости. Каждая доля становится частью общего капитала, необходимого для реализации проекта<span class="investment-end">.</span></p>
-          <div id="investment-details" class="investment-details">
-            <p tabindex="-1">Капитал направляют в торговые помещения, склады, сервисные и другие коммерческие объекты с потенциалом арендного дохода и роста стоимости. Для нас недвижимость — долгосрочный актив. Её ценность раскрывают грамотное использование, профессиональное управление и развитие</p>
-          </div>
-          <button type="button" class="investment-more" data-puzzle-expand aria-expanded="false" aria-controls="investment-details">
-            <span class="text-gold-plate text-plat-dense" data-puzzle-expand-label>читать далее</span>
-            <span class="investment-chevron" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <div class="investment-demo-track">
-          <div data-puzzle-demo-marker aria-hidden="true"></div>
-          <div class="investment-demo" data-puzzle-demo>
-            <div class="investment-capital">
-              <p class="plat-card-heading investment-capital-label">Объединение капитала</p>
-              <div class="investment-amount">
-                <span><span data-puzzle-amount>{totalMln}</span> млн ₽</span>
-                <span>из {totalMln} млн ₽</span>
-              </div>
-              <div class="investment-count">
-                <span><span data-puzzle-count>{pieces.length}</span> из {pieces.length} долей</span>
-                <span class="text-gold-plate" data-puzzle-percent>100%</span>
-              </div>
-              <div class="investment-progress" role="progressbar" aria-label="Объединение капитала" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-puzzle-progress>
-                <span data-puzzle-bar></span>
-              </div>
-              <p class="investment-phase" data-puzzle-phase>Сбор долей завершён · этап управления</p>
-            </div>
-
-            <div class="investment-visual">
-            <figure class="investment-board">
-              <figcaption>Логистический комплекс</figcaption>
-              <div class="investment-scene plat-outline">
-                <div class="investment-picture">
-                  <svg viewBox={`0 0 ${sceneWidth} ${sceneHeight}`} role="img" aria-label="Логистический комплекс: кран, контейнеры, грузовики и склад">
-                    <defs>
-                      <image id="investment-image" href={`${base}images/investment-puzzle.webp`} width={sceneWidth} height={sceneHeight} />
-                      <filter id="investment-monochrome" color-interpolation-filters="sRGB">
-                        <feColorMatrix type="saturate" values="0" />
-                      </filter>
-                      <mask id="investment-sky" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                        <path d={sky} fill="white" />
-                        {craneMetal.map((path) => <path d={path} fill="black" />)}
-                        <path d={craneCables} fill="none" stroke="black" stroke-width="2" />
-                      </mask>
-                      <mask id="investment-background-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                        <rect width={sceneWidth} height={sceneHeight} fill="white" />
-                        {foregroundPieces.map(({ path }) => <path d={path} fill="black" />)}
-                      </mask>
-                      <mask id="investment-crane-occlusion" maskUnits="userSpaceOnUse" x="0" y="0" width={sceneWidth} height={sceneHeight}>
-                        <rect width={sceneWidth} height={sceneHeight} fill="white" />
-                        <path d={pieces[1].path} fill="black" />
-                      </mask>
-                      {pieces.map(({ id, path }) => (
-                        <clipPath id={`investment-piece-${id}`}><path d={path} /></clipPath>
-                      ))}
-                    </defs>
-  
-                    <g class="investment-animated-art">
-                      <use href="#investment-image" filter="url(#investment-monochrome)" />
-                      <use data-puzzle-sky href="#investment-image" mask="url(#investment-sky)" />
-                      {pieces.map(({ id }, index) => (
-                        <g data-puzzle-reveal opacity="0" mask={occlusion(index)}>
-                          <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
-                        </g>
-                      ))}
-                      {pieces.map(({ id, path, amount, center }, index) => (
-                        <g data-puzzle-flight display="none">
-                          <g mask={occlusion(index)}>
-                            <use href="#investment-image" clip-path={`url(#investment-piece-${id})`} />
-                            <path d={path} fill="none" stroke="#e1bf80" stroke-width="3" stroke-linejoin="round" />
-                          </g>
-                          <text x={center[0]} y={center[1]} text-anchor="middle" dominant-baseline="central" class="investment-flight-label" data-piece={id}>+{amount} млн ₽</text>
-                        </g>
-                      ))}
-                    </g>
-                    <use data-puzzle-final href="#investment-image" />
-                  </svg>
-                  <button class="investment-replay" type="button" data-puzzle-replay aria-label="Собрать пазл ещё раз">
-                    <span>Собрать ещё раз</span>
-                  </button>
-                </div>
-              </div>
-              <p class="investment-disclaimer-terms">Форма участия, имущественные права и условия получения дохода определяются индивидуально для каждого проекта</p>
-            </figure>
-
-            <div class="investment-directions plat-outline">
-              <span class="plat-card-heading">Арендаторы</span>
-              <span class="plat-card-heading">Согласования</span>
-              <span class="plat-card-heading">Подрядчики</span>
-              <span class="plat-card-heading">Инфраструктура</span>
-              <picture class="plat-outline">
-                <source media="(min-width: 1024px)" srcset={`${base}images/investment-puzzle/bridge-desktop.svg`} width="58" height="25" />
-                <img src={`${base}images/investment-puzzle/bridge-mobile.svg`} width="48" height="22" alt="" />
-              </picture>
-            </div>
-
-            </div>
-
-            <div class="investment-disclaimer">
-              <p><span class="investment-disclaimer-desktop">Представлена условная модель объединения капитала и формирования долей объекта. Демонстрация не является сбором средств или предложением участия в конкретном проекте. Все суммы, параметры и изображение объекта приведены исключительно для иллюстрации</span><span class="investment-disclaimer-mobile">Демонстрация принципа, не сбор средств и не предложение конкретного проекта. Суммы условные. Изображение — концепция</span></p>
-            </div>
-          </div>
-        </div>
-      </div>
+<section
+  id="asset"
+  class="asset relative"
+  data-asset
+  data-total={demo.totalMln}
+  data-model={`${base}models/puzzle.glb`}
+  data-photo={`${base}images/puzzle-photo.webp`}
+  style="height: calc(var(--stage-h, 100svh) * 2.6);"
+>
+  <div data-stage class="sticky top-0 overflow-hidden bg-canvas" style="height: var(--stage-h, 100svh);">
+    {/* Запасная/«постер» картинка: до загрузки сцены тусклая, в статичном режиме — яркая */}
+    <img
+      src={`${base}images/puzzle-photo.webp`}
+      alt="Коммерческий объект"
+      width="1280"
+      height="853"
+      class="asset-fallback absolute inset-0 size-full object-cover opacity-30"
+    />
+    {/* ПК: сцена на весь блок (пазл справа). Three.js добавит сюда canvas и подписи на деталях */}
+    <div data-canvas data-mode="bleed" class="absolute inset-0 hidden xl:block"></div>
+    {/* Затемнение под текст на ПК (слева); на мобильном пазл в своей области, затемнение не нужно */}
+    <div
+      class="pointer-events-none absolute inset-0 hidden xl:block"
+      style="background: linear-gradient(90deg, rgba(10,32,25,0.94) 0%, rgba(10,32,25,0.72) 34%, rgba(10,32,25,0) 62%);"
+    >
     </div>
-    <div class="investment-scroll-space" aria-hidden="true"></div>
+
+    <div class="container-page relative z-10 flex h-full flex-col justify-between gap-6 pb-5 pt-[92px] md:pt-[118px] lg:gap-10 lg:pb-10">
+      {/* Текст */}
+      <div class="flex max-w-[640px] flex-col items-start gap-4 md:gap-6">
+        <div class="flex items-center gap-2.5">
+          <span class="h-px w-5 shrink-0 bg-gold-line"></span>
+          <span class="text-eyebrow text-gold-plate">Инвестиции в недвижимость</span>
+        </div>
+
+        <h2 class="text-h2">
+          <span class="block text-fg-dim">Крупный актив —</span>
+          <span class="block text-gold-plate">по силам частному инвестору</span>
+        </h2>
+
+        <div class="flex max-w-[500px] flex-col gap-2 font-accent text-sm leading-[1.4] text-fg-dim md:gap-1 md:text-xl md:leading-[1.3]">
+          <p>
+            Фидента объединяет средства нескольких инвесторов в один пул, и вместе они получают доступ к объектам,
+            которые были бы недоступны каждому по отдельности.
+          </p>
+          <p>
+            Каждый инвестор владеет долей в объекте и получает доход — без необходимости приобретать объект целиком.
+          </p>
+        </div>
+
+        <Button variant="outline-lg" block href="#cta" data-cta-audience="investor" class="mt-2 md:mt-8">Узнать больше об участии</Button>
+      </div>
+
+      {/* МОБИЛЬНЫЙ/ПЛАНШЕТ: отдельная область для пазла между текстом и счётчиком
+           (раньше пазл был фоном на весь экран и наезжал на кнопку). С xl (1280+) скрыта: на 1024–1279 пазл справа наезжал на текст, поэтому там тоже отдельная область. */}
+      <div data-canvas data-mode="box" class="relative -mx-6 my-1 min-h-[min(72vw,330px)] flex-1 xl:hidden"></div>
+
+      {/* Счётчик сборки (демо) */}
+      <aside class="max-w-[360px] font-accent" aria-live="off">
+        <span data-phase class="text-xs uppercase tracking-[0.14em] text-gold-plate md:text-sm">01 / Отдельные доли</span>
+        <div class="mt-1 flex items-baseline gap-2">
+          <span data-amount class="text-3xl leading-none text-fg md:text-5xl">0</span>
+          <span class="text-base text-fg-dim md:text-xl">млн ₽</span>
+        </div>
+        <div class="mt-2 h-[3px] w-full overflow-hidden rounded-full bg-[rgba(244,241,234,0.14)]">
+          <div data-bar class="h-full w-0 rounded-full bg-gold-line"></div>
+        </div>
+        <p class="mt-2 text-sm text-fg-dim md:text-base">
+          из <span data-total-text>{demo.totalMln}</span> млн ₽ · <span data-percent>0</span>%
+        </p>
+        <p class="mt-1 text-[11px] uppercase tracking-[0.1em] text-muted/80 md:text-xs">
+          Демонстрация механики, не текущий сбор
+        </p>
+      </aside>
+    </div>
   </div>
 </section>
 
 <script>
-  import { initInvestmentPuzzle } from '../../scripts/puzzle-scene';
+  const sec = document.querySelector<HTMLElement>('[data-asset]');
+  if (sec) init(sec);
 
-  document.querySelectorAll<HTMLElement>('[data-investment-puzzle]').forEach(initInvestmentPuzzle);
+  function init(sec: HTMLElement) {
+    const stage = sec.querySelector<HTMLElement>('[data-stage]')!;
+    const boxes = [...sec.querySelectorAll<HTMLElement>('[data-canvas]')];
+    // активный контейнер: на ПК — «bleed» (весь блок), иначе — «box» (область между текстом и счётчиком)
+    const desktop = matchMedia('(min-width: 1280px)');
+    const pickBox = () => boxes.find((b) => b.dataset.mode === (desktop.matches ? 'bleed' : 'box'))!;
+    const total = Number(sec.dataset.total ?? 120);
+    const ui = {
+      phase: sec.querySelector<HTMLElement>('[data-phase]')!,
+      amount: sec.querySelector<HTMLElement>('[data-amount]')!,
+      bar: sec.querySelector<HTMLElement>('[data-bar]')!,
+      percent: sec.querySelector<HTMLElement>('[data-percent]')!,
+    };
+    const fmt = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 });
+
+    // --- Высота сцены при CSS zoom (vh/svh на больших экранах «врут»; см. шапку файла) ---
+    const zoom = () => parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+    function setStageHeight() {
+      const z = zoom();
+      if (z !== 1) sec.style.setProperty('--stage-h', innerHeight / z + 'px');
+      else sec.style.removeProperty('--stage-h');
+    }
+    setStageHeight();
+    addEventListener('resize', setStageHeight);
+
+    // --- Счётчик/шкала/фаза от прогресса ---
+    function updateUI(p: number) {
+      const pct = Math.round(p * 100);
+      ui.percent.textContent = String(pct);
+      ui.amount.textContent = fmt.format(total * p);
+      ui.bar.style.width = pct + '%';
+      ui.phase.textContent = p < 0.15 ? '01 / Отдельные доли' : p < 0.92 ? '02 / Собираем объект' : '03 / Единый актив';
+    }
+
+    // --- Прогресс = положение скролла внутри секции (0 — вход, 1 — выход из «залипания») ---
+    function scrollProgress() {
+      const r = sec.getBoundingClientRect();
+      const s = stage.getBoundingClientRect();
+      const range = r.height - s.height;
+      return range > 0 ? Math.min(1, Math.max(0, -r.top / range)) : 0;
+    }
+
+    // --- Статичный режим (reduced motion / нет WebGL): картинка + 100% ---
+    function makeStatic() {
+      sec.style.height = 'auto';
+      stage.style.position = 'relative';
+      stage.style.height = 'auto';
+      stage.style.minHeight = '100svh';
+      sec.querySelector<HTMLElement>('.asset-fallback')!.style.opacity = '0.55';
+      updateUI(1);
+    }
+
+    const hasWebGL = (() => {
+      try {
+        const c = document.createElement('canvas');
+        return !!(c.getContext('webgl2') || c.getContext('webgl'));
+      } catch {
+        return false;
+      }
+    })();
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    updateUI(0);
+    if (reduced || !hasWebGL) {
+      makeStatic();
+      return;
+    }
+
+    // --- Ленивая загрузка тяжёлой сцены: когда секция подъезжает к экрану ---
+    let started = false;
+    const loader = new IntersectionObserver(
+      (entries) => {
+        if (started || !entries.some((e) => e.isIntersecting)) return;
+        started = true;
+        loader.disconnect();
+        start();
+      },
+      { rootMargin: '150% 0px' },
+    );
+    loader.observe(sec);
+    // Не ждём, пока блок подъедет: тяжёлая сцена (~3 МБ) начинает грузиться вскоре после загрузки страницы,
+    // иначе на медленной сети пазл долго показывается «постером» и выглядит неработающим.
+    const early = () => setTimeout(() => !started && ((started = true), loader.disconnect(), start()), 1500);
+    if (document.readyState === 'complete') early();
+    else addEventListener('load', early, { once: true });
+
+    async function start() {
+      try {
+        const { createPuzzleScene } = await import('../../scripts/puzzle-scene');
+        const scene = await createPuzzleScene({
+          container: pickBox(),
+          modelUrl: sec!.dataset.model!,
+          photoUrl: sec!.dataset.photo!,
+          totalMln: total,
+          reducedMotion: false,
+        });
+        sec!.querySelector<HTMLElement>('.asset-fallback')!.style.opacity = '0';
+        // поворот телефона/ресайз через breakpoint lg → переносим сцену в нужный контейнер
+        desktop.addEventListener('change', () => scene.setContainer(pickBox()));
+
+        let ticking = false;
+        const apply = () => {
+          ticking = false;
+          const p = scrollProgress();
+          scene.setProgress(p);
+          updateUI(p);
+        };
+        addEventListener(
+          'scroll',
+          () => {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(apply);
+            }
+          },
+          { passive: true },
+        );
+        apply();
+
+        // Рендерим только пока сцена в зоне видимости
+        new IntersectionObserver((es) => scene.setActive(es.some((e) => e.isIntersecting)), {
+          rootMargin: '10% 0px',
+        }).observe(stage);
+      } catch (err) {
+        console.error('[puzzle] не удалось запустить 3D, показываем картинку', err);
+        makeStatic();
+      }
+    }
+  }
 </script>
 
-<style>
-  .asset-puzzle {
-    --puzzle-background: var(--color-investment-surface);
-    --puzzle-edge: rgba(255, 241, 217, 0.6);
-    --investment-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
-    --investment-label-plat: linear-gradient(155deg, #d0bc97, #bfaa82);
-    padding-block: 20px 56px;
-    color: var(--color-fg);
-    background: linear-gradient(to bottom, var(--puzzle-background) calc(100% - 56px), color-mix(in srgb, var(--puzzle-background), var(--color-canvas)) calc(100% - 34px), var(--color-canvas)), var(--color-canvas);
-    position: relative;
-    font-family: var(--font-accent);
-    scroll-margin-top: 98px;
-    overflow-anchor: none;
-    zoom: calc(1 / var(--desktop-reference-zoom, 1));
-  }
-
-  .investment-viewport {
-    position: absolute;
-    width: 0;
-    height: 100svh;
-    visibility: hidden;
-  }
-
-  .investment-container {
-    width: calc(100% - 40px);
-    max-width: 1280px;
-    margin-inline: auto;
-  }
-
-  .investment-heading {
-    padding-top: 16px;
-    margin-bottom: 14px;
-  }
-
-  .investment-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: clamp(13px, 4.1vw, 16px);
-    font-family: var(--font-eyebrow);
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-  }
-
-  .investment-eyebrow::before {
-    content: '';
-    flex: 0 0 20px;
-    height: 1px;
-    background: var(--gradient-gold);
-  }
-
-  .investment-heading h2 {
-    --plat-text-fill: var(--gradient-plat-wide-heading);
-    margin-top: 7px;
-    zoom: 1;
-  }
-
-  .investment-heading h2 .text-gold-plate {
-    display: block;
-  }
-
-  .investment-disclaimer-desktop,
-  .investment-scroll-space {
-    display: none;
-  }
-
-  .investment-stage {
-    background: var(--puzzle-background);
-    scroll-margin-top: 88px;
-  }
-
-  .investment-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .investment-demo-track,
-  .investment-demo {
-    display: contents;
-  }
-
-  [data-puzzle-demo-marker],
-  .investment-replay {
-    display: none;
-  }
-
-  @media (width < 1024px) {
-    [data-puzzle-expanded] .investment-demo-track {
-      display: block;
-      grid-column: 1 / -1;
-    }
-
-    [data-puzzle-expanded] [data-puzzle-demo-marker] {
-      display: block;
-      height: 0;
-    }
-
-    [data-puzzle-expanded] .investment-demo {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      row-gap: 10px;
-      background: var(--puzzle-background);
-    }
-
-    [data-puzzle-expanded] .investment-demo > * {
-      grid-area: auto;
-    }
-  }
-
-  .investment-copy {
-    color: var(--color-copy);
-    font-size: 16px;
-    line-height: 1.23;
-  }
-
-  .investment-details p {
-    margin-top: 7px;
-    scroll-margin-top: 88px;
-  }
-
-  .investment-more {
-    display: none;
-    min-height: 36px;
-    padding: 0 8px 0 0;
-    align-items: center;
-    gap: 8px;
-    color: #d9bc83;
-    text-align: left;
-    cursor: pointer;
-    scroll-margin-top: 98px;
-  }
-
-  .investment-more:hover [data-puzzle-expand-label],
-  .investment-more:focus-visible [data-puzzle-expand-label] {
-    text-decoration: underline #b9a274;
-    text-underline-offset: 3px;
-  }
-
-  [data-puzzle-ready] .investment-more {
-    display: inline-flex;
-  }
-
-  [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-details {
-    display: none;
-  }
-
-  .investment-chevron {
-    width: 7px;
-    height: 7px;
-    border: solid currentColor;
-    border-width: 0 1px 1px 0;
-    transform: translateY(-2px) rotate(45deg);
-  }
-
-  [data-puzzle-expanded] .investment-chevron {
-    transform: translateY(2px) rotate(225deg);
-  }
-
-  .investment-capital {
-    display: grid;
-    align-content: center;
-    min-height: 120px;
-    padding: 12px 13px;
-    border: 1px solid rgba(217, 188, 131, 0.4);
-    border-radius: 9px;
-    background: var(--surface-90);
-  }
-
-  .investment-capital-label {
-    --plat-text-fill: var(--investment-label-plat);
-    font-size: clamp(16px, 4.4vw, 18px);
-    line-height: 1.15;
-  }
-
-  .investment-amount {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    justify-content: space-between;
-    margin-top: 10px;
-    line-height: 1.1;
-    white-space: nowrap;
-  }
-
-  .investment-amount > :first-child {
-    font-size: clamp(27px, 8.46vw, 36px);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .investment-amount > :last-child {
-    font-size: 18px;
-    color: var(--color-copy);
-  }
-
-  .investment-count {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 9px;
-    color: var(--color-copy);
-    font-size: 12px;
-  }
-
-  .investment-progress {
-    height: 5px;
-    margin-top: 9px;
-    overflow: hidden;
-    border-radius: 3px;
-    background: #404036;
-  }
-
-  .investment-progress span {
-    display: block;
-    height: 100%;
-    transform: scaleX(var(--investment-progress, 1));
-    transform-origin: left;
-    background: linear-gradient(177deg, rgb(247 234 212 / 87%) 25.714%, rgb(168 133 72 / 87%) 120.56%);
-  }
-
-  .investment-phase {
-    margin-top: 4px;
-    color: var(--color-copy);
-    font-size: 11px;
-  }
-
-  [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-end { display: none; }
-  .investment-visual { display: contents; }
-  .investment-picture { position: relative; }
-
-  .investment-board figcaption {
-    margin-bottom: 7px;
-    color: var(--color-copy);
-    font-size: clamp(9px, 2.55vw, 10px);
-    text-transform: uppercase;
-  }
-
-  .investment-scene {
-    padding: 5px 4px 7px;
-    border-radius: 9px;
-    background: var(--surface-90);
-  }
-
-  .investment-scene svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    border: 1px solid rgba(181, 156, 102, 0.64);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .investment-flight-label {
-    fill: #fff1d9;
-    stroke: #092219;
-    stroke-width: 8px;
-    stroke-linejoin: round;
-    paint-order: stroke;
-    font-size: 68px;
-  }
-
-  .investment-flight-label[data-piece="yard"] { font-size: 104px; }
-
-  @media (width < 640px) {
-    .investment-flight-label { font-size: 88px; }
-    .investment-flight-label[data-piece="yard"] { font-size: 118px; }
-  }
-
-  .investment-directions {
-    --plat-text-fill: var(--investment-label-plat);
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    grid-template-areas: 'tenants logo permits' 'contractors logo infrastructure';
-    align-items: center;
-    gap: 5px;
-    min-height: 78px;
-    padding: 9px 12px;
-    border-radius: 9px;
-    background: var(--surface-60);
-    color: #ebd6b0;
-    font-size: clamp(14px, 3.8vw, 16px);
-    line-height: 1.16;
-  }
-
-  .investment-directions span:nth-child(1) { grid-area: tenants; }
-  .investment-directions span:nth-child(2) { grid-area: permits; }
-  .investment-directions span:nth-child(3) { grid-area: contractors; }
-  .investment-directions span:nth-child(4) { grid-area: infrastructure; }
-  .investment-directions span:nth-child(even) { text-align: right; }
-
-  .investment-directions picture {
-    grid-area: logo;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    min-height: 45px;
-    border-radius: 9px;
-  }
-
-  .investment-disclaimer-terms { margin: 5px 4px 0; }
-
-  .investment-disclaimer-terms,
-  .investment-disclaimer {
-    color: var(--color-legal);
-    font-family: var(--font-legal);
-    font-size: 9.5px;
-    line-height: 1.3;
-  }
-
-  [data-puzzle-marker] {
-    height: 0;
-    scroll-margin-top: 88px;
-  }
-
-  @media (640px <= width < 1024px) {
-    .investment-container {
-      max-width: 680px;
-    }
-  }
-
-  @media (width < 1024px) and (max-height: 740px) {
-    .asset-puzzle { padding-top: 12px; }
-    .investment-heading { margin-bottom: 6px; padding-top: 5px; }
-    .investment-eyebrow { line-height: 1.12; }
-    .investment-heading h2 { margin-top: 5px; }
-    .investment-grid { gap: 7px; }
-    .investment-copy { font-size: 14px; line-height: 1.15; }
-    .investment-more { min-height: 32px; }
-    .investment-capital { min-height: 105px; padding-block: 8px; line-height: 1.1; }
-    .investment-amount { margin-top: 5px; }
-    .investment-amount > :first-child { font-size: clamp(25px, 7.5vw, 32px); }
-    .investment-amount > :last-child { font-size: 16px; }
-    .investment-count { font-size: 10px; }
-    .investment-count,
-    .investment-progress { margin-top: 4px; }
-    .investment-phase { font-size: 10px; }
-    .investment-board figcaption { margin-bottom: 4px; line-height: 1.12; }
-    .investment-scene { padding-block: 4px; }
-    .investment-directions { min-height: 50px; padding-block: 4px; }
-    .investment-directions picture { min-height: 34px; }
-    .investment-disclaimer-terms,
-    .investment-disclaimer { font-size: 9px; line-height: 1.25; }
-  }
-
-  @media (width < 640px) {
-    [data-puzzle-tight] .investment-heading { padding-top: 5px; margin-bottom: 6px; }
-    [data-puzzle-tight] .investment-grid { gap: 5px; }
-    [data-puzzle-tight] .investment-capital { padding-block: 8px; }
-    [data-puzzle-tight] .investment-board figcaption { margin-bottom: 4px; }
-    [data-puzzle-tight] .investment-scene { padding-block: 4px; }
-    [data-puzzle-tight] .investment-directions { min-height: 50px; padding-block: 4px; }
-
-    [data-puzzle-short] .investment-heading { margin-bottom: 5px; }
-    [data-puzzle-short] .investment-grid { gap: 4px; }
-    [data-puzzle-short] .investment-copy { font-size: 13px; }
-    [data-puzzle-short] .investment-more { min-height: 28px; }
-    [data-puzzle-short] .investment-directions { min-height: 40px; }
-  }
-
-  @media (640px <= width < 1024px) and (max-height: 550px) {
-    .investment-heading h2 .text-gold-plate { display: inline; }
-
-    .investment-grid {
-      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-      align-items: start;
-      gap: 6px 14px;
-    }
-
-    .investment-copy { grid-column: 1 / -1; }
-    .investment-copy > p { display: inline; }
-    .investment-more { min-height: 30px; }
-    .investment-capital { grid-area: 2 / 1 / 4; }
-
-    .investment-amount > :first-child {
-      font-size: clamp(22px, 4vw, 30px);
-    }
-
-    .investment-amount > :last-child {
-      font-size: 15px;
-    }
-
-    .investment-board { grid-area: 2 / 2; }
-    .investment-directions { grid-area: 3 / 2; min-height: 38px; }
-    .investment-disclaimer { grid-column: 1 / -1; }
-  }
-
-  @media (min-width: 1024px) {
-    .asset-puzzle {
-      padding-top: 48px;
-      scroll-margin-top: 112px;
-    }
-
-    .investment-container {
-      width: calc(100% - 2 * clamp(32px, 5.556%, 80px));
-    }
-
-    .investment-heading {
-      margin-bottom: clamp(26px, 3.3vw, 48px);
-      padding-top: 0;
-      border: 0;
-    }
-
-    .investment-heading h2 .text-gold-plate,
-    .investment-disclaimer-desktop {
-      display: inline;
-    }
-
-    .investment-disclaimer-terms {
-      margin-inline: 10px;
-      font-size: 10px;
-    }
-
-    .investment-disclaimer-mobile,
-    .investment-board figcaption {
-      display: none;
-    }
-
-    /* Keep the capital card aligned as the desktop text opens. */
-    [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-details {
-      display: block;
-      visibility: hidden;
-    }
-    .investment-copy { display: flex; flex-direction: column; align-items: flex-start; }
-    [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-more { order: -1; }
-    [data-puzzle-ready]:not([data-puzzle-expanded]) .investment-copy > p { order: -2; }
-    .investment-copy {
-      grid-area: 1 / 1;
-      font-size: clamp(16px, 1.05vw, 20px);
-      line-height: 1.3;
-    }
-
-
-
-    .investment-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 466fr) minmax(0, 800fr);
-      grid-template-rows: auto auto auto auto;
-      gap: 16px 14px;
-      align-items: start;
-      background: var(--puzzle-background);
-    }
-
-    .investment-capital {
-      grid-area: 2 / 1 / 4;
-      align-content: space-between;
-      align-self: end;
-      min-height: 212px;
-      padding: 20px;
-      border-color: var(--puzzle-edge);
-      background: var(--surface-90);
-    }
-
-    .investment-capital-label {
-      font-size: 20px;
-    }
-
-    .investment-amount > :first-child {
-      font-size: clamp(31px, 3.54vw, 51px);
-    }
-
-    .investment-amount > :last-child {
-      font-size: clamp(16px, 1.53vw, 22px);
-    }
-
-    .investment-count, .investment-phase {
-      font-size: 13px;
-    }
-
-    .investment-progress {
-      height: 6px;
-    }
-
-    .investment-visual {
-      grid-area: 1 / 2 / 4;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .investment-visual > .investment-directions { align-self: stretch; }
-    .investment-board {
-      width: 100%;
-      align-self: start;
-    }
-
-    .investment-scene {
-      padding: clamp(5px, 0.69vw, 10px);
-      padding-block: clamp(7px, 0.97vw, 14px) clamp(9px, 1.39vw, 20px);
-    }
-
-    .investment-scene svg {
-      border-radius: 9px;
-    }
-
-    .investment-directions {
-      grid-area: 3 / 2;
-      align-self: end;
-      grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
-      grid-template-areas: 'tenants permits logo contractors infrastructure';
-      min-height: 48px;
-      margin-top: 0;
-      padding: 7px clamp(10px, 1.87vw, 27px);
-      gap: clamp(4px, 0.69vw, 10px);
-      font-size: clamp(11px, 1.12vw, 16px);
-    }
-
-    .investment-directions span:nth-child(even) { text-align: left; }
-    .investment-directions span:nth-child(3) { text-align: right; }
-
-    .investment-directions span:nth-child(even)::before {
-      content: '·';
-      margin-right: 8px;
-    }
-
-    .investment-directions picture {
-      width: 58px;
-      min-height: 25px;
-    }
-
-    .investment-directions picture::after {
-      display: none;
-    }
-
-    .investment-disclaimer {
-      grid-area: 4 / 1 / 5 / -1;
-      margin-top: 0;
-      font-size: 10px;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    [data-puzzle-compact] .investment-heading {
-      margin-bottom: 20px;
-    }
-
-    [data-puzzle-compact] .investment-grid {
-      grid-template-rows: auto auto auto auto;
-      gap: 10px 14px;
-    }
-
-    [data-puzzle-compact] .investment-capital {
-      min-height: 170px;
-      padding-block: 12px;
-    }
-
-    [data-puzzle-compact] .investment-picture {
-      width: min(100%, calc(clamp(140px, var(--investment-room) - 260px, 350px) * 1880 / 836));
-      margin-inline: auto;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    [data-puzzle-ready] .investment-replay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
-      padding: clamp(6px, 0.8vw, 12px);
-      border-radius: inherit;
-      background: transparent;
-      cursor: pointer;
-    }
-
-    .investment-replay span {
-      padding: 4px 9px;
-      border: 1px solid rgb(211 203 184 / 28%);
-      border-radius: 9px;
-      background: rgb(6 27 21 / 82%);
-      color: #e2dac9;
-      font: clamp(13px, 1vw, 15px)/1.2 var(--font-accent);
-    }
-    .investment-replay:focus-visible span {
-      outline: 2px solid #ded6c5;
-      outline-offset: 2px;
-    }
-    @media (hover: hover) {
-      .investment-replay:hover span { background: rgb(6 27 21 / 94%); }
-    }
-
-    [data-puzzle-motion] .investment-scroll-space {
-      display: block;
-      height: var(--investment-scroll, 0px);
-    }
-
-    [data-puzzle-motion] [data-puzzle-pin] {
-      position: sticky;
-      top: var(--investment-pin, 0px);
-    }
-
-    [data-puzzle-demo-motion] .investment-demo-track::after {
-      display: block;
-      height: var(--investment-scroll, 0px);
-      content: '';
-    }
-
-    [data-puzzle-demo-motion] [data-puzzle-demo] {
-      position: sticky;
-      top: var(--investment-pin, 0px);
-    }
-
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .investment-animated-art {
-      display: none;
-    }
+<style is:global>
+  /* Подпись-«постер» плавно пропадает, когда включилась 3D-сцена */
+  .asset-fallback {
+    transition: opacity 0.6s ease;
   }
 </style>
