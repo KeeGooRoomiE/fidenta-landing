@@ -37,7 +37,7 @@ const copy = {
     eyebrow: 'Обратная связь',
     title: 'Покажем объекты, открытые для входа',
     accent: 'и подберём решение',
-    lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода',
+    lead: 'Обсудим вашу задачу. Если есть подходящий объект, пришлём карточку с адресом, сведениями об арендаторе, сроке договора и условиях выхода',
     steps: [
       'Позвоним по указанному номеру и уточним, какую сумму вы рассматриваете, на какой срок и как хотите участвовать в проекте',
       'Если есть подходящий объект, пришлём карточку с адресом, арендатором и основными условиями. Расскажем, какие документы необходимо изучить и какие расходы и риски стоит учесть',
@@ -50,8 +50,8 @@ const copy = {
   // ЧЕРНОВИК — см. примечание в шапке файла
   owner: {
     eyebrow: 'Обратная связь',
-    title: 'Передайте объект под управление',
-    accent: 'и обсудим его потенциал',
+    title: 'Передайте объект под управление,',
+    accent: 'а мы раскроем его потенциал',
     lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива',
     steps: [
       'Позвоним по указанному номеру. На первом разговоре достаточно адреса, площади и короткого описания того, что нужно сделать с объектом',
@@ -86,8 +86,8 @@ const copy = {
         <span data-t="lead">{copy.investor.lead}</span>{' '}
         <details class="cta-process">
           <summary class="cursor-pointer"><span class="text-gold-plate text-plat-dense">Читать далее</span> <span class="cta-chevron" aria-hidden="true"></span></summary>
-          <p class="mt-3 text-gold-plate md:text-xl">Как мы обрабатываем заявки</p>
-          <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-xl [&>li+li]:mt-2">
+          <p class="mt-3 text-base leading-tight text-fg/85">Как мы обрабатываем заявки</p>
+          <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-[17px] [&>li+li]:mt-2">
             {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
           </ul>
         </details>
@@ -153,7 +153,7 @@ const copy = {
 
       <p class="cta-note mt-2 font-accent text-sm leading-5 text-copy">
         <span class="lg:hidden">Телефон обязателен. Email и сообщение можно не заполнять</span>
-        <span class="hidden font-legal text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре</span>
+        <span class="hidden font-legal text-[13px] text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре</span>
       </p>
     </div>
   </div>
@@ -166,7 +166,7 @@ const copy = {
   .cta-chevron { display: inline-block; width: 8px; height: 8px; margin-inline: 4px; vertical-align: 0.16em; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
   .cta-process[open] .cta-chevron { rotate: 225deg; vertical-align: 0; }
   .cta-process ul { margin-top: 8px; }
-  .cta-submit :global(button) { width: 100%; min-height: 48px; height: auto; padding: 8px 12px; font-size: clamp(15px, 1.4vw, 20px); }
+  .cta-submit :global(button) { width: 100%; min-height: 48px; height: auto; padding: 8px 12px; font-size: 18px; }
   .cta-submit :global(summary) { height: 100%; }
   @media (width < 768px) {
     .cta-layout { gap: 36px; }

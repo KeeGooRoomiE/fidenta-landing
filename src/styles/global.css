@@ -87,8 +87,8 @@
   --gradient-plat-subtle: linear-gradient(155deg, var(--plat-text-midpoint), var(--plat-text-mid-dark));
   --gradient-plat-navigation: linear-gradient(108deg, var(--plat-text-midpoint) 16%, var(--plat-text-mid-dark) 102%);
   --gradient-plat-wide-heading: linear-gradient(162deg, var(--plat-text-midpoint) 9%, var(--plat-text-mid-dark) 92%);
-  --gradient-plat-button: linear-gradient(143deg, #cdbc9d 0%, #f2e5ca 34%, #dfceb0 59%, #b7a17b 100%);
-  --gradient-plat-contact-button: linear-gradient(143deg, #cebea1 0%, #f5e7cd 33%, #deccaa 58%, #b49c75 100%);
+  --gradient-plat-button: linear-gradient(143deg, #cdbc9d 0%, #eee1c7 34%, #dfceb0 59%, #b7a17b 100%);
+  --gradient-plat-contact-button: linear-gradient(143deg, #cebea1 0%, #efe2c8 33%, #deccaa 58%, #b49c75 100%);
   --gradient-plat-cta: linear-gradient(151deg, #c8ba9e 4%, #d8cbb0 33%, #cbbc9e 60%, #bba987 100%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
@@ -405,3 +405,24 @@
 @media (forced-colors: active) {
   .text-gold-plate { background: none; color: CanvasText; }
 }
+
+/* Shared typography for card headings and secondary actions. */
+.plat-card-heading {
+  color: #cec5b4;
+  font-family: var(--font-accent);
+  font-weight: 400;
+}
+.plat-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  background-color: var(--surface-40);
+  color: #cebea0;
+  font: 18px/1.15 var(--font-accent);
+  text-align: center;
+  cursor: pointer;
+}
+.plat-action:is(:hover, :focus-visible) { background-color: rgb(246 243 232 / 10%); }

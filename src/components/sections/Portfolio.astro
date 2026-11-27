@@ -11,19 +11,22 @@ const cover = (object: number) => `${base}images/objects/obj${object}-1.webp`;
 
 const objects = [
   {
-    id: 'autograd', title: 'Автосервис «Ауто Град»', photos: [photo('autograd-facade'), ...exterior(4, 6)],
+    id: 'autograd', title: 'Малярно-кузовной центр', photos: [photo('autograd-facade'), ...exterior(4, 6)],
     lead: 'В одном здании работают диагностические и ремонтные посты, а также малярно-кузовной центр',
-    facts: ['—', 'Кузовной ремонт', '—'],
+    facts: ['С 2024 года', 'Кузовной ремонт', 'Диагностика'],
+    labels: ['В управлении', 'Профиль', 'Также на объекте'],
+    extraFacts: [{ label: 'Работы', value: 'Диагностика и ремонт' }],
     story: [
       { title: 'Состояние объекта на старте', text: 'Проект автосервиса с кузовным ремонтом' },
       { title: 'Что мы сделали', text: 'Организовали диагностические и ремонтные посты в одном здании' },
-      { title: 'Результат', text: 'Автосервис «Ауто Град»\nДиагностика, ремонт и кузовные работы в одном здании' },
+      { title: 'Результат', text: 'Малярно-кузовной центр\nДиагностика, ремонт и кузовные работы в одном здании' },
     ],
   },
   {
     id: 'detailing', title: 'Детейлинг-центр', photos: [photo('detailing-facade'), ...exterior(4, 0)],
     lead: 'У центра своё помещение рядом с мойкой. После мойки машину можно передать мастерам на той же площадке',
     facts: ['С 2024 года', 'Детейлинг', 'Полная'],
+    extraFacts: [{ label: 'Размещение', value: 'Рядом с автомойкой' }],
     story: [
       { title: 'Состояние объекта на старте', text: 'Отдельное помещение рядом с моечными постами' },
       { title: 'Что мы сделали', text: 'Открыли детейлинг-центр на одной площадке с мойкой' },
@@ -31,7 +34,7 @@ const objects = [
     ],
   },
   {
-    id: 'wash', title: 'Автомойка', photos: [cover(2), ...exterior(3, 2), photo('disk-3-0')],
+    id: 'wash', title: 'Автомойка', photos: [...exterior(3, 2), cover(2), photo('disk-3-0')],
     lead: 'На одной площадке можно вымыть машину и оставить её на детейлинг. Все три помещения заняты',
     facts: ['С 2024 года', 'Автомойка', 'Полная'],
     extraFacts: [{ label: 'Помещения', value: '3' }, { label: 'Формат', value: 'Субаренда' }],
@@ -42,7 +45,7 @@ const objects = [
     ],
   },
   {
-    id: 'park-five', title: 'Автосервис «Парк 5»', photos: [cover(1), ...exterior(7, 0), `${base}images/objects/obj1-2.webp`],
+    id: 'park-five', title: 'Автосервис с ремонтными постами', photos: [cover(1), ...exterior(7, 0), `${base}images/objects/obj1-2.webp`],
     lead: 'В 2022 году мы построили отдельное здание под автосервис. Теперь все помещения заняты',
     facts: ['С 2022 года', 'Автосервис', 'Полная'],
     story: [
@@ -64,7 +67,7 @@ const objects = [
   },
   {
     id: 'bogatyrsky', title: 'Автомобильный комплекс', storyTitle: 'Объект на Богатырском',
-    photos: [cover(3), ...exterior(2, 12)],
+    photos: [...exterior(2, 12), cover(3)],
     lead: 'На Богатырском мы полностью реконструировали автоцентр — от внутренних помещений до территории вокруг здания. Уже в 2022 году все помещения были сданы',
     facts: ['С 2022 года', 'Автоцентр', 'Полная'],
     story: [
@@ -107,7 +110,8 @@ const objects = [
   {
     id: 'cnc', title: 'ЧПУ-мастерская в Кудрово', photos: [photo('production-3'), ...exterior(5, 7)],
     lead: 'Между двумя корпусами швейного цеха мы построили мастерскую на арендованной земле. Здесь работают станки с числовым программным управлением',
-    facts: ['—', 'ЧПУ-мастерская', '—'],
+    facts: ['Кудрово', 'ЧПУ-мастерская', 'В аренде'],
+    labels: ['Расположение', 'Профиль', 'Земля'],
     story: [
       { title: 'Состояние объекта на старте', text: 'Арендованная земля на производственной площадке' },
       { title: 'Что мы сделали', text: 'Построили корпус между двумя зданиями швейного цеха' },
@@ -117,7 +121,7 @@ const objects = [
 ];
 const featuredObjects = objects.slice(0, 6);
 const desktopOnlyObjects = featuredObjects.slice(2);
-const additionalObjects = [...objects.slice(featuredObjects.length), ...desktopOnlyObjects];
+const additionalObjects = [desktopOnlyObjects[0], ...objects.slice(featuredObjects.length), ...desktopOnlyObjects.slice(1)];
 ---
 
 <Section id="portfolio">
@@ -139,7 +143,7 @@ const additionalObjects = [...objects.slice(featuredObjects.length), ...desktopO
   </div>
 
   <div class="mt-8 flex justify-center" data-portfolio-more>
-    <button class="portfolio-toggle plat-outline text-plat-dense" type="button" aria-controls="portfolio-more" aria-expanded="false"><span class="text-gold-plate">Показать ещё объекты</span></button>
+    <button class="portfolio-toggle plat-outline plat-action" type="button" aria-controls="portfolio-more" aria-expanded="false"><span>Показать ещё объекты</span></button>
   </div>
 
   <div class="mt-8" id="portfolio-more" hidden>
@@ -171,8 +175,8 @@ const additionalObjects = [...objects.slice(featuredObjects.length), ...desktopO
     </div>
     <input class="object-position" type="range" min="0" max="1" value="0" aria-label="Позиция в галерее объектов" data-track-position />
     <div class="mt-4 flex justify-center">
-      <button type="button" class="portfolio-toggle plat-outline text-plat-dense" aria-controls="portfolio-more" data-portfolio-close>
-        <span class="text-gold-plate">Скрыть дополнительные объекты</span>
+      <button type="button" class="portfolio-toggle plat-outline plat-action" aria-controls="portfolio-more" data-portfolio-close>
+        <span>Скрыть дополнительные объекты</span>
       </button>
     </div>
   </div>
@@ -193,20 +197,16 @@ const additionalObjects = [...objects.slice(featuredObjects.length), ...desktopO
   }
   .portfolio-title-accent { --plat-text-fill: var(--gradient-plat-heading); }
 
-  .portfolio-toggle {
-    width: min(100%, 300px);
-    height: 48px;
-    padding-inline: 10px;
-    border-radius: 9px;
-    font: 18px/1.15 var(--font-accent);
-  }
-
-  .portfolio-toggle:hover {
-    background: rgb(246 243 232 / 10%);
-  }
+  .portfolio-toggle { width: min(100%, 300px); }
 
   .object-grid > :global(article:nth-child(n + 3)) {
     display: none;
+  }
+
+  @media (min-width: 1024px) {
+    :global(main:has([data-puzzle-motion]) #portfolio > .container-page) {
+      top: calc(var(--portfolio-puzzle-offset, 0px) + 20px);
+    }
   }
 
   .object-track {

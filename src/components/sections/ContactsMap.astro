@@ -94,7 +94,7 @@ const info = [
       <div class="flex flex-col gap-5 lg:col-start-1 lg:row-start-2 lg:gap-6">
         <div class="flex flex-col gap-1.5 lg:gap-2">
           <span class="h-px w-full bg-gold-line"></span>
-          <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">Контакты</span>
+          <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] plat-card-heading lg:text-sm">Контакты</span>
           <div class="grid gap-1 font-accent text-sm leading-snug text-copy lg:text-lg">
             <p>Адрес: {office.full}</p>
             <p>Номер телефона: <a href={phones.header.href} class="hover:underline">{phones.header.text}</a></p>
@@ -104,7 +104,7 @@ const info = [
         {info.map((block) => (
           <div class="flex flex-col gap-1.5 lg:gap-2">
             <span class="h-px w-full bg-gold-line"></span>
-            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] text-gold-plate lg:text-sm">{block.label}</span>
+            <span class="font-accent text-xs uppercase leading-5 tracking-[0.09em] plat-card-heading lg:text-sm">{block.label}</span>
             <div class="font-accent text-sm leading-snug text-copy lg:text-lg lg:leading-7">
               {block.lines.map((line) => <p>{line}</p>)}
             </div>

@@ -70,7 +70,7 @@ const extraQuestions = [
         ))}
       </div>
 
-      <button type="button" class="faq-more text-gold-plate text-plat-dense w-fit" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
+      <button type="button" class="faq-more plat-action plat-outline" data-faq-more aria-expanded="false">Показать ещё вопросы</button>
     </div>
 
 
@@ -80,7 +80,7 @@ const extraQuestions = [
 <style>
   .faq-section { background: #071f18; }
   .faq-layout { grid-template-areas: 'intro' 'list' 'contact'; }
-  .faq-more { display: grid; place-items: center; min-height: 48px; font: clamp(16px, 1.45vw, 21px) var(--font-accent); justify-self: center; align-self: end; cursor: pointer; }
+  .faq-more { width: min(100%, 300px); justify-self: center; align-self: end; cursor: pointer; }
   .faq-sidebar { display: contents; }
   .faq-list { grid-area: list; display: grid; gap: 16px; }
   .faq-layout { reading-flow: grid-rows; }

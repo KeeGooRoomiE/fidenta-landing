@@ -4,6 +4,7 @@ interface Props {
   lead: string;
   photos: string[];
   facts?: string[];
+  labels?: string[];
   extraFacts?: { label: string; value: string }[];
   story?: { title: string; text: string }[];
   storyTitle?: string;
@@ -12,8 +13,7 @@ interface Props {
   projectHref?: string;
 }
 
-const { title, lead, photos, facts = [], extraFacts = [], story = [], storyTitle = title, id, class: className, projectHref } = Astro.props;
-const factLabels = ['В управлении', 'Профиль', 'Заполняемость'];
+const { title, lead, photos, facts = [], labels: factLabels = ['В управлении', 'Профиль', 'Заполняемость'], extraFacts = [], story = [], storyTitle = title, id, class: className, projectHref } = Astro.props;
 const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text-xl leading-tight hover:underline';
 ---
 
@@ -56,23 +56,17 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
         <p class="mt-2 text-base leading-snug text-copy">{lead}</p>
       </div>
       {!projectHref && <div class="object-facts border-t border-cream/20 pt-3">
-        <div class="fact-pages" data-fact-pages>
-          {[factLabels.map((label, index) => ({ label, value: facts[index] })), ...(extraFacts.length ? [extraFacts] : [])].map(page => (
-            <dl class="fact-page grid grid-cols-3 gap-2">
-              {page.map(({ label, value }) => <div>
-                <dt class="text-[11px] leading-tight text-copy">{label}</dt>
-                <dd class="mt-1 text-base leading-tight text-copy">{value}</dd>
-              </div>)}
-            </dl>
+        <dl class:list={['fact-strip', extraFacts.length > 0 && 'fact-strip--scroll']} tabindex="0" aria-label={`Показатели: ${title}`}>
+          {[...factLabels.map((label, index) => ({ label, value: facts[index] })), ...extraFacts].map(({ label, value }) => (
+            <div><dt class="text-[11px] leading-tight text-copy">{label}</dt>
+              <dd class="mt-1 text-base leading-tight text-copy">{value}</dd></div>
           ))}
-        </div>
-        {extraFacts.length > 0 && <input class="fact-slider" type="range" min="1" max="2" value="1" data-fact-slider
-          aria-label={`Страница показателей — ${title}`} aria-valuetext="Основные показатели, 1 из 2" />}
+        </dl>
       </div>}
       {projectHref ? (
         <a href={projectHref} class:list={[ctaClass, 'border-cream/20']}><span class="text-gold-plate">Обсудить проект <span aria-hidden="true">→</span></span></a>
       ) : (
-        <button type="button" class:list={[ctaClass, 'border-cream/20']} data-object-open aria-controls={id} aria-expanded="false"><span class="text-gold-plate text-plat-dense">Подробнее об объекте <span aria-hidden="true">→</span></span></button>
+        <button type="button" class:list={[ctaClass, 'border-cream/20']} data-object-open aria-controls={id} aria-expanded="false"><span class="object-detail-label">Подробнее об объекте <span aria-hidden="true">→</span></span></button>
       )}
     </div>
   </div>
@@ -145,29 +139,25 @@ const ctaClass = 'flex min-h-11 w-full items-center border-t pt-3 text-left text
     background: linear-gradient(180deg, rgb(10 28 70 / 15%), rgb(10 28 70 / 7%) 60%, rgb(10 28 70 / 12%)), rgb(13 29 56 / 21%);
   }
 
-  .fact-pages {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 100%;
+  .fact-strip {
+    gap: 8px;
+    display: flex;
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
   }
-  .fact-page { scroll-snap-align: start; }
-  .fact-slider {
-    width: 68px;
-    height: 24px;
-    display: block;
-    margin: 2px auto 0;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
-  }
-  .fact-slider::-webkit-slider-runnable-track { height: 2px; background: #586151; }
-  .fact-slider::-moz-range-track { height: 2px; background: #586151; }
-  .fact-slider::-webkit-slider-thumb { appearance: none; width: 22px; height: 6px; margin-top: -2px; border-radius: 9px; background: #c6b695; }
-  .fact-slider::-moz-range-thumb { width: 22px; height: 6px; border: 0; border-radius: 9px; background: #c6b695; }
+  .fact-strip > div { flex: 1 0 max-content; white-space: nowrap; scroll-snap-align: start; }
+  .fact-strip--scroll > div { min-width: max-content; flex: 0 0 29%; scroll-snap-align: start; }
+  .fact-strip dt { font-family: var(--font-legal); }
+  .fact-strip dd { color: #d2d4cf; }
+  .object-facts, [data-object-open] { border-color: rgb(191 178 151 / 42%); }
+  .fact-strip--scroll { cursor: grab; }
+  .fact-strip[data-dragging] { scroll-snap-type: none; user-select: none; cursor: grabbing; }
+  .fact-strip:focus-visible { outline: 1px solid #ab9c81; outline-offset: 2px; }
+  .object-detail-label { color: #cebea0; }
+  [data-object-card]:has(#wash) [data-slide]:first-child,
+  [data-object-card]:has(#detailing) [data-slide]:first-child { object-position: center 56%; }
   .object-facts { min-block-size: var(--facts-height, 0px); align-content: start; }
   .card-content {
     container-type: inline-size;

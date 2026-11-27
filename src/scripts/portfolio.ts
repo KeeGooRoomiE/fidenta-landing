@@ -32,21 +32,22 @@ export function initPortfolio(root: HTMLElement) {
     });
   }
 
-  for (const slider of root.querySelectorAll<HTMLInputElement>('[data-fact-slider]')) {
-    const pages = slider.parentElement!.querySelector<HTMLElement>('[data-fact-pages]')!;
-    function describePage() {
-      slider.setAttribute('aria-valuetext', slider.value === '1'
-        ? 'Основные показатели, 1 из 2' : 'Дополнительные показатели, 2 из 2');
-    }
-    slider.addEventListener('input', () => {
-      pages.scrollTo({ left: (slider.valueAsNumber - 1) * pages.clientWidth, behavior: 'instant' });
-      describePage();
+  for (const strip of root.querySelectorAll<HTMLElement>('.fact-strip')) {
+    let startX = 0;
+    let startScroll = 0;
+    strip.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'mouse' || event.button !== 0 || strip.scrollWidth <= strip.clientWidth) return;
+      startX = event.clientX;
+      startScroll = strip.scrollLeft;
+      strip.setAttribute('data-dragging', '');
+      strip.setPointerCapture(event.pointerId);
+      event.preventDefault();
+      strip.focus({ preventScroll: true });
     });
-    pages.addEventListener('scroll', () => {
-      if (!pages.clientWidth) return;
-      slider.value = String(1 + Math.round(pages.scrollLeft / pages.clientWidth));
-      describePage();
-    }, { passive: true });
+    strip.addEventListener('pointermove', event => {
+      if (strip.hasPointerCapture(event.pointerId)) strip.scrollLeft = startScroll + startX - event.clientX;
+    });
+    strip.addEventListener('lostpointercapture', () => strip.removeAttribute('data-dragging'));
   }
 
   for (const gallery of root.querySelectorAll<HTMLElement>('[data-gallery]')) {

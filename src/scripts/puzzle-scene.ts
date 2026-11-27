@@ -33,10 +33,11 @@ export function initInvestmentPuzzle(root: HTMLElement) {
   // Отдельный финальный отрезок убирает стыки масок и показывает оригинал.
   const leadIn = 0.3;
   const slot = 1;
-  const flightTime = 0.72;
-  const revealTime = 0.24;
+  const flightTime = 0.54;
+  const labelHold = 0.22;
+  const revealTime = 0.20;
   const finishTime = 0.65;
-  const finishStarts = leadIn + (pieces.length - 1) * slot + flightTime + revealTime;
+  const finishStarts = leadIn + (pieces.length - 1) * slot + flightTime + labelHold + revealTime;
   const duration = finishStarts + finishTime;
   const replayDuration = 10_000;
   const ease = (p: number) => 1 - (1 - clamp(p)) ** 3;
@@ -73,7 +74,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
       if (event.detail === 0) firstDetail.focus({ preventScroll: true });
       const detailTop = firstDetail.getBoundingClientRect().top + scrollY;
       const headerBottom = header?.getBoundingClientRect().bottom ?? 0;
-      window.scrollTo({ top: detailTop - headerBottom - 12, behavior: 'instant' });
+      if (!desktop.matches) window.scrollTo({ top: detailTop - headerBottom - 12, behavior: 'instant' });
     }
     update();
   });
@@ -103,8 +104,8 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     pieces.forEach(({ center, enter }, index) => {
       const elapsed = time - leadIn - index * slot;
       const arrival = elapsed - flightTime;
-      const isFlying = elapsed >= 0 && arrival < revealTime;
-      const reveal = clamp(arrival / revealTime);
+      const isFlying = elapsed >= 0 && arrival < labelHold + revealTime;
+      const reveal = clamp((arrival - labelHold) / revealTime);
       if (arrival >= 0) landed++;
       reveals[index].setAttribute('opacity', String(reveal));
       flights[index].setAttribute('display', isFlying ? 'inline' : 'none');
@@ -218,7 +219,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     portfolioScale = 0;
     portfolio?.style.removeProperty('--portfolio-puzzle-offset');
     const wide = desktop.matches;
-    const reading = !wide && expand.getAttribute('aria-expanded') === 'true';
+    const demoOnly = !phone.matches && !wide && expand.getAttribute('aria-expanded') === 'true';
     if (reducedMotion.matches) {
       stopReplay();
       travel = 0;
@@ -235,7 +236,7 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     if (released) return;
     root.removeAttribute('data-puzzle-tight');
 
-    const stage = reading ? demo : pin;
+    const stage = demoOnly ? demo : pin;
     const bounds = stage.getBoundingClientRect();
     // getBoundingClientRect учитывает масштаб страницы, а CSS top задаётся в локальных пикселях.
     const scale = stage.offsetWidth ? bounds.width / stage.offsetWidth : 1;
@@ -248,31 +249,31 @@ export function initInvestmentPuzzle(root: HTMLElement) {
     const room = availableHeight / scale;
     root.style.setProperty('--investment-room', `${Math.round(room)}px`);
     root.toggleAttribute('data-puzzle-compact', wide && room < 670);
-    root.toggleAttribute('data-puzzle-short', !wide && !reading && room < 565);
+    root.toggleAttribute('data-puzzle-short', !wide && !demoOnly && room < 565);
     if (stage.getBoundingClientRect().height > availableHeight) {
-      root.toggleAttribute('data-puzzle-tight', phone.matches && !reading);
-      if (stage.getBoundingClientRect().height > availableHeight) {
+      root.toggleAttribute('data-puzzle-tight', phone.matches && !demoOnly);
+      if (!phone.matches && stage.getBoundingClientRect().height > availableHeight) {
         // На низких экранах сцена проходит под шапкой вместе со страницей.
         root.removeAttribute('data-puzzle-tight');
         root.removeAttribute('data-puzzle-motion');
         root.removeAttribute('data-puzzle-demo-motion');
-        progressAnchor = reading ? demoMarker : photo;
-        progressStart = reading ? availableTop : viewportHeight - 24;
-        travel = Math.max(1, reading ? availableHeight * 0.65 : progressStart - availableTop);
+        progressAnchor = demoOnly ? demoMarker : photo;
+        progressStart = demoOnly ? availableTop : viewportHeight - 24;
+        travel = Math.max(1, demoOnly ? availableHeight * 0.65 : progressStart - availableTop);
         if (sync) update();
         return;
       }
     }
-    progressAnchor = reading ? demoMarker : marker;
+    progressAnchor = demoOnly ? demoMarker : marker;
     progressStart = availableTop;
     // A taller free area under the pinned scene needs a shorter handoff to the next section.
     const freeSpace = Math.max(0, availableHeight - stage.getBoundingClientRect().height);
     travel = Math.max(viewportHeight * 0.55, viewportHeight * (wide ? 0.95 : 1.55) - freeSpace);
     root.style.setProperty('--investment-pin', `${availableTop / scale}px`);
     root.style.setProperty('--investment-scroll', `${travel / scale}px`);
-    root.toggleAttribute('data-puzzle-motion', !reading);
-    root.toggleAttribute('data-puzzle-demo-motion', reading);
-    if (!reading && portfolio && portfolio.offsetWidth && freeSpace >= (wide ? 34 : 68)) {
+    root.toggleAttribute('data-puzzle-motion', !demoOnly);
+    root.toggleAttribute('data-puzzle-demo-motion', demoOnly);
+    if (!demoOnly && portfolio && portfolio.offsetWidth && freeSpace >= (wide ? 34 : 68)) {
       portfolioScale = portfolio.getBoundingClientRect().width / portfolio.offsetWidth;
     }
     if (sync) update();

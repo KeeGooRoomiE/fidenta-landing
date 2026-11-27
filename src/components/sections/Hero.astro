@@ -7,7 +7,7 @@ const cards = [
   },
   {
     title: 'Что делает Фидента',
-    description: 'Аудит, подбор, организация, развитие и управление объектом, аналитика, платежи, расчёты и документы',
+    description: 'Подбираем объект, оцениваем затраты, организуем работы и ведём расчёты с арендаторами',
   },
 ];
 ---
@@ -35,31 +35,30 @@ const cards = [
       </h1>
 
       <p class="hero-intro">
-        <span>Помогаем инвесторам выбрать объект, оценить расходы и понять условия участия</span>
-        <span>Собственникам — найти арендаторов и организовать обслуживание здания</span>
+        <span><span>Помогаем инвесторам</span> <span>выбрать объект</span> <span>и оценить расходы до сделки</span></span>
+        <span><span>Собственникам — найти арендаторов</span> <span>и организовать обслуживание здания</span></span>
       </p>
     </div>
 
     <div class="hero-actions">
-      <a href="#cta" data-cta-audience="investor" class="hero-btn hero-btn--primary">Обсудить инвестиции</a>
+      <a href="#cta" data-cta-audience="investor" aria-describedby="hero-project-note" class="hero-btn hero-btn--primary">Обсудить инвестиции</a>
       <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary plat-outline"><span class="text-fg">Я собственник</span></a>
     </div>
+
+    <p class="hero-project-note" id="hero-project-note">Если есть подходящий объект, пришлём карточку с адресом, арендатором и условиями участия</p>
 
     <ul class="hero-cards">
       {cards.map(({ title, description }) => (
         <li class="plat-outline hero-card">
-          <h2 class="text-gold-plate">{title}</h2>
+          <h2 class="plat-card-heading">{title}</h2>
           <p>{description}</p>
         </li>
       ))}
       <li class="plat-outline hero-card hero-news">
         <a href="https://t.me/fidenta" aria-label="Открыть канал «Архитектура капитала» компании Фидента">
-          <h2 class="text-gold-plate">Смотрите за проектами Фидента</h2>
+          <h2 class="plat-card-heading">Смотрите за проектами Фидента</h2>
           <p>Новые объекты и новости<span class="channel-detail"> компании</span><br />в <span class="channel-detail">нашем </span>канале «Архитектура капитала»</p>
-          <svg class="channel-plane" width="23" height="23" viewBox="2 3.5 18.5 16" fill="none" stroke="url(#channel-metal)" stroke-width=".85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <defs><linearGradient id="channel-metal" x2=".8" y2="1"><stop stop-color="#F9F2E5"/><stop offset=".42" stop-color="#B6AB97"/><stop offset=".57" stop-color="#DFD7C6"/><stop offset="1" stop-color="#9A8765"/></linearGradient></defs>
-            <path d="m3 10 17-6-3.6 15-5.5-4.4-3 2.7.5-5.5L17 6.8l-7.1 6.7"/>
-          </svg>
+          <img class="channel-plane" src={`${assets}channel-mobile.svg`} width="27" height="27" alt="" />
           <img class="channel-desktop" src={`${assets}news-telegram.svg`} width="52" height="48" alt="" />
         </a>
       </li>
@@ -163,11 +162,21 @@ const cards = [
 
 
   .hero-intro {
-    max-width: 260px;
+    max-width: 44em;
     margin-top: 24px;
     font-size: 16px;
     line-height: 1.22;
     color: #dedede;
+  }
+
+  .hero-intro > span > span { display: inline-block; max-width: 100%; }
+
+  .hero-project-note {
+    max-width: 58ch;
+    margin-top: 10px;
+    color: var(--color-copy);
+    font-size: 16px;
+    line-height: 1.3;
   }
 
   .hero-actions {
@@ -186,20 +195,30 @@ const cards = [
     font-size: 20px;
     line-height: 1.22;
     text-align: center;
-    transition: filter 0.2s ease;
+    box-shadow: inset 0 0 0 1px transparent;
   }
 
-  .hero-btn:hover {
-    filter: brightness(1.14);
+  @media (hover: hover) {
+    .hero-btn:hover {
+      background-image: linear-gradient(110deg, rgb(249 239 216 / 9%), rgb(249 239 216 / 18%) 45%, rgb(215 196 159 / 8%)), var(--hero-btn-fill);
+      box-shadow: inset 0 0 0 1px rgb(252 238 208 / 88%);
+    }
+  }
+
+  .hero-btn:focus-visible {
+    outline: 2px solid #f0dfbc;
+    outline-offset: 3px;
   }
 
   .hero-btn--primary {
-    color: #000;
-    background: var(--gradient-plat-contact-button);
+    color: #10241e;
+    --hero-btn-fill: var(--gradient-plat-contact-button);
+    background: var(--hero-btn-fill);
   }
 
   .hero-btn--secondary {
     color: var(--color-fg);
+    --hero-btn-fill: linear-gradient(var(--color-cta-dark), var(--color-cta-dark));
     background: var(--color-cta-dark);
   }
 
@@ -218,7 +237,7 @@ const cards = [
   }
 
   .hero-card h2 {
-    --gradient-gold: linear-gradient(177deg, rgba(255, 241, 217, 0.87) 25.714%, rgba(168, 133, 72, 0.87) 120.56%);
+    --plat-text-fill: linear-gradient(160deg, #d9cbb1, #c5b394 64%, #ae9b79);
     font-size: 17px;
     line-height: 1.22;
   }
@@ -246,11 +265,11 @@ const cards = [
   }
   .hero-card.hero-news {
     position: relative;
-    background-image: linear-gradient(105deg, transparent 35%, rgb(191 175 142 / 8%));
+    background-image: linear-gradient(110deg, rgb(205 196 172 / 14%), rgb(197 190 169 / 8%) 60%, rgb(189 182 163 / 13%));
   }
   .hero-news a::after { box-shadow: inset 0 0 0 1px transparent; }
   @media (hover: hover) {
-    .hero-news:hover a::after { box-shadow: inset 0 0 0 1px rgb(211 193 156 / 22%); }
+    .hero-news:hover a::after { box-shadow: inset 0 0 0 1px rgb(224 210 182 / 53%); }
   }
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .hero-news a::after, .hero-news :is(.channel-desktop, .channel-plane) { transition: box-shadow 180ms ease, transform 180ms ease; }
@@ -261,13 +280,14 @@ const cards = [
   .hero-news a { border-radius: inherit; }
   .hero-news h2 { grid-column: 1 / -1; }
   .channel-desktop { display: none; }
-  .channel-plane { align-self: end; width: auto; height: 1.85rem; aspect-ratio: 18.5 / 16; translate: 0 1px; grid-column: 2; grid-row: 2; color: #c5b392; }
-  @media (max-width: 420px) {
-    .hero-news .channel-detail { display: none; }
-    .hero-news { padding-inline: 12px; }
-    .hero-news > a { column-gap: 4px; }
+  .channel-plane { position: absolute; top: 44px; right: 20px; width: 29px; height: 29px; }
+  @media (width < 1024px) {
+    .hero-card.hero-news { padding: 12px 51px 12px 18px; }
+    .hero-news > a { display: block; }
+    .hero-news p { margin-top: 5px; }
   }
-  @media (max-width: 350px) { .hero-news p { font-size: 15px; } .channel-plane { height: 27px; } }
+  @media (max-width: 420px) { .hero-news .channel-detail { display: none; } }
+  @media (max-width: 350px) { .hero-news p { font-size: 15px; } }
 
   @media (width < 640px) {
     .hero-title { font-size: 34px; }
@@ -313,7 +333,6 @@ const cards = [
     }
 
     .hero-intro {
-      max-width: 620px;
       font-size: 18px;
     }
 
@@ -364,7 +383,6 @@ const cards = [
     }
 
     .hero-intro {
-      max-width: 642px;
       margin-top: 28px;
       font-size: 20px;
     }

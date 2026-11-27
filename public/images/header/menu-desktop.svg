@@ -10,7 +10,7 @@
 <stop stop-color="#F9F2E5"/>
 <stop offset="1" stop-color="#9A8765"/>
 </linearGradient>
-<linearGradient id="menu-lines" x1="16" y1="17" x2="40" y2="36" gradientUnits="userSpaceOnUse">
+<linearGradient id="menu-lines" x1="16" y1="0" x2="40" y2="0" gradientUnits="userSpaceOnUse">
 <stop stop-color="#DACFBB"/>
 <stop offset="0.37" stop-color="#EEE6D6"/>
 <stop offset="1" stop-color="#9A8765"/>
