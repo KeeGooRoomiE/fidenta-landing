@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { office, phones } from '../data/site';
+
+export function getStaticPaths() {
+  const documents = [
+    {
+      slug: 'cookie',
+      title: 'Политика использования cookie',
+      notes: ['После нажатия «Принять» сайт сохраняет отметку fidenta-cookie-accepted в локальном хранилище браузера и больше не показывает баннер в этом браузере', 'Когда посетитель доходит до карты, браузер загружает её фрагменты с серверов OpenStreetMap'],
+      fields: ['Перечень используемых cookie и других технологий хранения', 'Сторонние сервисы и цели их использования', 'Сроки хранения и порядок изменения выбора'],
+    },
+    {
+      slug: 'privacy',
+      title: 'Политика обработки персональных данных',
+      notes: ['На сайте есть форма обратного звонка. В ней предусмотрены поля имени и телефона, а также необязательные поля электронной почты и сообщения'],
+      fields: ['Полное наименование, ИНН, ОГРН и юридический адрес оператора', 'Цели, основания, способы и сроки обработки', 'Получатели данных и порядок обращения пользователя'],
+    },
+    {
+      slug: 'consent',
+      title: 'Согласие на обработку персональных данных',
+      notes: ['Рядом с заявкой предусмотрен отдельный флажок согласия на обработку данных для ответа на обращение'],
+      fields: ['Полные реквизиты оператора', 'Утверждённый текст согласия, перечень данных и действий с ними', 'Срок действия и способ отзыва'],
+    },
+    {
+      slug: 'legal',
+      title: 'Правовая информация',
+      notes: ['На сайте компания представлена под названием «Фидента»'],
+      fields: ['Полное наименование юридического лица, ИНН и ОГРН', 'Юридический адрес и подтверждённые контакты для обращений', 'Условия использования сайта и утверждённые документы'],
+    },
+    {
+      slug: 'project-documents',
+      title: 'Проектная документация',
+      notes: ['На лендинге представлен каталог объектов коммерческой недвижимости'],
+      fields: ['Перечень проектов и документов, доступных для публикации', 'Ссылки на утверждённые файлы и даты их редакций', 'Порядок запроса документов и ответственный контакт'],
+    },
+  ];
+
+  return documents.map(({ slug, ...document }) => ({ params: { document: slug }, props: document }));
+}
+
+interface Props {
+  title: string;
+  notes: string[];
+  fields: string[];
+}
+
+const { title, notes, fields } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title={`${title} — Фидента`}>
+  <meta slot="head" name="robots" content="noindex" />
+  <main class="container-page max-w-[760px] py-10 font-accent sm:py-16">
+    <a href={base} class="text-gold-plate underline">Вернуться на главную</a>
+    <h1 class="mt-8 text-3xl text-fg sm:text-5xl">{title}</h1>
+    <p class="mt-4 text-lg text-sand">Черновик для заполнения и утверждения</p>
+    <div class="mt-8 grid gap-3 text-lg leading-snug text-copy">
+      {notes.map(note => <p>{note}</p>)}
+      <p>Контакт на сайте: <a class="underline" href={phones.header.href}>{phones.header.text}</a></p>
+      <p>Адрес офиса на сайте: {office.full}</p>
+    </div>
+    <h2 class="mt-8 text-2xl text-fg">Заполнить перед публикацией</h2>
+    <dl class="mt-4 grid gap-4 text-lg text-copy">
+      {fields.map(field => <div class="border-t border-cream/20 pt-3">
+        <dt>{field}</dt>
+        <dd class="mt-1 text-legal">[Заполняет руководство]</dd>
+      </div>)}
+    </dl>
+  </main>
+</Layout>

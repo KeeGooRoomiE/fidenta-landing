@@ -1,0 +1,127 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
+import { comparisonCriteria } from '../../data/cooperation';
+const base = import.meta.env.BASE_URL;
+---
+
+<Section id="comparison" class="comparison" data-comparison>
+  <div class="border-t border-cream/25 pt-8 md:pt-10">
+    <SectionHeading eyebrow="Услуги">
+      <span class="text-gold-plate">Преимущества</span> работы с управляющей компанией
+      <Fragment slot="lead">Самостоятельная работа с недвижимостью требует времени: от просмотров до аренды и ремонта. С командой Фидента вы выбираете, какие задачи передать и какие решения оставить за собой</Fragment>
+    </SectionHeading>
+
+    <p class="mb-4 mt-6 font-accent text-lg text-gold-plate text-plat-dense">Выберите критерий, чтобы сопоставить подходы</p>
+    <div class="compare-options">
+      <div class="compare-criteria grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
+        {comparisonCriteria.map(([title], index) => (
+          <button type="button" class="compare-trigger plat-outline flex items-center gap-3 rounded-[9px] bg-interface/40 px-3 text-left font-accent text-fg md:px-4 md:text-xl" aria-controls={`comparison-${index}`} aria-expanded="false" data-compare-open>
+            {title}<span class="text-gold-plate" aria-hidden="true">+</span>
+          </button>
+        ))}
+      </div>
+    {comparisonCriteria.map(([title, alone, withTeam], index) => (
+      <div id={`comparison-${index}`} class="compare-panel plat-outline rounded-[9px] bg-interface/50 p-5 sm:p-6" data-compare-panel hidden>
+        <button class="compare-title flex w-full items-center justify-between gap-4 border-b border-cream/20 pb-4 text-left font-accent text-2xl text-fg" type="button" data-compare-close aria-label={`Свернуть критерий «${title}»`}>
+          {title}<span class="text-gold-plate" aria-hidden="true">−</span>
+        </button>
+        <div class="compare-pair mt-5 grid gap-5 font-accent text-lg leading-snug text-copy md:items-center">
+          <div>
+            <h3 class="mb-2 text-xs uppercase tracking-wider text-sand">Самостоятельно</h3>
+            <p>{alone}</p>
+          </div>
+          <span class="hourglass plat-outline mx-auto grid h-12 w-12 place-items-center rounded-[9px] md:h-[58px] md:w-[63px]" aria-hidden="true">
+            <span class="hourglass-vessel">
+              <img src={`${base}images/comparison-hourglass.svg`} width="30" height="40" alt="" loading="lazy" />
+              <span class="sand-chamber sand-chamber--top"></span>
+              <span class="sand-stream"><i></i><i></i><i></i></span>
+              <span class="sand-chamber sand-chamber--bottom"></span>
+            </span>
+          </span>
+          <div>
+            <h3 class="mb-2 text-xs uppercase tracking-wider text-gold-plate">С командой Фидента</h3>
+            <p>{withTeam}</p>
+          </div>
+        </div>
+      </div>
+    ))}
+
+    </div>
+    <p class="mt-6 font-legal text-[13px] text-legal">Состав работ, полномочия команды и условия участия определяются договором по конкретному объекту</p>
+  </div>
+</Section>
+
+<script>
+  const section = document.querySelector('[data-comparison]');
+  if (section) {
+    const buttons = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-compare-open]'));
+    const panels = Array.from(section.querySelectorAll<HTMLElement>('[data-compare-panel]'));
+
+    function select(index: number) {
+      buttons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === index)));
+      panels.forEach((panel, i) => { panel.hidden = i !== index; });
+    }
+
+    buttons.forEach((button, index) => {
+      const panel = panels[index];
+      const close = panel.querySelector<HTMLButtonElement>('[data-compare-close]')!;
+      button.addEventListener('click', () => {
+        const wasOpen = button.getAttribute('aria-expanded') === 'true';
+        select(wasOpen ? -1 : index);
+        if (!wasOpen) {
+          close.focus({ preventScroll: true });
+          const top = panel.getBoundingClientRect().top;
+          if (top < 120 || top > innerHeight - 130) panel.scrollIntoView({ block: 'start' });
+        }
+      });
+      close.addEventListener('click', () => {
+        select(-1);
+        button.focus();
+      });
+    });
+  }
+</script>
+
+<style>
+  .comparison > :global(.container-page) > div {
+    border-image: linear-gradient(90deg, transparent, rgb(215 201 175 / 45%) 28%, rgb(215 201 175 / 20%) 75%, transparent) 1;
+  }
+  .comparison { background: #071f18; }
+  .comparison > :global(.container-page) { padding-top: 6px; }
+  .compare-options { display: flex; flex-direction: column; gap: 14px; }
+  .compare-panel { scroll-margin-top: 120px; }
+  .compare-trigger { min-height: 44px; justify-content: center; text-align: center; }
+  .compare-trigger span { display: none; }
+  .compare-trigger[aria-expanded='true'] { background: var(--surface-90); }
+  .hourglass-vessel { position: relative; display: block; width: 30px; height: 40px; }
+  .sand-chamber { position: absolute; left: 3px; width: 24px; height: 15px; }
+  .sand-chamber::after { position: absolute; inset: 0; background: linear-gradient(#f5dfaa, #d6b574); content: ''; }
+  .sand-chamber--top { top: 4px; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+  .sand-chamber--top::after { transform: translateY(24%); }
+  .sand-chamber--bottom { bottom: 4px; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .sand-chamber--bottom::after { transform: translateY(38%); }
+  .sand-stream { position: absolute; top: 20px; left: 14px; width: 2px; height: 15px; overflow: hidden; opacity: 0; }
+  .sand-stream i { position: absolute; inset: 0 auto auto 0; width: 2px; height: 2px; border-radius: 50%; background: #ffe5a7; }
+  @media (min-width: 768px) {
+    .compare-panel { order: -1; }
+    .compare-trigger { min-height: 77px; justify-content: space-between; text-align: left; }
+    .compare-trigger span { display: inline; }
+    .compare-trigger[aria-expanded='true'] span { rotate: 45deg; }
+    .compare-pair { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: clamp(16px, 4vw, 64px); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .compare-panel:not([hidden]) .hourglass-vessel { animation: hourglass-turn 4.8s infinite; }
+    .compare-panel:not([hidden]) .sand-chamber--top::after { animation: sand-drain 4.8s linear infinite; }
+    .compare-panel:not([hidden]) .sand-chamber--bottom::after { animation: sand-fill 4.8s linear infinite; }
+    .compare-panel:not([hidden]) .sand-stream { animation: sand-visible 4.8s linear infinite; }
+    .compare-panel:not([hidden]) .sand-stream i { animation: sand-fall 360ms linear infinite; }
+    .compare-panel:not([hidden]) .sand-stream i:nth-child(2) { animation-delay: -120ms; }
+    .compare-panel:not([hidden]) .sand-stream i:nth-child(3) { animation-delay: -240ms; }
+    @keyframes hourglass-turn { 0%, 86% { rotate: 0deg; } 100% { rotate: 180deg; } }
+    @keyframes sand-drain { 0% { transform: translateY(0); } 70%, 100% { transform: translateY(102%); } }
+    @keyframes sand-fill { 0% { transform: translateY(102%); } 70%, 100% { transform: translateY(0); } }
+    @keyframes sand-visible { 0%, 70% { opacity: 1; } 71%, 100% { opacity: 0; } }
+    @keyframes sand-fall { from { translate: 0 -2px; } to { translate: 0 15px; } }
+  }
+</style>

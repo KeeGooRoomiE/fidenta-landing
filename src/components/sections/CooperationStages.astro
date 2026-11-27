@@ -1,0 +1,275 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import Section from '../ui/Section.astro';
+import { cooperationStages as stages } from '../../data/cooperation';
+
+const base = import.meta.env.BASE_URL;
+const animateBirds = import.meta.env.DEV || import.meta.env.PUBLIC_FIDENTA_ANIMATE_BIRDS === 'true';
+---
+
+<Section id="cooperation" class="cooperation" data-cooperation>
+  <div class="cooperation-layout">
+    <div class="cooperation-intro relative">
+      <SectionHeading eyebrow="Этапы работы">
+        <span class="text-gold-plate">Прозрачно</span> на каждом этапе
+        <Fragment slot="lead">Как мы подбираем объект под вашу задачу, помогаем выбрать между покупкой и арендой и организуем работу после сделки</Fragment>
+      </SectionHeading>
+    </div>
+
+    <div class="bridge-visual" aria-hidden="true" data-animate-birds={animateBirds ? '' : undefined}>
+      <img src={`${base}images/cooperation-bridge.webp`} width="1100" height="620" alt="" loading="lazy" decoding="async" />
+      <svg class="bridge-birds" viewBox="0 0 80 36" fill="currentColor" focusable="false">
+        <path d="M3 23c8-2 16 0 22 4 8-7 15-9 23-8-8 2-14 6-20 11l-3 2-3-2C16 26 10 24 3 23Z" />
+        <path d="M48 9c6-1 11 0 16 3 4-5 9-7 14-8-5 3-8 6-12 10l-2 1-2-1c-5-3-9-5-14-5Z" opacity=".62" />
+      </svg>
+    </div>
+
+    <div class="cooperation-panel relative" data-cooperation-panel>
+      <div class="bridge-scale" data-cooperation-progress style={`--stage-progress: ${100 / stages.length}; --stage-count: ${stages.length}`}>
+        <div class="bridge-progress" aria-hidden="true"><span></span></div>
+        <div class="bridge-stops" role="group" aria-label="Перейти к этапу">
+          {stages.map(([phase, title], index) => (
+            <button type="button" data-stage-stop aria-label={title} aria-controls="cooperation-track" aria-current={index === 0 ? 'step' : undefined}>
+              <span class="bridge-stop-dot" aria-hidden="true"></span>
+              <span class="bridge-stop-label" aria-hidden="true">{phase}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div id="cooperation-track" class="stage-track" data-cooperation-track role="region" aria-label="Карусель этапов сотрудничества" tabindex="0">
+        {stages.map(([phase, title, description]) => (
+          <article class="stage-detail font-accent" data-cooperation-detail>
+            <div class="stage-card">
+              <p class="text-xs uppercase tracking-wider text-sand">{phase}</p>
+              <h3 class="mt-1.5 text-2xl text-fg md:text-3xl">{title}</h3>
+              <p class="stage-description text-lg leading-snug text-copy">{description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <span data-cooperation-count class="sr-only" aria-live="polite">Этап 1 из {stages.length}</span>
+    </div>
+    <p class="relative mt-7 font-legal text-[13px] text-legal">Состав работ, полномочия команды и порядок отчётности фиксируем в договоре по конкретному объекту</p>
+  </div>
+</Section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-cooperation]');
+  if (root) {
+    const track = root.querySelector<HTMLElement>('[data-cooperation-track]')!;
+    const details = Array.from(root.querySelectorAll<HTMLElement>('[data-cooperation-detail]'));
+    const progress = root.querySelector<HTMLElement>('[data-cooperation-progress]')!;
+    const count = root.querySelector<HTMLElement>('[data-cooperation-count]')!;
+    const stops = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stage-stop]'));
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const bridge = root.querySelector('[data-animate-birds]');
+    if (bridge && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        bridge.setAttribute('data-birds-visible', '');
+        observer.disconnect();
+      }, { threshold: 0.35 });
+      observer.observe(bridge);
+    }
+
+    let current = 0;
+
+    const position = (index: number) => details[index].offsetLeft - details[0].offsetLeft;
+    function update() {
+      const closest = details.reduce((best, _, index) =>
+        Math.abs(position(index) - track.scrollLeft) < Math.abs(position(best) - track.scrollLeft) ? index : best, 0);
+      const limit = track.scrollWidth - track.clientWidth;
+      current = closest;
+      const journey = limit - track.scrollLeft > 1 ? Math.max(0, track.scrollLeft / limit) : 1;
+      progress.style.setProperty('--stage-progress', String((1 + journey * (details.length - 1)) / details.length * 100));
+      const step = position(1) || track.clientWidth;
+      details.forEach((card, index) => {
+        const distance = Math.max(-1, Math.min(1, (position(index) - track.scrollLeft) / step));
+        card.style.setProperty('--stage-depth', String(Math.abs(distance)));
+        card.style.setProperty('--stage-side', String(distance));
+        card.style.setProperty('--stage-turn', `${distance * -42}deg`);
+        const lift = Math.sqrt(Math.max(0, 1 - distance * distance));
+        card.style.setProperty('--stage-lift', String(1 - lift));
+        card.toggleAttribute('data-stage-current', index === current);
+        if (index === current) card.setAttribute('aria-current', 'step');
+        else card.removeAttribute('aria-current');
+      });
+
+      stops.forEach((stop, index) => {
+        if (index === current) stop.setAttribute('aria-current', 'step');
+        else stop.removeAttribute('aria-current');
+      });
+      const stageNumber = `Этап ${current + 1} из ${details.length}`;
+      if (count.textContent !== stageNumber) count.textContent = stageNumber;
+    }
+
+    function move(index: number) {
+      if (index < 0 || index >= details.length) return;
+      track.scrollTo({ left: position(index), behavior: reduced.matches ? 'instant' : 'smooth' });
+    }
+
+    let drag: { id: number; x: number; left: number } | undefined;
+    track.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'mouse' || event.button !== 0) return;
+      drag = { id: event.pointerId, x: event.clientX, left: track.scrollLeft };
+    });
+    track.addEventListener('pointermove', event => {
+      if (!drag || drag.id !== event.pointerId || Math.abs(event.clientX - drag.x) < 5) return;
+      if (!track.hasPointerCapture(event.pointerId)) track.setPointerCapture(event.pointerId);
+      track.toggleAttribute('data-dragging', true);
+      track.scrollLeft = drag.left - (event.clientX - drag.x);
+    });
+    function finishDrag() {
+      drag = undefined;
+      if (!track.hasAttribute('data-dragging')) return;
+      update();
+      track.removeAttribute('data-dragging');
+      move(current);
+    }
+    track.addEventListener('pointerup', finishDrag);
+    track.addEventListener('pointercancel', finishDrag);
+    track.addEventListener('lostpointercapture', finishDrag);
+    track.addEventListener('pointerleave', () => {
+      if (!track.hasAttribute('data-dragging')) drag = undefined;
+    });
+
+    stops.forEach((stop, index) => stop.addEventListener('click', () => move(index)));
+    track.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(track);
+    track.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault();
+      move(current + (event.key === 'ArrowLeft' ? -1 : 1));
+    });
+  }
+</script>
+
+<style>
+  .cooperation { background: #061e16; padding-block: clamp(20px, 4vh, 44px); }
+  .cooperation-layout { display: grid; align-items: center; }
+  .cooperation-intro { min-width: 0; }
+  .cooperation-intro :global(.text-eyebrow) { --plat-text-fill: var(--gradient-plat-subtle); }
+  .bridge-visual { isolation: isolate; position: relative; }
+  .bridge-visual::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 9% 4% 2%;
+    background: radial-gradient(ellipse at 58% 50%, rgb(112 130 135 / 19%), transparent 65%),
+      radial-gradient(ellipse at 50% 92%, rgb(190 152 96 / 14%), transparent 58%);
+  }
+  .bridge-visual img { display: block; width: 100%; height: auto; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent), linear-gradient(black 96%, transparent); mask-composite: intersect; }
+  .bridge-birds {
+    position: absolute;
+    inset: 28% auto auto 19%;
+    width: clamp(25px, 6%, 56px);
+    color: rgb(206 194 167 / 70%);
+    pointer-events: none;
+  }
+  .bridge-stops { display: none; }
+  .cooperation-panel { min-width: 0; }
+  .bridge-progress { height: 2px; margin-inline: 8px; background: rgb(209 184 135 / 20%); }
+  .bridge-progress span { display: block; height: 100%; width: calc(var(--stage-progress) * 1%); background: var(--gradient-gold); }
+  .stage-track {
+    --stage-inset: 19%;
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: 10px;
+    padding: 18px var(--stage-inset) 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+  .stage-track:focus-visible { outline: 1px solid #ad9c79; outline-offset: -1px; border-radius: 12px; }
+  .stage-track[data-dragging] { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+  .stage-detail { scroll-snap-align: center; min-width: 0; }
+  .stage-card {
+    height: 100%;
+    padding: 18px;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+    background: radial-gradient(ellipse at 15% 0%, rgb(158 175 158 / 15%), transparent 62%),
+      linear-gradient(154deg, #153229, #0b211a 62%, #091914);
+    box-shadow: inset 0 0 0 0.7px rgb(216 200 158 / 52%), inset 0 1px rgb(243 229 197 / 13%), 0 12px 22px rgb(2 10 7 / 38%);
+  }
+  .stage-description { margin-top: 8px; font-size: 16px; line-height: 1.35; }
+  @media (hover: hover) and (pointer: fine) {
+    .stage-track { cursor: grab; }
+  }
+  .cooperation-layout > .text-legal { margin-top: 14px; }
+  @media (width < 1024px) {
+    .bridge-visual { margin: 10px auto 7px; width: min(100%, 480px); }
+    .stage-track { --stage-inset: max(11%, calc((100% - 340px) / 2)); }
+    .stage-card { height: auto; min-height: 100%; aspect-ratio: 1; }
+  }
+  @media (width < 640px) {
+    .cooperation { padding-block: 16px; }
+    .bridge-visual { margin-top: 16px; }
+    .stage-card { padding: 14px; }
+    .stage-card h3 { font-size: clamp(20px, 6vw, 24px); }
+  }
+  @media (min-width: 1024px) {
+    .cooperation-layout { grid-template-columns: minmax(0, 1fr); }
+    .bridge-visual { width: 100%; margin-top: 12px; }
+    .bridge-visual img { mask-image: linear-gradient(to right, transparent, black 2%, black 97%, transparent); }
+    .bridge-visual::before {
+      inset: 0;
+      background: radial-gradient(ellipse at 66% 42%, #203c3a 0%, transparent 67%),
+        radial-gradient(ellipse at 50% 95%, rgb(163 133 84 / 19%), transparent 64%);
+      mask-image: radial-gradient(ellipse at 55% 55%, black 25%, transparent 76%);
+    }
+    .bridge-scale { position: relative; }
+    .bridge-progress { position: absolute; inset: 11px 0 auto; height: 1px; margin: 0; }
+    .bridge-stops { display: grid; grid-template-columns: repeat(var(--stage-count), minmax(0, 1fr)); }
+    .bridge-stops button {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 7px 3px 4px;
+      color: var(--color-copy);
+      font: 13px var(--font-accent);
+      cursor: pointer;
+    }
+    .bridge-stop-dot { width: 9px; height: 9px; border: 1px solid #ad9c79; border-radius: 50%; background: #061e16; }
+    .bridge-stops button:is(:hover, [aria-current]) { color: var(--color-fg); }
+    .bridge-stops button[aria-current] .bridge-stop-dot { background: #dfc797; box-shadow: 0 0 14px rgb(243 217 158 / 52%); }
+    .stage-track { --stage-inset: 38%; gap: clamp(14px, 1.6vw, 26px); padding-block: 22px 24px; }
+    .cooperation-layout > .text-legal { text-align: start; }
+    .stage-card { padding: 18px 24px 24px; }
+    .stage-description { font-size: 18px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-birds-visible] .bridge-birds {
+      animation: bridge-bird-glide 4.2s ease-in-out;
+    }
+    [data-birds-visible] .bridge-birds path {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: bridge-bird-wings 1.15s ease-in-out 3;
+    }
+    [data-birds-visible] .bridge-birds path + path { animation-delay: .22s; }
+    .stage-card {
+      transform: translate(calc(var(--stage-side, 0) * -20%), calc(var(--stage-lift, 0) * 15px)) perspective(580px) rotateY(var(--stage-turn, 0deg)) scale(calc(1 - var(--stage-depth, 0) * .12));
+      opacity: calc(1 - var(--stage-depth, 0) * .32);
+    }
+  }
+  @keyframes bridge-bird-glide {
+    from { transform: translate(-30%, 15%); }
+    62% { transform: translate(-8%, -8%); }
+    to { transform: translate(0); }
+  }
+  @keyframes bridge-bird-wings {
+    50% { transform: scaleY(.58) rotate(-5deg); }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .stage-card {
+      transform: translateY(calc(var(--stage-depth, 0) * 5px)) perspective(1100px) rotateY(calc(var(--stage-turn, 0deg) * .24)) scale(calc(1 - var(--stage-depth, 0) * .035));
+    }
+    [data-stage-current] .stage-card { box-shadow: inset 0 0 0 1px rgb(223 199 151 / 58%), 0 16px 27px rgb(2 10 7 / 38%); }
+  }
+</style>

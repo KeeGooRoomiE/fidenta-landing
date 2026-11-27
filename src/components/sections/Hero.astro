@@ -1,196 +1,461 @@
 ---
-/*
-  УРОВЕНЬ 3 — БЛОК Hero (главный экран)
-
-  Второй заход на композицию (первый — полноэкранное object-cover фото на всю
-  секцию — ломался на мобильном: секция там в 2+ раза выше вьюпорта из-за
-  карточек в столбик, а cover в таких пропорциях растягивал фото до
-  нераспознаваемого вертикального огрызка). Исправление — фото живёт в
-  СВОЁМ блоке с фиксированным через aspect-ratio соотношением сторон
-  (разным по брейкпоинтам), а не растягивается на высоту всей секции:
-  сколько бы контента ни было ниже (хоть 3 карточки в столбик, хоть 10),
-  высота самого фото от этого не зависит и никогда не "съезжает".
-
-  Структура сверху вниз:
-   1. Фото-баннер (aspect-ratio) — вечерний деловой район, лёгкая синяя
-      тонировка, градиент-фейд в сплошной canvas у своего нижнего края.
-   2. Контент НИЖЕ баннера, уже на сплошном фоне — заголовок, сабтайтл,
-      кнопки, 3 карточки. Никакой текст не лежит поверх фото — поэтому не
-      нужно подбирать контраст под то, что именно на фото в этом месте
-      (источник фрагильности предыдущей версии).
-   Лёгкий отрицательный margin у контента — чтобы заголовок начинался чуть
-   внахлёст с фейдом баннера, без явного шва между блоками.
-
-  Cookie-баннер больше не здесь — переехал в index.astro как отдельный
-  independent fixed-bottom-bar компонент, не завязанный на разметку Hero.
-*/
-const base = import.meta.env.BASE_URL;
-
+const assets = `${import.meta.env.BASE_URL}images/hero/`;
 const cards = [
   {
-    icon: 'tile-club.png',
-    lead: 'Fidenta Invest Club',
-    rest: ' — закрытое сообщество',
+    title: 'Реальные объекты',
+    description: 'Коммерческая недвижимость: действующие объекты, реконструкция, управление и развитие',
   },
   {
-    icon: 'tile-cycle.png',
-    lead: 'Полный цикл сопровождения:',
-    rest: ' аудит объекта — расчёт доходности',
-  },
-  {
-    icon: 'tile-ownership.png',
-    lead: 'Реальное владение:',
-    rest: ' доля в объекте закреплена договором',
+    title: 'Что делает Фидента',
+    description: 'Подбираем объект, оцениваем затраты, организуем работы и ведём расчёты с арендаторами',
   },
 ];
 ---
 
-<section class="relative overflow-hidden bg-canvas">
-  {/* md:max-h-[500px] — на широких экранах баннер не растёт выше 500px (иначе Hero с карточками
-       не помещается в первый экран); фото при этом просто кадрируется object-cover. */}
-  {/* Фото-баннер: высота ВСЕГДА определяется aspect-ratio, а не контентом
-       секции ниже — поэтому не может "растянуться" независимо от того,
-       сколько карточек и как они складываются на узких экранах. */}
-  <div class="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/9] md:aspect-[21/9] md:max-h-[500px]">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-art" aria-hidden="true">
     <img
       id="hero-bg-image"
-      src={`${base}images/hero-bg-skyline.webp`}
+      src={`${assets}panorama.webp`}
+      srcset={`${assets}panorama-small.webp 960w, ${assets}panorama.webp 2560w`}
+      sizes="(max-width: 639px) 567px, 100vw"
+      width="2560"
+      height="1920"
       alt=""
-      class="h-full w-full object-cover object-center md:object-[center_68%]"
+      fetchpriority="high"
     />
-    {/* Лёгкая синяя тонировка сверху (фирменная гамма) + фейд в сплошной
-         canvas у нижнего края баннера, чтобы переход в контент ниже был
-         бесшовным. Само фото при этом хорошо видно почти на всю высоту. */}
-    <div
-      class="absolute inset-0"
-      style="background: linear-gradient(180deg, rgba(11,24,48,.22) 0%, rgba(11,24,48,.06) 30%, rgba(10,32,25,0) 55%, var(--color-canvas) 97%);"
-    ></div>
-    {/* Только ПК: заголовок поднят на фото (верх текста на 250px), поэтому нижняя половина
-         баннера затемняется раньше — иначе первая строка читается хуже на светлых окнах зданий. */}
-    <div
-      class="absolute inset-0 hidden md:block"
-      style="background: linear-gradient(180deg, rgba(10,32,25,0) 38%, rgba(10,32,25,.55) 62%, var(--color-canvas) 96%);"
-    ></div>
   </div>
 
-  {/* Контент — уже на сплошном фоне секции, текст нигде не лежит поверх
-       фото, поэтому читаемость не зависит от того, что именно на кадре. */}
-  <div class="hero-content container-page relative -mt-10 flex flex-col gap-12 pb-16 pt-0 md:gap-12 md:pb-24">
-    <div class="flex max-w-2xl flex-col gap-5 md:max-w-4xl">
-      <h1 class="hero-title font-accent font-normal">
-        <span class="block text-fg">Коммерческая недвижимость,</span>
-        <span class="text-gold-plate block">открытая для частного инвестора</span>
+  <div class="hero-content">
+    <div class="hero-copy">
+      <h1 class="hero-title" id="hero-title">
+        <span class="hero-subject">Коммерческая <span>недвижимость</span></span>
+        <span class="hero-city"><span class="text-gold-plate">Санкт-Петербурга:</span></span>
+        <span class="hero-title-line">инвестиции и управление</span>
       </h1>
 
-      <p class="max-w-[38rem] font-accent text-lg leading-[1.4] tracking-[0.01em] text-text-soft md:text-xl">
-        Объединяем капитал частных инвесторов и профессионально управляем коммерческими объектами
-        Санкт-Петербурга — от подбора актива до дохода с квадратного метра.
+      <p class="hero-intro">
+        <span><span>Помогаем инвесторам</span> <span>выбрать объект</span> <span>и оценить расходы до сделки</span></span>
+        <span><span>Собственникам — найти арендаторов</span> <span>и организовать обслуживание здания</span></span>
       </p>
-
-      <div class="flex flex-wrap gap-4 pt-2">
-        <a href="#cta" data-cta-audience="investor" class="hero-btn hero-btn--primary">Доступ к сделкам</a>
-        <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary">Передать объект в управление</a>
-      </div>
     </div>
 
-    <div class="relative grid gap-5 md:grid-cols-3 md:gap-6">
-      {/* Мягкое золотое свечение за карточками — CSS, не завязано на фото. */}
-      <div
-        class="pointer-events-none absolute inset-x-0 -bottom-16 -top-10 -z-10 mix-blend-screen"
-        style="background: radial-gradient(60% 100% at 50% 60%, rgba(199,162,75,.14), transparent 70%);"
-      ></div>
-      {cards.map((card) => (
-        <div class="hero-card">
-          <img src={`${base}icons/${card.icon}`} width="56" height="56" alt="" class="h-14 w-14 shrink-0 md:h-10 md:w-10" />
-          <p class="font-accent text-[17px] leading-[1.4] tracking-[0.01em]">
-            <span class="text-gold-plate">{card.lead}</span><span class="text-fg">{card.rest}</span>
-          </p>
-        </div>
+    <div class="hero-actions">
+      <a href="#cta" data-cta-audience="investor" aria-describedby="hero-project-note" class="hero-btn hero-btn--primary">Обсудить инвестиции</a>
+      <a href="#cta" data-cta-audience="owner" class="hero-btn hero-btn--secondary plat-outline"><span class="text-fg">Я собственник</span></a>
+    </div>
+
+    <p class="hero-project-note" id="hero-project-note">Если есть подходящий объект, пришлём карточку с адресом, арендатором и условиями участия</p>
+
+    <ul class="hero-cards">
+      {cards.map(({ title, description }) => (
+        <li class="plat-outline hero-card">
+          <h2 class="plat-card-heading">{title}</h2>
+          <p>{description}</p>
+        </li>
       ))}
-    </div>
+      <li class="plat-outline hero-card hero-news">
+        <a href="https://t.me/fidenta" aria-label="Открыть канал «Архитектура капитала» компании Фидента">
+          <h2 class="plat-card-heading">Смотрите за проектами Фидента</h2>
+          <p>Новые объекты и новости<span class="channel-detail"> компании</span><br />в <span class="channel-detail">нашем </span>канале «Архитектура капитала»</p>
+          <img class="channel-plane" src={`${assets}channel-mobile.svg`} width="27" height="27" alt="" />
+          <img class="channel-desktop" src={`${assets}news-telegram.svg`} width="52" height="48" alt="" />
+        </a>
+      </li>
+    </ul>
   </div>
 </section>
 
 <style>
-  /* Фото-баннер — aspect-ratio, его высота = ширина секции * 9/21 на md+ (21:9).
-     Ниже вместо vw используется % (margin-top в % считается от ширины родителя =
-     секции): vw ломается при CSS zoom на больших экранах (см. global.css, «масштаб»).
-     Фиксированный margin-top: -320px (как просили) ломается при "резиновом"
-     ресайзе: при ширине < ~1493px высота баннера < 640px, и -320 утягивает
-     текст ВЫШЕ своей середины — на небо, а не на тёмные здания, как нужно.
-     max() держит верх текста не ниже 250px (было 320; верх текста на 250px от начала Hero, а не 320 — чтобы карточки влезали в первый экран) от начала Hero ВСЕГДА: на узких
-     md-экранах подъём автоматически меньше 320px, на широких — ровно -320px
-     (как и было одобрено на 1440px). */
-  @media (min-width: 768px) {
-    .hero-content {
-      margin-top: max(-250px, calc(250px - 42.857%));
-    }
+  .hero {
+    --hero-base: #071d17;
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(var(--hero-base) 70%, var(--color-canvas));
+    font-family: var(--font-accent);
+    color: var(--color-fg);
+    /* Согласуем масштаб первого экрана с шапкой на контрольной ширине 1440px. */
+    zoom: calc(1 / var(--desktop-reference-zoom, 1));
+  }
+
+  .hero-art {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: 575px;
+    max-height: 100%;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - clamp(72px, 11vw, 168px)), transparent);
+    pointer-events: none;
+  }
+
+  .hero-art img {
+    position: absolute;
+    inset: 83px 0 auto;
+    width: 100%;
+    height: 425px;
+    object-fit: cover;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: auto 0 0;
+    height: clamp(44px, 8vw, 128px);
+    background: linear-gradient(transparent, var(--color-canvas));
+    pointer-events: none;
+  }
+
+  .hero-art::before,
+  .hero-art::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-art::before {
+    z-index: 1;
+    opacity: 0.64;
+    background:
+      linear-gradient(180deg, var(--hero-base) 26%, rgba(7, 29, 23, 0.1) 48%, rgba(7, 29, 23, 0.2) 72%, var(--hero-base)),
+      linear-gradient(90deg, rgba(7, 29, 23, 0.83), rgba(7, 29, 23, 0.756) 34.527%, rgba(7, 29, 23, 0.35) 52%, transparent);
+    background-size: 100% 480px;
+    background-position: 0 83px;
+    background-repeat: no-repeat;
+  }
+
+  .hero-art::after {
+    z-index: 2;
+    background:
+      linear-gradient(180deg, var(--hero-base) 22%, rgba(7, 29, 23, 0.84) 48%, rgba(7, 29, 23, 0.38) 73%, transparent) left top 58px / 100% 190px no-repeat,
+      linear-gradient(180deg, rgba(7, 21, 52, 0.28), rgba(5, 15, 33, 0.08) 62%, rgba(1, 3, 5, 0.01)) left top 83px / 100% 492px no-repeat,
+      linear-gradient(180deg, transparent, rgba(7, 29, 23, 0.08) 18%, rgba(7, 29, 23, 0.38) 40%, rgba(7, 29, 23, 0.79) 64%, rgba(7, 29, 23, 0.96) 82%, var(--hero-base) 100%) left top 330px / 100% 245px no-repeat;
+  }
+
+  .hero-content {
+    width: calc(100% - 40px);
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-block: 334px 80px;
+  }
+
+  .hero-copy {
+    padding-inline: 4px;
   }
 
   .hero-title {
-    font-size: 2.75rem;
-    line-height: 0.96;
-    letter-spacing: -0.02em;
+    font-size: clamp(26px, 7.7vw, 30px);
+    line-height: 1.07;
   }
-  @media (min-width: 640px) {
-    .hero-title {
-      font-size: 3.75rem;
-    }
+
+  .hero-subject,
+  .hero-subject > span,
+  .hero-city,
+  .hero-title-line,
+  .hero-intro > span {
+    display: block;
   }
-  /* Заголовок на ПК: 4.5rem → 3.5rem/4rem, чтобы Hero целиком (с карточками) помещался
-     в первый экран ноутбука (по правке дизайнера: нижние карточки не влезали) */
-  @media (min-width: 768px) {
-    .hero-title {
-      font-size: 3.5rem;
-    }
+
+  .hero-title .text-gold-plate {
+    --plat-text-fill: linear-gradient(166deg, var(--plat-text-mid-dark), var(--plat-text-midpoint) 33%, var(--plat-text-shadow) 100%);
   }
 
 
+  .hero-intro {
+    max-width: 44em;
+    margin-top: 24px;
+    font-size: 16px;
+    line-height: 1.22;
+    color: #dedede;
+  }
+
+  .hero-intro > span > span { display: inline-block; max-width: 100%; }
+
+  .hero-project-note {
+    max-width: 58ch;
+    margin-top: 10px;
+    color: var(--color-copy);
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .hero-actions {
+    display: grid;
+    gap: 13px;
+    margin-top: 26px;
+  }
 
   .hero-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-accent);
-    font-size: 1rem;
-    letter-spacing: -0.01em;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    transition: transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    height: 52px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 20px;
+    line-height: 1.22;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+
+  @media (hover: hover) {
+    .hero-btn:hover {
+      background-image: linear-gradient(110deg, rgb(249 239 216 / 9%), rgb(249 239 216 / 18%) 45%, rgb(215 196 159 / 8%)), var(--hero-btn-fill);
+      box-shadow: inset 0 0 0 1px rgb(252 238 208 / 88%);
+    }
+  }
+
+  .hero-btn:focus-visible {
+    outline: 2px solid #f0dfbc;
+    outline-offset: 3px;
   }
 
   .hero-btn--primary {
-    background-image: var(--gradient-gold);
-    color: var(--color-on-gold);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 14px 32px -14px rgba(199, 162, 75, 0.65);
-  }
-  .hero-btn--primary:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
+    color: #10241e;
+    --hero-btn-fill: var(--gradient-plat-contact-button);
+    background: var(--hero-btn-fill);
   }
 
   .hero-btn--secondary {
-    border: 1px solid rgba(199, 162, 75, 0.5);
-    color: var(--color-accent-soft);
-    background: rgba(244, 241, 234, 0.04);
+    color: var(--color-fg);
+    --hero-btn-fill: linear-gradient(var(--color-cta-dark), var(--color-cta-dark));
+    background: var(--color-cta-dark);
   }
-  .hero-btn--secondary:hover {
-    border-color: var(--color-accent-soft);
-    background: rgba(244, 241, 234, 0.08);
-    transform: translateY(-1px);
+
+  .hero-cards {
+    display: grid;
+    gap: 12px;
+    margin-top: 62px;
+    list-style: none;
   }
 
   .hero-card {
+    min-height: 106px;
+    padding: 11px 17px;
+    border-radius: 9px;
+    background: var(--color-tile);
+  }
+
+  .hero-card h2 {
+    --plat-text-fill: linear-gradient(160deg, #d9cbb1, #c5b394 64%, #ae9b79);
+    font-size: 17px;
+    line-height: 1.22;
+  }
+
+  .hero-card p {
+    margin-top: 3px;
+    font-size: 16px;
+    line-height: 1.22;
+  }
+
+  .hero-news {
     display: flex;
-    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding-right: 22px;
+  }
+
+  .hero-news > a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: 100%;
     align-items: center;
-    gap: 1rem;
-    padding: 1.25rem;
-    border-radius: 16px;
-    /* Сплошная заливка — не размытое стекло: за карточками фото больше нет
-       (оно осталось только в баннере выше), прозрачность/блюр тут ничего не
-       показывали бы, кроме сплошного фона секции. */
-    background: var(--color-surface);
-    border: 1px solid rgba(199, 162, 75, 0.25);
+    column-gap: 8px;
+  }
+  .hero-card.hero-news {
+    position: relative;
+    background-image: linear-gradient(110deg, rgb(205 196 172 / 14%), rgb(197 190 169 / 8%) 60%, rgb(189 182 163 / 13%));
+  }
+  .hero-news a::after { box-shadow: inset 0 0 0 1px transparent; }
+  @media (hover: hover) {
+    .hero-news:hover a::after { box-shadow: inset 0 0 0 1px rgb(224 210 182 / 53%); }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .hero-news a::after, .hero-news :is(.channel-desktop, .channel-plane) { transition: box-shadow 180ms ease, transform 180ms ease; }
+    .hero-news:hover :is(.channel-desktop, .channel-plane) { transform: translate(1px, -1px); }
+  }
+  .hero-news a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .hero-news:has(a:focus-visible) { outline: 1px solid #c9b38e; }
+  .hero-news a { border-radius: inherit; }
+  .hero-news h2 { grid-column: 1 / -1; }
+  .channel-desktop { display: none; }
+  .channel-plane { position: absolute; top: 44px; right: 20px; width: 29px; height: 29px; }
+  @media (width < 1024px) {
+    .hero-card.hero-news { padding: 12px 51px 12px 18px; }
+    .hero-news > a { display: block; }
+    .hero-news p { margin-top: 5px; }
+  }
+  @media (max-width: 420px) { .hero-news .channel-detail { display: none; } }
+  @media (max-width: 350px) { .hero-news p { font-size: 15px; } }
+
+  @media (width < 640px) {
+    .hero-title { font-size: 34px; }
+    .hero-title-line { font-size: 30px; }
+  }
+
+  @media (min-width: 640px) {
+    .hero-art {
+      height: 675px;
+    }
+
+    .hero-art img {
+      inset-block: 104px 0;
+      height: calc(100% - 104px);
+    }
+
+    .hero-art::before {
+      content: none;
+    }
+
+    .hero-art::after {
+      background:
+        linear-gradient(180deg, rgba(7, 21, 52, 0.62), rgba(5, 15, 33, 0.22) 62%, rgba(1, 3, 5, 0.01)),
+        linear-gradient(180deg, var(--hero-base) 26%, rgba(7, 29, 23, 0.1) 48%, rgba(7, 29, 23, 0.2) 72%, var(--hero-base)),
+        linear-gradient(90deg, rgba(7, 29, 23, 0.83), rgba(7, 29, 23, 0.756) 34.527%, rgba(7, 29, 23, 0.35) 52%, transparent);
+    }
+
+    .hero-content {
+      width: calc(100% - 2 * clamp(32px, 5.556%, 80px));
+      padding-top: 260px;
+    }
+
+    .hero-copy {
+      padding-inline: 0;
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 5.2vw, 48px);
+    }
+
+    .hero-subject > span {
+      display: inline;
+    }
+
+    .hero-intro {
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .hero-btn--primary {
+      min-width: 250px;
+    }
+
+    .hero-btn--secondary {
+      min-width: 185px;
+    }
+
+    .hero-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 64px;
+      @media (width < 768px) {
+        margin-top: 90px;
+      }
+    }
+
+    .hero-news {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-art {
+      height: 942px;
+    }
+
+    .hero-art img {
+      inset-block-start: 173px;
+      height: calc(100% - 173px);
+    }
+
+    .hero-content {
+      padding-block: 232px 94px;
+    }
+
+    .hero-title {
+      font-size: clamp(44px, 3.889vw, 56px);
+    }
+
+    .hero-intro {
+      margin-top: 28px;
+      font-size: 20px;
+    }
+
+    .hero-btn {
+      padding-inline: 30px;
+    }
+
+    .hero-btn--primary {
+      min-width: 300px;
+    }
+
+    .hero-btn--secondary {
+      min-width: 213px;
+    }
+
+    .hero-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: clamp(96px, 9.93vw, 143px);
+    }
+
+    .hero-card {
+      min-height: 120px;
+      padding: 19px;
+      background: var(--hero-card-surface);
+    }
+
+    .hero-card h2 {
+      font-size: 20px;
+    }
+
+    .hero-card p {
+      margin-top: 10px;
+      color: #dedede;
+    }
+
+    .channel-plane { display: none; }
+    .channel-desktop { display: block; grid-column: 2; grid-row: 1 / 3; align-self: end; }
+    .hero-news h2 { grid-column: 1; }
+    .hero-news {
+      grid-column: auto;
+      padding-right: clamp(19px, 2.5vw, 36px);
+    }
+  }
+
+  @media (1024px <= width < 1200px) {
+    .hero-art {
+      height: 780px;
+    }
+
+    .hero-art img {
+      inset-block-start: 125px;
+      height: calc(100% - 125px);
+    }
+
+    .hero-content {
+      padding-block: 196px 64px;
+    }
+
+    .hero-cards {
+      gap: 16px;
+      margin-top: 64px;
+    }
+
+    .hero-card {
+      padding: 14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-btn {
+      transition: none;
+    }
   }
 </style>
