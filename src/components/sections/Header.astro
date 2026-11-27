@@ -1,420 +1,286 @@
 ---
+/*
+  УРОВЕНЬ 3 — БЛОК Header (шапка)
+
+  На самом верху страницы — прозрачная полоса во всю ширину (фото Hero
+  просвечивает). При скролле за полосой проявляется светло-серая
+  полупрозрачная пилюля (fully rounded) с блюром. Цвета текста/иконок внутри
+  тоже переключаются (золото-на-тёмном → тёмно-зелёный на светлом), иначе
+  кремовый/золотой текст потерялся бы на светлом фоне. Переключение —
+  атрибутом `data-scrolled` на `<header>`, JS только считает порог скролла,
+  вся анимация — на CSS transition.
+
+  ВАЖНО про саму пилюлю (.header-pill): это ОТДЕЛЬНЫЙ `absolute`-слой под
+  контентом, а не контейнер, который сам меняет margin/max-width. Раньше
+  именно контейнер с контентом внутри менял размер (margin-inline/max-width
+  от "во всю ширину" до "узкая по центру") — при скролле вверх было ВИДНО,
+  как прямоугольник физически расширяется обратно (это и есть "растягивание",
+  на которое жаловались, причём дважды: синхронизация кривых анимации не
+  помогает, если МЕНЯЕТСЯ САМА ГЕОМЕТРИЯ). Теперь геометрия пилюли
+  (позиция/размер/скругление) ПОСТОЯННА на обоих состояниях — анимируется
+  ТОЛЬКО opacity (и вместе с ней фон/рамка/тень/блюр, т.к. это один и тот же
+  элемent). Контент (лого/навигация/кнопка) тоже не сдвигается между
+  состояниями — высота `<header>` фиксирована (не зависит от data-scrolled),
+  контент прижат к низу (`mt-auto`) ровно там, где раньше была нижняя граница
+  полосы. Визуально ничего не "растёт" и не "едет" — пилюля просто
+  проявляется/гаснет на своём месте.
+
+  Логотип центрируется через `absolute` + `-translate-x-1/2` НЕЗАВИСИМО от
+  ширины левого/правого блоков (а не через grid 1fr/auto/1fr, как было раньше) —
+  это сознательно: при grid-раскладке на узких экранах левый/правый блок могли
+  столкнуться с центральным, если тот не помещался в оставшееся место (так и
+  было: лого наезжало на кнопку «Консультация» на мобильном). С `absolute`
+  такого столкновения по разметке быть не может; дополнительно логотип на
+  мобильном уменьшен и показывается в одну строку (без подписи «архитектура
+  капитала»), чтобы с запасом помещаться между бургером и кнопкой.
+*/
 import { nav, office, phones } from '../../data/site';
 
-const assets = `${import.meta.env.BASE_URL}images/header/`;
+const base = import.meta.env.BASE_URL;
+
 ---
 
-<header class="site-header fixed inset-x-0 top-0 z-50" id="site-header" data-scrolled="false">
-  <div id="nav-backdrop" class="fixed inset-0 hidden bg-black/40" aria-hidden="true"></div>
+<header class="fixed inset-x-0 top-0 z-50 flex h-[84px] flex-col md:h-[92px]" id="site-header" data-scrolled="false">
+  {/* Пилюля-подложка: отдельный слой, геометрия ПОСТОЯННА (см. комментарий
+       вверху файла) — анимируется только opacity, никогда margin/width. */}
+  <div class="header-pill header-shell pointer-events-none absolute inset-x-3 top-2.5 bottom-0 md:inset-x-0 md:top-3 md:mx-auto" aria-hidden="true"></div>
 
-  <div class="header-shell header-bar relative">
-    <a href="#" class="header-brand" aria-label="Фидента — архитектура капитала">
-      <picture class="header-bridge">
-        <img src={`${assets}bridge-asset-3.svg`} width="663" height="296" alt="" />
-      </picture>
-      <span class="header-wordmark" aria-hidden="true">
-        <span class="header-name text-gold-plate">ФИДЕНТА</span>
-        <span class="header-tagline text-gold-plate">АРХИТЕКТУРА КАПИТАЛА</span>
-      </span>
-    </a>
+  {/* Подложка-«закрыватель» меню: тап по любому свободному месту закрывает открытое меню */}
+  <div id="nav-backdrop" class="fixed inset-0 -z-10 hidden bg-black/40" aria-hidden="true"></div>
 
-    <div class="header-contact">
-      <p>{office.short}</p>
-      <a href={phones.header.href}>{phones.header.text}</a>
-    </div>
-
-    <div class="contact-choice">
-      <button type="button" class="header-cta" aria-label="Связаться" aria-expanded="false" aria-controls="contact-options">
-        <svg preserveAspectRatio="none" overflow="visible" aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g aria-hidden="true">
-          <path d="M9 0.339844H35C39.7828 0.339844 43.6602 4.21721 43.6602 9V35C43.6602 39.7828 39.7828 43.6602 35 43.6602H9C4.21721 43.6602 0.339844 39.7828 0.339844 35V9C0.339844 4.21721 4.21721 0.339844 9 0.339844Z" stroke="url(#paint0_linear_0_8)" stroke-opacity="0.86" stroke-width="0.68"/>
-          <path class="handset" d="M15.5 14.26H19.5L21.5 19.26L19 20.76C20.071 22.9315 21.8285 24.689 24 25.76L25.5 23.26L30.5 25.26V29.26C30.5 29.7904 30.2893 30.2991 29.9142 30.6742C29.5391 31.0493 29.0304 31.26 28.5 31.26C24.5993 31.023 20.9202 29.3665 18.1568 26.6032C15.3935 23.8398 13.737 20.1607 13.5 16.26C13.5 15.7296 13.7107 15.2209 14.0858 14.8458C14.4609 14.4707 14.9696 14.26 15.5 14.26Z" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke="url(#paint1_linear_0_8)" stroke-opacity="0.76"/>
-          </g>
-          <defs>
-          <linearGradient id="paint0_linear_0_8" x1="-11.3143" y1="-11.3143" x2="46.5143" y2="58.4571" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#F9F2E5" stop-opacity="0.99"/>
-          <stop offset="1" stop-color="#9A8765"/>
-          </linearGradient>
-          <linearGradient id="paint1_linear_0_8" x1="11" y1="13" x2="33" y2="34" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#DACFBB"/>
-          <stop offset="0.37" stop-color="#EEE6D6"/>
-          <stop offset="1" stop-color="#9A8765"/>
-          </linearGradient>
-          </defs>
-        </svg>
-        <span>Связаться</span>
-      </button>
-      <div id="contact-options" hidden>
-        <a href="https://t.me/turvast"><span class="text-gold-plate">Написать в чат</span></a>
-        <a href={phones.header.href}><span class="text-gold-plate">Позвонить</span></a>
+  <div class="container-page relative mt-auto flex h-[72px] items-center justify-between md:h-20">
+      {/* ЛЕВО: бургер + адрес/телефон (адрес скрыт до md — не помещается рядом с бургером) */}
+      <div class="flex items-center gap-3">
+        <button
+          id="menu-toggle"
+          type="button"
+          class="header-burger flex h-11 w-11 shrink-0 lg:h-12 lg:w-12 items-center justify-center rounded-[9px] border border-white/15 text-fg transition-colors hover:border-accent/50 hover:text-accent"
+          aria-label="Открыть меню"
+          aria-expanded="false"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="size-6">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+        </button>
+        <div class="header-contact hidden font-accent text-sm leading-tight text-fg md:block lg:text-lg">
+          <p class="m-0">{office.short}</p>
+          <p class="m-0">{phones.header.text}</p>
+        </div>
       </div>
-    </div>
 
-    <div class="header-account">
-      <img src={`${assets}owner.svg`} width="54" height="50" alt="Личный кабинет — скоро" />
-    </div>
+      {/* ЦЕНТР: логотип — всегда строго по центру полосы, независимо от ширины соседей.
+           На мобильном сильно компактнее (меньше знак, мельче и плотнее wordmark) —
+           иначе при true-center перекрывает бургер/кнопку на узких экранах. */}
+      <a href="#" class="absolute left-1/2 flex -translate-x-1/2 items-center gap-1.5 md:gap-3">
+        <img src={`${base}images/logo-mark.png`} width="72" height="32" alt="Фидента" class="h-6 w-auto md:h-7 lg:h-10" />
+        <span class="leading-none">
+          <span class="header-logo-word block font-accent text-base tracking-[0.06em] text-gold-plate md:text-lg md:tracking-[0.18em] lg:text-3xl">ФИДЕНТА</span>
+          <span class="header-logo-sub mt-1 hidden text-right text-[0.5rem] uppercase tracking-[0.2em] text-accent/80 md:block lg:text-[0.7rem]">архитектура капитала</span>
+        </span>
+      </a>
 
-    <button id="menu-toggle" type="button" class="header-menu" aria-label="Меню"
-      aria-controls="nav-panel" aria-expanded="false">
-      <picture>
-        <source media="(min-width: 1024px)" srcset={`${assets}menu-desktop.svg`} width="54" height="50" />
-        <img src={`${assets}menu-mobile.svg`} width="44" height="44" alt="" />
-      </picture>
-    </button>
+      {/* ПРАВО: кнопка «Консультация» — компактная на мобильном, обычная от sm */}
+      {/* На мобильном — иконка телефона (симметрична бургеру: тот же квадрат 44px), с sm — текст «Консультация» */}
+      <a href="#cta" class="header-cta btn-hero btn-outline shrink-0" aria-label="Консультация">
+        <svg class="size-6 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path>
+        </svg>
+        <span class="header-cta-label hidden text-gold-plate sm:inline">Консультация</span>
+      </a>
   </div>
 
-  <nav id="nav-panel" class="header-shell nav-panel-card relative hidden" aria-label="Основная навигация">
-    <div class="grid gap-1 p-4 sm:grid-cols-2">
-      {nav.map((link) => (
-        <a href={link.href} class="rounded-lg px-4 py-3.5 text-lg transition-colors hover:bg-white/5">
-          <span class="text-gold-plate">{link.label}</span>
-        </a>
-      ))}
-    </div>
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-white/10 px-6 py-4 text-base text-fg/75">
-      <a href={phones.header.href} class="font-semibold text-fg hover:text-accent">{phones.header.text}</a>
-      <span class="text-copy">{office.short}</span>
-    </div>
+  {/*
+    ВЫПАДАЮЩАЯ ПАНЕЛЬ НАВИГАЦИИ (скрыта по умолчанию).
+    Раньше была сплошной тёмно-зелёной полосой во всю ширину с жёсткими
+    углами — на верхнем (прозрачном) состоянии ещё туда-сюда, но под белой
+    плавающей пилюлёй смотрелась чужеродным тёмным блоком. Теперь это
+    светлая плавающая карточка в той же логике, что и сама пилюля (те же
+    отступы/скругление/тень) — продолжение одного и того же языка, а не
+    второй отдельный стиль.
+
+    ВАЖНО: `absolute` обязателен. `<header>` — flex-col ФИКСИРОВАННОЙ высоты
+    (см. комментарий вверху файла про .header-pill), контент-роу внутри
+    прижат к низу через mt-auto. Без absolute nav-panel был бы ВТОРЫМ
+    flow-элементом в том же flex-col — при открытии меню он начинал
+    участвовать в расчёте высоты наравне с контент-роу, свободное место для
+    mt-auto схлопывалось, и контент-роу (лого/бургер/кнопка) прыгал к ВЕРХУ
+    капсулы вместо низа ("меню сдвигает весь хэдер внутри капсулы"). absolute
+    полностью убирает nav-panel из flex-потока — на контент-роу открытие
+    меню теперь вообще никак не влияет.
+  */}
+  <nav id="nav-panel" class="nav-panel absolute inset-x-0 top-full hidden">
+      <div class="nav-panel-card header-shell mx-3 overflow-hidden md:mx-auto">
+        <div class="grid gap-1 p-4 sm:grid-cols-2">
+          {nav.map((link) => (
+            <a href={link.href} class="rounded-lg px-4 py-3.5 text-lg text-fg/90 transition-colors hover:bg-white/5 hover:text-accent">
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-8 gap-y-2 border-t border-white/10 px-6 py-4 text-base text-fg/75">
+          <a href={phones.header.href} class="font-semibold text-fg hover:text-accent">{phones.header.text}</a>
+          <span>{office.short}</span>
+        </div>
+      </div>
   </nav>
 </header>
 
 <style>
-  .site-header {
-    --header-inset: 12px;
-    padding-top: 16px;
-    pointer-events: none;
-    /* Шапка задана в масштабе 1:1 при ширине макета 1440px. */
-    zoom: calc(1 / var(--desktop-reference-zoom, 1));
+  /*
+    Пилюля — ОДИН раз зафиксированная геометрия (позиция/размер/скругление
+    заданы в разметке через Tailwind-классы и никогда не меняются). Здесь
+    анимируется ТОЛЬКО opacity — вместе с ней естественным образом "гаснут"
+    фон/рамка/тень/блюр, т.к. всё это один и тот же элемент. Никакого
+    margin/width transition — значит нечему визуально "растягиваться".
+  */
+  /* Ширина пилюли и панели меню (md+): на 4rem шире контейнера (70rem, от 1600px — 80rem).
+     Через обычный CSS, а не утилиту min-[1600px]: Tailwind ставит её РАНЬШЕ md:max-w и она не срабатывала. */
+  @media (min-width: 768px) {
+    .header-shell {
+      max-width: 74rem;
+    }
+  }
+  @media (min-width: 1600px) {
+    .header-shell {
+      max-width: 84rem;
+    }
   }
 
-  .header-shell {
-    width: calc(100% - 2 * var(--header-inset));
-    max-width: 1440px;
-    margin-inline: auto;
-    pointer-events: auto;
-  }
-
-  #nav-backdrop {
-    pointer-events: auto;
-  }
-
-  .header-bar {
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
-    grid-template-areas: 'menu brand cta';
-    align-items: center;
-    min-height: 62px;
-    padding-inline: 9px 7px;
-    border: 0.68px solid rgba(255, 241, 217, 0.58);
-    border-radius: 9px;
-    background: var(--surface-90);
+  .header-pill {
+    border-radius: 18px;
+    border: 1px solid rgba(255, 241, 217, 0.22);
+    background: rgba(11, 24, 19, 0.82);
+    box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    font-family: var(--font-accent);
+    /* Тёмная пилюля видна всегда (и на фото, и при прокрутке): золото логотипа читается на любом фоне */
   }
 
-  .header-brand {
-    grid-area: brand;
-    display: flex;
-    align-items: center;
-    justify-self: center;
-    gap: 2px;
-    translate: -3px -2px;
-    white-space: nowrap;
-  }
-
-  .header-bridge {
-    flex: 0 0 auto;
-    width: 80px;
-  }
-
-  .header-bridge img {
-    display: block;
-    width: 100%;
-    height: var(--bridge-height, 35px);
-    translate: 0 -2.5px;
-  }
-
-  .header-wordmark {
-    display: grid;
-    min-width: 108px;
-    text-align: center;
-  }
-
-  .header-name {
-    --plat-text-fill: var(--gradient-plat-wordmark);
-    font-size: 24px;
-    line-height: 1.1;
-    letter-spacing: 1.2px;
-  }
-
-  .header-tagline {
-    --plat-text-fill: linear-gradient(167deg, var(--plat-text-base) 18%, var(--plat-text-shadow) 111%);
-    font-size: 10px;
-    line-height: 1.22;
-  }
-
-  .header-menu {
-    grid-area: menu;
-    display: block;
-    padding: 0;
-    border-radius: 9px;
-    cursor: pointer;
-  }
-
-  .contact-choice {
-    grid-area: cta;
-    position: relative;
-  }
-
-  #contact-options {
-    position: absolute;
-    top: calc(100% + 20px);
-    right: 0;
-    width: max-content;
-    padding: 6px;
-    border: 1px solid #766e5c;
-    border-radius: 9px;
-    background: var(--surface-60);
-    backdrop-filter: blur(12px);
-    color: #fff1d9;
-  }
-
-  #contact-options a {
-    display: block;
-    padding: 10px 14px;
-  }
-
-  #contact-options a:is(:hover, :focus-visible) {
-    background: var(--surface-90);
-  }
-
-  .header-cta {
-    width: 100%;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-  }
-
-  .header-menu img,
-  .header-cta svg {
-    display: block;
-  }
-
-  .header-menu:hover,
-  .header-cta:hover {
-    filter: brightness(1.15);
-  }
-
+  /* Шапка тёмная (стекло): перекраска текста не нужна. Переходы цвета оставлены для hover в тёмно-зелёный/глубокое золото, иначе
+     пропадает контраст. Переходы на каждом элементе отдельно (transition
+     родителя на детей не каскадится), чтобы цвет менялся плавно вместе с
+     фоном, а не скачком. */
+  .header-burger,
   .header-contact,
-  .header-account,
-  .header-cta span {
-    display: none;
+  .header-logo-word,
+  .header-logo-sub,
+  .header-cta,
+  .header-cta-label {
+    /* Та же длительность+кривая, что и у .header-pill выше — текст и фон
+       пилюли должны проявляться синхронно, одним движением. */
+    transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Кнопка «Консультация»: своя, компактная на мобильном раскладка поверх
+     общей btn-hero/btn-outline — иначе на узких экранах задевает логотип. */
+  .header-cta {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .header-cta {
+      padding: 0.625rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
+  /* МОБИЛЬНЫЙ (до sm): бургер и иконка телефона — ОДИНАКОВЫЕ квадраты 44px (симметрия вокруг логотипа),
+     заметнее: полупрозрачная тёмная «стеклянная» подложка + светлая рамка 1.5px на прозрачной шапке,
+     тёмная рамка и тёмный значок на светлой «капсуле» (после прокрутки). */
+  @media (max-width: 639px) {
+    .header-burger,
+    .header-cta {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-cream);
+      background: rgba(10, 32, 25, 0.5);
+      border: 1.5px solid rgba(255, 241, 217, 0.55);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      text-shadow: none;
+    }
+  }
+
+  /* ПК (от lg): шапка крупнее — по правке дизайнера навигация/лого были слишком мелкими */
+  @media (min-width: 1024px) {
+    .header-cta {
+      padding: 0.75rem 1.9rem;
+      font-size: 1.2rem;
+    }
+  }
+
+  /* Выпадающая панель навигации — светлая плавающая карточка, тот же язык,
+     что у .header-pill (см. комментарий в разметке выше). Ширина/отступы —
+     mx-3 / md:mx-auto прямо в разметке, ТА ЖЕ техника, что
+     у .header-pill (inset-x-3 / md:inset-x-0 md:mx-auto) —
+     раньше тут был .container-page с собственным padding-inline, из-за
+     которого карточка оказывалась уже пилюли на 48px (24px с каждой
+     стороны) — видимое рассогласование краёв при открытии меню. */
   .nav-panel-card {
-    --plat-text-fill: var(--gradient-plat-navigation);
-    margin-top: 8px;
-    max-height: calc(100dvh - 120px);
-    overflow-y: auto;
-    border: 1px solid rgba(255, 241, 217, 0.22);
+    margin-top: 0.5rem;
     border-radius: 14px;
-    background: var(--surface-90);
+    background: rgba(11, 24, 19, 0.94);
+    border: 1px solid rgba(255, 241, 217, 0.22);
     box-shadow: 0 20px 45px -18px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
-
-  @media (width < 1024px) {
-    .header-brand { scale: .97 1; translate: -1px -2px; }
-  }
-
-  @media (max-width: 350px) {
-    .header-bridge {
-      width: 67px;
-      --bridge-height: 32px;
-    }
-
-    .header-wordmark {
-      min-width: 94px;
-    }
-
-    .header-name {
-      font-size: 21px;
-    }
-
-    .header-tagline {
-      font-size: 9px;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .site-header {
-      --header-inset: clamp(24px, 3.333%, 48px);
-      padding-top: 22px;
-    }
-
-    .header-bar {
-      grid-template-columns: minmax(0, 1fr) auto 156px 54px 54px;
-      grid-template-areas: 'brand contact cta account menu';
-      gap: 16px;
-      min-height: 86px;
-      /* Проценты от ширины шапки страницы, как у контейнера hero. */
-      --panel-width: min(calc(100% - 2 * var(--header-inset)), 1440px);
-      --content-width: min(calc(100% - 2 * clamp(32px, 5.556%, 80px)), 1280px);
-      padding: 0 0 4px;
-      padding-inline: calc((var(--panel-width) - var(--content-width)) / 2 - 1px);
-      border-width: 1px;
-      /* Подложка сохраняет контраст и поверх светлого фото первого экрана. */
-      background: var(--surface-90);
-    }
-
-    .site-header[data-scrolled="true"] .header-bar {
-      background: var(--surface-90);
-    }
-
-    .header-brand {
-      justify-self: start;
-      gap: 8px;
-      translate: 0 2px;
-    }
-
-    .header-bridge {
-      width: 120px;
-      --bridge-height: 49px;
-    }
-
-    .header-bridge img { translate: 0 -2.5px; }
-
-    .header-wordmark {
-      min-width: 154px;
-    }
-
-    .header-name {
-      font-size: 32px;
-      letter-spacing: 3.2px;
-    }
-
-    .header-tagline {
-      font-size: 14px;
-    }
-
-    .header-contact {
-      grid-area: contact;
-      display: block;
-      font-size: 20px;
-      line-height: 1.15;
-      color: var(--color-cream);
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    #contact-options {
-      top: calc(100% + 10px);
-      width: 100%;
-      padding: 4px;
-      background: var(--surface-60);
-    }
-
-    #contact-options a {
-      padding: 10px 6px;
-      text-align: center;
-    }
-
-    .header-contact a:hover {
-      text-decoration: underline;
-    }
-
-    .header-cta {
-      min-height: 50px;
-      font-size: 20px;
-      color: #082419;
-      background: var(--gradient-plat-contact-button);
-    }
-
-    .header-cta svg {
-      display: none;
-    }
-
-    .header-cta span {
-      display: block;
-    }
-
-    .header-account {
-      grid-area: account;
-      display: grid;
-      justify-items: center;
-      align-content: center;
-      min-height: 50px;
-
-      cursor: default;
-      color: #b7aa91;
-      font-size: 14px;
-      line-height: 1.22;
-    }
-    .header-account img { filter: saturate(.38); }
-  }
 </style>
 
-<script is:inline>
-  // Bind the controls as soon as the header is parsed on a slow connection.
-  (() => {
-    const toggle = document.getElementById('menu-toggle');
-    const panel = document.getElementById('nav-panel');
-    const backdrop = document.getElementById('nav-backdrop');
+<script>
+  // Бургер раскрывает/прячет панель навигации на всех экранах.
+  const toggle = document.getElementById('menu-toggle');
+  const panel = document.getElementById('nav-panel');
 
-    const contactButton = document.querySelector('.header-cta');
-    const options = document.getElementById('contact-options');
+  const backdrop = document.getElementById('nav-backdrop');
 
-    function setContactOpen(open) {
-      if (options) options.hidden = !open;
-      contactButton?.setAttribute('aria-expanded', String(open));
-    }
+  function setMenuOpen(open: boolean) {
+    panel?.classList.toggle('hidden', !open);
+    backdrop?.classList.toggle('hidden', !open);
+    toggle?.setAttribute('aria-expanded', String(open));
+  }
 
-    contactButton?.addEventListener('click', () => {
-      setMenuOpen(false);
-      setContactOpen(options?.hidden ?? false);
-    });
-    function closeOutside(event) {
-      if (event.target instanceof Element && !event.target.closest('.contact-choice')) setContactOpen(false);
-    }
-    document.addEventListener('click', closeOutside);
-    document.addEventListener('focusin', closeOutside);
-    options?.addEventListener('click', () => setContactOpen(false));
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && options && !options.hidden) {
-        setContactOpen(false);
-        contactButton?.focus();
+  toggle?.addEventListener('click', () => setMenuOpen(panel?.classList.contains('hidden') ?? false));
+
+  // Закрываем панель после клика по ссылке (переход к секции).
+  panel?.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', () => setMenuOpen(false));
+  });
+
+  // Тап/клик по свободному месту (подложка вокруг шапки и панели) закрывает меню, а не только кнопка-бургер.
+  // Подложка перехватывает тап, поэтому элементы страницы под ней случайно не срабатывают.
+  backdrop?.addEventListener('click', () => setMenuOpen(false));
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && setMenuOpen(false));
+
+  // Переключаем data-scrolled у хедера, когда страница прокручена — вся
+  // визуальная разница (плавающая карточка) решается CSS-transition выше,
+  // здесь только булево состояние по порогу скролла.
+  const header = document.getElementById('site-header');
+  const SCROLL_THRESHOLD = 24;
+  let ticking = false;
+
+  function syncScrolledState() {
+    const isScrolled = window.scrollY > SCROLL_THRESHOLD;
+    header?.setAttribute('data-scrolled', String(isScrolled));
+    ticking = false;
+  }
+
+  syncScrolledState();
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(syncScrolledState);
+        ticking = true;
       }
-    });
-
-    function setMenuOpen(open) {
-      panel?.classList.toggle('hidden', !open);
-      backdrop?.classList.toggle('hidden', !open);
-      toggle?.setAttribute('aria-expanded', String(open));
-    }
-
-    toggle?.addEventListener('click', () => setMenuOpen(panel?.classList.contains('hidden') ?? false));
-
-    panel?.querySelectorAll('a[href^="#"]').forEach((link) => {
-      link.addEventListener('click', () => setMenuOpen(false));
-    });
-
-    backdrop?.addEventListener('click', () => setMenuOpen(false));
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
-        setMenuOpen(false);
-        toggle.focus();
-      }
-    });
-
-    const header = document.getElementById('site-header');
-    function syncScrolledState() {
-      header?.setAttribute('data-scrolled', String(window.scrollY > 24));
-    }
-
-    syncScrolledState();
-    window.addEventListener('scroll', syncScrolledState, { passive: true });
-  })();
+    },
+    { passive: true }
+  );
 </script>

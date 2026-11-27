@@ -30,46 +30,45 @@
 */
 import Button from '../ui/Button.astro';
 import Section from '../ui/Section.astro';
-import ContactMenu from '../ui/ContactMenu.astro';
-const base = import.meta.env.BASE_URL;
 const copy = {
   investor: {
-    eyebrow: 'Обратная связь',
-    title: 'Покажем объекты, открытые для входа',
-    accent: 'и подберём решение',
-    lead: 'Обсудим вашу задачу. Если есть подходящий объект, пришлём карточку с адресом, сведениями об арендаторе, сроке договора и условиях выхода',
+    eyebrow: 'заявка инвестора',
+    title: 'Покажем объекты, открытые для входа, подберем решение',
+    lead: 'Оставьте заявку — пришлём карточку объекта: адрес, арендатор, срок договора и порядок выхода.',
     steps: [
-      'Позвоним по указанному номеру и уточним, какую сумму вы рассматриваете, на какой срок и как хотите участвовать в проекте',
-      'Если есть подходящий объект, пришлём карточку с адресом, арендатором и основными условиями. Расскажем, какие документы необходимо изучить и какие расходы и риски стоит учесть',
-      'Ответим на вопросы и при необходимости договоримся о просмотре объекта. Дальнейшие шаги согласуем после того, как вы изучите условия',
+      'Свяжемся в течение одного рабочего дня',
+      'Пришлём карточку объекта с адресом и арендатором',
+      'Съездим на объект вместе, если захотите',
     ],
     formTitle: 'Заявка инвестора',
-    placeholder: 'Несколько слов о вашем запросе',
-    submit: 'Заказать обратный звонок',
+    placeholder: 'Например, интересуют склады в Ленобласти',
+    submit: 'Получить карточку объекта',
   },
   // ЧЕРНОВИК — см. примечание в шапке файла
   owner: {
-    eyebrow: 'Обратная связь',
-    title: 'Передайте объект под управление,',
-    accent: 'а мы раскроем его потенциал',
-    lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива',
+    eyebrow: 'заявка собственника',
+    title: 'Передайте объект под управление — расскажем, как повысить доход',
+    lead: 'Оставьте заявку — оценим объект и предложим схему управления: от эксплуатации до роста стоимости актива.',
     steps: [
-      'Позвоним по указанному номеру. На первом разговоре достаточно адреса, площади и короткого описания того, что нужно сделать с объектом',
-      'Уточним, какие помещения заняты, как устроена аренда и какие работы уже запланированы. Если для оценки нужны документы или осмотр, договоримся об этом отдельно',
-      'По итогам оценки обсудим план работ, расходы и отчётность. Объём управления и полномочия команды закрепим в договоре',
+      'Свяжемся в течение одного рабочего дня',
+      'Запросим данные по объекту и оценим его потенциал',
+      'Приедем на объект и предложим условия управления',
     ],
     formTitle: 'Заявка собственника',
     placeholder: 'Например, офисное здание, 3 000 м², Санкт-Петербург',
-    submit: 'Заказать обратный звонок',
+    submit: 'Передать объект под управление',
   },
 };
 // Поле-подпись «Комментарий» одинаково для обоих вариантов (в Figma — «Комментарий / интересующий формат участия»)
 ---
 
-<Section id="cta" class="contact-form-section" data-cta data-copy={JSON.stringify(copy)}>
-    <div class="cta-layout grid gap-6 border-t border-cream/25 pt-8 lg:grid-cols-[minmax(0,0.65fr)_minmax(0,1fr)] lg:gap-12 lg:pt-14">
+<Section id="cta" data-cta data-copy={JSON.stringify(copy)}>
+  {/* МОБИЛЬНЫЙ ПОРЯДОК (по правке дизайнера: блок был слишком длинным): сначала переключатель,
+         потом короткий призыв, потом форма. Для этого правая колонка на <lg «растворяется»
+         (max-lg:contents) и её части переставляются через order. На lg — две колонки как в макете. */}
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-12">
     {/* Левая колонка: призыв (тексты подменяются скриптом по data-copy) */}
-    <div class="cta-intro flex flex-col gap-3 font-accent lg:gap-[15px]">
+    <div class="flex flex-col gap-3 font-accent max-lg:order-2 lg:gap-[15px]">
       <div class="flex items-center gap-2.5">
         <span class="h-px w-5 shrink-0 bg-gold-line"></span>
         <span data-t="eyebrow" class="text-eyebrow text-gold-plate">
@@ -77,110 +76,81 @@ const copy = {
         </span>
       </div>
       <h2
+        data-t="title"
         class="max-w-[437px] text-h2 text-fg"
       >
-        <span data-t="title">{copy.investor.title}</span><br />
-        <span data-t="accent" class="text-gold-plate">{copy.investor.accent}</span>
+        {copy.investor.title}
       </h2>
-      <div class="cta-lead max-w-[428px] text-lead text-copy">
-        <span data-t="lead">{copy.investor.lead}</span>{' '}
-        <details class="cta-process">
-          <summary class="cursor-pointer"><span class="text-gold-plate text-plat-dense">Читать далее</span> <span class="cta-chevron" aria-hidden="true"></span></summary>
-          <p class="mt-3 text-base leading-tight text-fg/85">Как мы обрабатываем заявки</p>
-          <ul class="list-disc ps-6 text-base leading-snug text-copy md:ps-[30px] md:text-[17px] [&>li+li]:mt-2">
-            {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
-          </ul>
-        </details>
-      </div>
+      <p data-t="lead" class="max-w-[428px] text-lead text-fg">{copy.investor.lead}</p>
+      <p class="text-base text-white md:text-xl">Что будет дальше?</p>
+      <ul class="list-disc ps-6 text-base leading-snug text-white md:ps-[30px] md:text-xl md:leading-5 [&>li+li]:mt-1 md:[&>li+li]:mt-0">
+        {copy.investor.steps.map((s, i) => <li data-step={i}>{s}</li>)}
+      </ul>
     </div>
 
     {/* Правая колонка: переключатель + форма */}
-    <div class="cta-form-column flex min-w-0 flex-col gap-4 font-accent">
-      <div class="cta-audiences grid grid-cols-2 gap-3 md:gap-5" role="group" aria-label="Тип заявки">
-        <button type="button" data-audience="investor" aria-pressed="true" class="aud-btn aud-btn--sm-mobile plat-outline">Я инвестор</button>
-        <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile plat-outline">Я собственник</button>
+    <div class="flex flex-col gap-4 font-accent max-lg:contents">
+      <div class="flex gap-3 max-lg:order-1 md:gap-5" role="group" aria-label="Тип заявки">
+        <button type="button" data-audience="investor" aria-pressed="true" class="aud-btn aud-btn--sm-mobile">Я инвестор</button>
+        <button type="button" data-audience="owner" aria-pressed="false" class="aud-btn aud-btn--sm-mobile">Я собственник</button>
       </div>
 
+      {/* Заголовок формы и «Ответим…» на мобильном скрыты: повторяют надпись и первый пункт сверху */}
       <h3 data-t="formTitle" class="mt-3 hidden font-accent text-4xl font-normal leading-[1.1] text-fg lg:block">
         {copy.investor.formTitle}
       </h3>
-      <p class="text-lg leading-snug text-copy">Оставьте номер для обратного звонка. Если хотите связаться быстрее, позвоните нам или напишите в чат</p>
+      <p class="hidden text-xl leading-[1.12] text-fg lg:block">Ответим в течение одного рабочего дня.</p>
 
-      <form id="cta-form" method="post" class="flex flex-col gap-3 md:gap-4">
+      <form id="cta-form" class="flex flex-col gap-3 max-lg:order-3 md:gap-4" novalidate>
         {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
         <input type="hidden" name="audience" value="investor" />
 
-        <div class="grid gap-3 sm:grid-cols-2 md:gap-4">
+        <div class="grid grid-cols-2 gap-3 md:gap-4">
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
             Имя
-            <input name="name" autocomplete="name" placeholder="Как к вам обращаться" class="cta-input" />
+            <input name="name" required autocomplete="name" placeholder="Александр" class="cta-input" />
           </label>
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
-            Телефон *
-            <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 (___) ___-__-__" class="cta-input" />
+            Телефон
+            <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 (812) ..." class="cta-input" />
           </label>
         </div>
 
         <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
-          Электронная почта (по желанию)
-          <input name="client_email" type="email" autocomplete="email" placeholder="name@example.ru" class="cta-input" />
-          <span class="text-sm text-copy">
-            <span class="lg:hidden">Для документов или письменного ответа</span>
-            <span class="hidden lg:inline">Если удобнее получить документы или ответ письменно</span>
+          E-mail
+          <span class="relative block">
+            <input name="client_email" type="email" autocomplete="email" placeholder="example@mail.ru" class="cta-input w-full !pr-[140px]" />
+            <span class="pointer-events-none absolute right-[17px] top-1/2 hidden -translate-y-1/2 font-body text-base text-[rgba(244,241,234,0.5)] sm:block">не обязательно</span>
           </span>
         </label>
 
         <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
-          Кратко о задаче (по желанию)
-          <textarea name="message" rows="3" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input"></textarea>
+          Комментарий / интересующий формат участия
+          <input name="message" data-t-placeholder="placeholder" placeholder={copy.investor.placeholder} class="cta-input" />
         </label>
 
-        <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-legal md:text-xl md:leading-[1.04]">
-          <input type="checkbox" name="consent" required class="mt-0.5 size-[18px] shrink-0 accent-link" />
+        {/* Согласие: ссылка #privacy — страница политики появится позже */}
+        <label class="flex items-start gap-2.5 text-sm leading-snug tracking-[0.013em] text-fg md:text-xl md:leading-[1.04]">
+          <input type="checkbox" name="consent" required checked class="mt-0.5 size-[18px] shrink-0 accent-link" />
           <span>
-            <a href={`${base}consent/`} class="underline underline-offset-2">Согласие на обработку данных</a> для ответа на обращение
+            Даю согласие на
+            <a href="#privacy" class="text-link underline">обработку персональных данных</a>
+            в соответствии с политикой конфиденциальности
           </span>
         </label>
 
-        <div class="cta-submit grid gap-3 sm:grid-cols-2 md:gap-4">
-          <Button variant="plat-form" type="submit" disabled data-t="submit">{copy.investor.submit}</Button>
-          <ContactMenu label="Связаться сейчас" />
-        </div>
+        <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
 
         {/* Статус отправки */}
         <p id="cta-status" class="hidden font-accent text-base" role="status"></p>
       </form>
 
-      <p class="cta-note mt-2 font-accent text-sm leading-5 text-copy">
-        <span class="lg:hidden">Телефон обязателен. Email и сообщение можно не заполнять</span>
-        <span class="hidden font-legal text-[13px] text-legal lg:inline">Не является публичной офертой. Условия конкретной сделки фиксируются в договоре</span>
+      <p class="mt-2 font-accent text-sm leading-5 text-sand max-lg:order-3">
+        Не является публичной офертой. Условия конкретной сделки фиксируются в договоре.
       </p>
     </div>
   </div>
 </Section>
-
-<style>
-  .cta-process { display: inline; }
-  .cta-process summary { display: inline; white-space: nowrap; list-style: none; }
-  .cta-process summary::-webkit-details-marker { display: none; }
-  .cta-chevron { display: inline-block; width: 8px; height: 8px; margin-inline: 4px; vertical-align: 0.16em; border: solid #c7b590; border-width: 0 1px 1px 0; rotate: 45deg; }
-  .cta-process[open] .cta-chevron { rotate: 225deg; vertical-align: 0; }
-  .cta-process ul { margin-top: 8px; }
-  .cta-submit :global(button) { width: 100%; min-height: 48px; height: auto; padding: 8px 12px; font-size: 18px; }
-  .cta-submit :global(summary) { height: 100%; }
-  @media (width < 768px) {
-    .cta-layout { gap: 36px; }
-    .cta-intro { gap: 14px; }
-    .cta-lead { margin-top: 6px; }
-    .cta-form-column { gap: 24px; }
-    .cta-audiences { padding-inline: 13px; }
-    .cta-audiences button { min-height: 44px; font-size: 17px; }
-    #cta-form { gap: 19px; }
-    #cta-form > :is(label, div, [role='status']) { margin-inline: 17px; }
-    #cta-form > div:first-of-type { gap: 19px; }
-    .cta-note { margin-top: 0; }
-  }
-</style>
 
 <script>
   type Audience = 'investor' | 'owner';
@@ -224,11 +194,11 @@ const copy = {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const data = new FormData(form);
-      if (!String(data.get('phone')).trim()) {
-        return show('Укажите телефон', false);
+      if (!String(data.get('name')).trim() || !String(data.get('phone')).trim()) {
+        return show('Укажите имя и телефон.', false);
       }
       if (!(form.elements.namedItem('consent') as HTMLInputElement).checked) {
-        return show('Нужно согласие на обработку персональных данных', false);
+        return show('Нужно согласие на обработку персональных данных.', false);
       }
 
       // TODO(CTA): отправка заявки письмом — пока доступов нет, это заглушка.
@@ -240,9 +210,8 @@ const copy = {
       //   3) целевая почта зависит от audience (investor / owner): завести словарь
       //      «аудитория → адрес» на стороне отправки (secrets), а не в браузере;
       //   4) показать успех/ошибку по ответу, очистить форму при успехе.
-      show('Заявка не отправлена. Выберите «Связаться сейчас», чтобы позвонить или написать нам', false);
+      show('Форма собрана. Отправка письма будет подключена позже.', true);
     });
-    form.querySelector<HTMLButtonElement>('button[type=submit]')!.disabled = false;
   }
 </script>
 
@@ -250,15 +219,12 @@ const copy = {
   /* Кнопки-переключатели .aud-btn — общие, лежат в styles/global.css
      (используются и в CtaForm, и в FAQ). */
   /* Поле ввода по спеке Figma: фон #143a30, рамка #1c4a3d, radius 9, высота 52 */
-  .contact-form-section {
-    background: #071f18;
-  }
   .cta-input {
     height: 52px;
     width: 100%;
     border-radius: 9px;
-    border: 1px solid #4f5747;
-    background: var(--surface-40);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
     padding: 0 17px;
     font-family: var(--font-body);
     font-size: 16px;
@@ -266,20 +232,11 @@ const copy = {
     outline: none;
     transition: border-color 0.15s;
   }
-  textarea.cta-input {
-    height: auto;
-    min-height: 76px;
-    padding-block: 12px;
-    resize: vertical;
-  }
   @media (max-width: 767px) {
     .cta-input {
-      height: 48px;
+      height: 46px;
       padding: 0 13px;
-      border-color: #576652;
-      background: var(--surface-40);
     }
-    textarea.cta-input { min-height: 65px; }
   }
   .cta-input::placeholder {
     color: rgba(244, 241, 234, 0.5);
