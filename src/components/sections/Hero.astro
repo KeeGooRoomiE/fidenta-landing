@@ -6,7 +6,7 @@ const cards = [
     description: 'Коммерческая недвижимость: действующие объекты, реконструкция, управление и развитие',
   },
   {
-    title: 'Роль Фиденты',
+    title: 'Что делает Фидента',
     description: 'Аудит, подбор, организация, развитие и управление объектом, аналитика, платежи, расчёты и документы',
   },
 ];
@@ -53,10 +53,11 @@ const cards = [
         </li>
       ))}
       <li class="plat-outline hero-card hero-news">
-        <a href="https://t.me/fidenta" aria-label="Открыть канал Фиденты «Архитектура капитала»">
-          <h2 class="text-gold-plate">Смотрите за проектами Фиденты</h2>
+        <a href="https://t.me/fidenta" aria-label="Открыть канал «Архитектура капитала» компании Фидента">
+          <h2 class="text-gold-plate">Смотрите за проектами Фидента</h2>
           <p>Новые объекты и новости<span class="channel-detail"> компании</span><br />в <span class="channel-detail">нашем </span>канале «Архитектура капитала»</p>
-          <svg class="channel-plane" width="23" height="23" viewBox="2 3.5 18.5 16" fill="none" stroke="currentColor" stroke-width=".85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg class="channel-plane" width="23" height="23" viewBox="2 3.5 18.5 16" fill="none" stroke="url(#channel-metal)" stroke-width=".85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <defs><linearGradient id="channel-metal" x2=".8" y2="1"><stop stop-color="#F9F2E5"/><stop offset=".42" stop-color="#B6AB97"/><stop offset=".57" stop-color="#DFD7C6"/><stop offset="1" stop-color="#9A8765"/></linearGradient></defs>
             <path d="m3 10 17-6-3.6 15-5.5-4.4-3 2.7.5-5.5L17 6.8l-7.1 6.7"/>
           </svg>
           <img class="channel-desktop" src={`${assets}news-telegram.svg`} width="52" height="48" alt="" />
@@ -243,19 +244,30 @@ const cards = [
     align-items: center;
     column-gap: 8px;
   }
-  .hero-news { position: relative; }
+  .hero-card.hero-news {
+    position: relative;
+    background-image: linear-gradient(105deg, transparent 35%, rgb(191 175 142 / 8%));
+  }
+  .hero-news a::after { box-shadow: inset 0 0 0 1px transparent; }
+  @media (hover: hover) {
+    .hero-news:hover a::after { box-shadow: inset 0 0 0 1px rgb(211 193 156 / 22%); }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .hero-news a::after, .hero-news :is(.channel-desktop, .channel-plane) { transition: box-shadow 180ms ease, transform 180ms ease; }
+    .hero-news:hover :is(.channel-desktop, .channel-plane) { transform: translate(1px, -1px); }
+  }
   .hero-news a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
-  .hero-news:focus-within { outline: 2px solid var(--color-cream); }
+  .hero-news:has(a:focus-visible) { outline: 1px solid #c9b38e; }
+  .hero-news a { border-radius: inherit; }
   .hero-news h2 { grid-column: 1 / -1; }
   .channel-desktop { display: none; }
-  .channel-plane { align-self: end; width: auto; height: 2.44rem; aspect-ratio: 18.5 / 16; translate: 0 1px; grid-column: 2; grid-row: 2; color: #c5b392; }
+  .channel-plane { align-self: end; width: auto; height: 1.85rem; aspect-ratio: 18.5 / 16; translate: 0 1px; grid-column: 2; grid-row: 2; color: #c5b392; }
   @media (max-width: 420px) {
     .hero-news .channel-detail { display: none; }
     .hero-news { padding-inline: 12px; }
     .hero-news > a { column-gap: 4px; }
   }
-  @media (max-width: 350px) { .hero-news p { font-size: 15px; } .channel-plane { height: 36.6px; } }
-  .hero-news a:hover .channel-plane { color: #e0d2b7; }
+  @media (max-width: 350px) { .hero-news p { font-size: 15px; } .channel-plane { height: 27px; } }
 
   @media (width < 640px) {
     .hero-title { font-size: 34px; }

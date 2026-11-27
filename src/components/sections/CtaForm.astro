@@ -106,14 +106,14 @@ const copy = {
       </h3>
       <p class="text-lg leading-snug text-copy">Оставьте номер для обратного звонка. Если хотите связаться быстрее, позвоните нам или напишите в чат</p>
 
-      <form id="cta-form" class="flex flex-col gap-3 md:gap-4" novalidate>
+      <form id="cta-form" method="post" class="flex flex-col gap-3 md:gap-4">
         {/* Аудитория уходит в отправку скрытым полем (TODO(CTA): по ней выбрать получателя) */}
         <input type="hidden" name="audience" value="investor" />
 
         <div class="grid gap-3 sm:grid-cols-2 md:gap-4">
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
             Имя
-            <input name="name" required autocomplete="name" placeholder="Как к вам обращаться" class="cta-input" />
+            <input name="name" autocomplete="name" placeholder="Как к вам обращаться" class="cta-input" />
           </label>
           <label class="flex flex-col gap-2 text-base tracking-[0.013em] text-fg md:text-xl">
             Телефон *
@@ -143,7 +143,7 @@ const copy = {
         </label>
 
         <div class="cta-submit grid gap-3 sm:grid-cols-2 md:gap-4">
-          <Button variant="plat-form" type="submit" data-t="submit">{copy.investor.submit}</Button>
+          <Button variant="plat-form" type="submit" disabled data-t="submit">{copy.investor.submit}</Button>
           <ContactMenu label="Связаться сейчас" />
         </div>
 
@@ -224,8 +224,8 @@ const copy = {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const data = new FormData(form);
-      if (!String(data.get('name')).trim() || !String(data.get('phone')).trim()) {
-        return show('Укажите имя и телефон', false);
+      if (!String(data.get('phone')).trim()) {
+        return show('Укажите телефон', false);
       }
       if (!(form.elements.namedItem('consent') as HTMLInputElement).checked) {
         return show('Нужно согласие на обработку персональных данных', false);
@@ -240,8 +240,9 @@ const copy = {
       //   3) целевая почта зависит от audience (investor / owner): завести словарь
       //      «аудитория → адрес» на стороне отправки (secrets), а не в браузере;
       //   4) показать успех/ошибку по ответу, очистить форму при успехе.
-      show('Форма собрана. Отправка письма будет подключена позже', true);
+      show('Заявка не отправлена. Выберите «Связаться сейчас», чтобы позвонить или написать нам', false);
     });
+    form.querySelector<HTMLButtonElement>('button[type=submit]')!.disabled = false;
   }
 </script>
 

@@ -87,8 +87,8 @@
   --gradient-plat-subtle: linear-gradient(155deg, var(--plat-text-midpoint), var(--plat-text-mid-dark));
   --gradient-plat-navigation: linear-gradient(108deg, var(--plat-text-midpoint) 16%, var(--plat-text-mid-dark) 102%);
   --gradient-plat-wide-heading: linear-gradient(162deg, var(--plat-text-midpoint) 9%, var(--plat-text-mid-dark) 92%);
-  --gradient-plat-button: linear-gradient(165deg, #e1d8c5, #c9b996);
-  --gradient-plat-contact-button: linear-gradient(159deg, #ded3bd 12%, #c2b08c 96%);
+  --gradient-plat-button: linear-gradient(143deg, #cdbc9d 0%, #f2e5ca 34%, #dfceb0 59%, #b7a17b 100%);
+  --gradient-plat-contact-button: linear-gradient(143deg, #cebea1 0%, #f5e7cd 33%, #deccaa 58%, #b49c75 100%);
   --gradient-plat-cta: linear-gradient(151deg, #c8ba9e 4%, #d8cbb0 33%, #cbbc9e 60%, #bba987 100%);
 
   /* --- Радиусы (база 8px) ------------------------------------------ */
@@ -204,7 +204,7 @@
 @utility btn-plat {
   background-image: var(--gradient-plat-button);
   color: #000;
-  box-shadow: inset 3px 4px 9.2px 0 rgba(217, 188, 106, 0.26);
+  box-shadow: inset 3px 4px 9.2px 0 rgba(219, 210, 189, 0.26);
 }
 
 @media (width < 768px) {

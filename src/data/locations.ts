@@ -24,7 +24,7 @@ export interface MapLocation {
 export const locations: MapLocation[] = [
   {
     id: 'bogatyrsky-18',
-    name: 'Офис Фиденты',
+    name: 'Офис Фидента',
     address: 'Санкт-Петербург, Богатырский пр., 18, корп. 4, стр. 2',
     lat: 59.996587,
     lng: 30.256292,
